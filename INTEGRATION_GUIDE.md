@@ -73,7 +73,7 @@ Roles are stored in a dedicated `roles` table and connected to users via a `role
 
 | Model | Tenant-scoped | Notes |
 |-------|--------------|-------|
-| `User` | Yes (via `HasInstitute`) | Has `institute_id` and `role_id` |
+| `User` | Yes (via `HasInstitute`) | UUID primary key. Has `institute_id` and `role_id` |
 | `Role` | No | Lookup table for user roles |
 | `Institute` | No | Top-level tenant entity |
 
@@ -93,7 +93,7 @@ roles
 └── timestamps
 
 users
-├── id
+├── id (UUID, primary key)
 ├── institute_id (FK → institutes, nullable)
 ├── role_id (FK → roles)
 ├── name

@@ -7,6 +7,7 @@ use App\Traits\HasInstitute;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,7 +19,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasInstitute, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, HasInstitute, HasUuids, Notifiable, TwoFactorAuthenticatable;
 
     protected function casts(): array
     {
