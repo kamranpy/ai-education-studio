@@ -2,6 +2,7 @@
 
 namespace App\Http\Responses;
 
+use App\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,9 +15,9 @@ class LoginResponse implements LoginResponseContract
             return new JsonResponse('', 204);
         }
 
-        $route = match (auth()->user()->role) {
-            'super_admin' => route('super_admin.dashboard'),
-            'student' => route('student.dashboard'),
+        $route = match (auth()->user()->role?->slug) {
+            Role::SUPER_ADMIN => route('super_admin.dashboard'),
+            Role::STUDENT => route('student.dashboard'),
             default => route('admin.dashboard'),
         };
 

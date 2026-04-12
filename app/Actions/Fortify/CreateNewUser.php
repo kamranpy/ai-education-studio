@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\Institute;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -30,12 +31,14 @@ class CreateNewUser implements CreatesNewUsers
                 'name' => $input['institute_name'],
             ]);
 
+            $role = Role::where('slug', Role::INSTITUTE_ADMIN)->firstOrFail();
+
             return User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
                 'password' => $input['password'],
                 'institute_id' => $institute->id,
-                'role' => 'institute_admin',
+                'role_id' => $role->id,
             ]);
         });
     }
