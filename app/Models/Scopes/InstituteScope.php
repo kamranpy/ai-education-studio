@@ -17,7 +17,7 @@ class InstituteScope implements Scope
 
         $user = Auth::user();
 
-        if ($user->role === 'super_admin') {
+        if ($user->isSuperAdmin()) {
             return;
         }
 
