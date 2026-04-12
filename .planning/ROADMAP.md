@@ -6,7 +6,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Foundation & Multi-Tenancy** - Institutes can onboard and access their isolated environments
+- [x] **Phase 1: Foundation & Multi-Tenancy** - Institutes can onboard and access their isolated environments
 - [ ] **Phase 2: User Management & Exam Creation** - Admins can manage their users and build complete exams
 - [ ] **Phase 3: Student Exam Experience** - Students can securely take and submit exams with resilience against interruptions
 - [ ] **Phase 4: AI Evaluation & Grading** - Exams are automatically evaluated and graded using configured AI models
@@ -100,7 +100,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Multi-Tenancy | 0/0 | Not started | - |
+| 1. Foundation & Multi-Tenancy | 4/4 | Completed | 2026-04-12 |
 | 2. User Management & Exam Creation | 0/0 | Not started | - |
 | 3. Student Exam Experience | 0/0 | Not started | - |
 | 4. AI Evaluation & Grading | 0/0 | Not started | - |
