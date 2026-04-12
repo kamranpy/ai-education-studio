@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Institute;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -11,19 +12,26 @@ class MultiTenancyTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(\Database\Seeders\RoleSeeder::class);
+    }
+
     public function test_institute_admin_cannot_see_other_institutes_users(): void
     {
         $instituteA = Institute::factory()->create();
         $instituteB = Institute::factory()->create();
+        $adminRole = Role::where('slug', Role::INSTITUTE_ADMIN)->first();
 
         $adminA = User::factory()->create([
             'institute_id' => $instituteA->id,
-            'role' => 'institute_admin',
+            'role_id' => $adminRole->id,
         ]);
 
         User::factory()->create([
             'institute_id' => $instituteB->id,
-            'role' => 'institute_admin',
+            'role_id' => $adminRole->id,
         ]);
 
         $this->actingAs($adminA);
@@ -35,20 +43,22 @@ class MultiTenancyTest extends TestCase
     {
         $instituteA = Institute::factory()->create();
         $instituteB = Institute::factory()->create();
+        $adminRole = Role::where('slug', Role::INSTITUTE_ADMIN)->first();
+        $superAdminRole = Role::where('slug', Role::SUPER_ADMIN)->first();
 
         User::factory()->create([
             'institute_id' => $instituteA->id,
-            'role' => 'institute_admin',
+            'role_id' => $adminRole->id,
         ]);
 
         User::factory()->create([
             'institute_id' => $instituteB->id,
-            'role' => 'institute_admin',
+            'role_id' => $adminRole->id,
         ]);
 
         $superAdmin = User::factory()->create([
             'institute_id' => null,
-            'role' => 'super_admin',
+            'role_id' => $superAdminRole->id,
         ]);
 
         $this->actingAs($superAdmin);
