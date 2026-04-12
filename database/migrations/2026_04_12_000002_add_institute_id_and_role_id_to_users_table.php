@@ -15,18 +15,17 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->string('role')
-                ->default('institute_admin')
+            $table->foreignId('role_id')
                 ->after('institute_id')
-                ->index();
+                ->constrained();
         });
     }
 
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('role_id');
             $table->dropConstrainedForeignId('institute_id');
-            $table->dropColumn('role');
         });
     }
 };
