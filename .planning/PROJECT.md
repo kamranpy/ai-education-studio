@@ -14,14 +14,12 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 <!-- Shipped and confirmed valuable. -->
 
-(None yet — ship to validate)
+- ✓ Multi-tenant architecture supporting multiple institutes from day one — Phase 1
+- ✓ Role-based access control (Super Admin, Institute Admin, Student) — Phase 1
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
-
-- [ ] Multi-tenant architecture supporting multiple institutes from day one
-- [ ] Role-based access control (Admin, Student)
 - [ ] Exam creation with Multiple Choice, True/False, and Written answer types
 - [ ] Student exam experience with auto-save, countdown timers, resume capability, and question randomization
 - [ ] Basic anti-cheat tracking (logging when students leave the tab/window)
@@ -57,7 +55,8 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Multi-tenant v1 | Required for the SaaS marketplace business model | — Pending |
+| Multi-tenant v1 | Required for the SaaS marketplace business model | ✓ Good |
+| Single-DB tenancy via global scope | Simpler than schema-per-tenant, works on shared hosting | ✓ Good |
 | Async AI Evaluation | Prevents user-facing timeouts and ensures reliable exam submission | — Pending |
 | Optional Human Override | Builds trust in AI grading by keeping teachers in control | — Pending |
 | Basic Anti-Cheat | Lowers barrier to entry and technical complexity for v1 | — Pending |
@@ -81,4 +80,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-12 after initialization*
+*Last updated: 2026-04-12 after Phase 1 completion*
