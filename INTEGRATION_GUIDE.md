@@ -22,20 +22,41 @@ class Exam extends Model
 - On `creating`, auto-assigns the current user's `institute_id` if not already set
 - Provides the `institute()` BelongsTo relationship
 
-**Super Admin bypass:** Users with `role = 'super_admin'` bypass the `InstituteScope` entirely and can see all records across all institutes.
+**Super Admin bypass:** Users with the `super_admin` role bypass the `InstituteScope` entirely and can see all records across all institutes. This is checked via `$user->isSuperAdmin()`.
 
-### User Roles
+### Roles
 
-| Role | Scope | Description |
-|------|-------|-------------|
-| `super_admin` | Global | Platform owner. Sees all institutes and data. No `institute_id`. |
-| `institute_admin` | Tenant | Manages their institute's exams, students, and settings. |
-| `student` | Tenant | Takes exams and views results within their institute. |
+Roles are stored in a dedicated `roles` table and connected to users via a `role_id` foreign key.
+
+**Schema:**
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `id` | bigint | Primary key |
+| `name` | string | Human-readable name (e.g., "Super Admin") |
+| `slug` | string | Machine-readable identifier (e.g., "super_admin") |
+
+**Default roles (seeded via `RoleSeeder`):**
+
+| Slug | Name | Scope | Description |
+|------|------|-------|-------------|
+| `super_admin` | Super Admin | Global | Platform owner. Sees all institutes and data. No `institute_id`. |
+| `institute_admin` | Institute Admin | Tenant | Manages their institute's exams, students, and settings. |
+| `student` | Student | Tenant | Takes exams and views results within their institute. |
+
+**Constants:** Use `Role::SUPER_ADMIN`, `Role::INSTITUTE_ADMIN`, `Role::STUDENT` instead of raw strings.
+
+**User helper methods:**
+- `$user->hasRole('super_admin')` — check by slug
+- `$user->isSuperAdmin()` — shorthand
+- `$user->isInstituteAdmin()` — shorthand
+- `$user->isStudent()` — shorthand
+- `$user->role` — returns the related `Role` model
 
 ### Authentication Flow
 
-- **Registration:** Creates an `Institute` and `User` atomically via `DB::transaction`. The user is assigned `role = 'institute_admin'`.
-- **Login redirect:** `LoginResponse` checks `auth()->user()->role` and redirects to the corresponding dashboard route:
+- **Registration:** Creates an `Institute` and `User` atomically via `DB::transaction`. The user is assigned the `institute_admin` role via `role_id`.
+- **Login redirect:** `LoginResponse` checks `auth()->user()->role->slug` and redirects to the corresponding dashboard route:
   - `super_admin` → `/super-admin/dashboard`
   - `institute_admin` → `/admin/dashboard`
   - `student` → `/student/dashboard`
@@ -52,8 +73,34 @@ class Exam extends Model
 
 | Model | Tenant-scoped | Notes |
 |-------|--------------|-------|
-| `User` | Yes (via `HasInstitute`) | Has `institute_id` and `role` |
-| `Institute` | No | Top-level entity |
+| `User` | Yes (via `HasInstitute`) | Has `institute_id` and `role_id` |
+| `Role` | No | Lookup table for user roles |
+| `Institute` | No | Top-level tenant entity |
+
+### Database Schema (Phase 1)
+
+```
+institutes
+├── id
+├── name
+├── status (boolean)
+└── timestamps
+
+roles
+├── id
+├── name (unique)
+├── slug (unique)
+└── timestamps
+
+users
+├── id
+├── institute_id (FK → institutes, nullable)
+├── role_id (FK → roles)
+├── name
+├── email
+├── password
+└── timestamps
+```
 
 ---
 
