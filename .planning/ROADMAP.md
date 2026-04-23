@@ -58,7 +58,12 @@ Plans:
   5. Student can successfully submit their completed exam
   6. Unit tests are written and pass for all phase features
   7. INTEGRATION_GUIDE.md is updated with any new API contracts
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [ ] 03-01-PLAN.md — Core Models & List Exams
+- [ ] 03-02-PLAN.md — Exam Take UI & AutoSave
+- [ ] 03-03-PLAN.md — Timer Enforcement & Anti-Cheat
+- [ ] 03-04-PLAN.md — Expiry Enforcer Job
 **UI hint**: yes
 
 ### Phase 4: AI Evaluation & Grading
@@ -107,7 +112,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation & Multi-Tenancy | 4/4 | Completed | 2026-04-12 |
 | 2. User Management & Exam Creation | 1/4 | In Progress|  |
-| 3. Student Exam Experience | 0/0 | Not started | - |
+| 3. Student Exam Experience | 0/4 | In Progress | - |
 | 4. AI Evaluation & Grading | 0/0 | Not started | - |
 | 5. Monetization & Billing | 0/0 | Not started | - |
 | 6. Super Admin & Global Management | 0/0 | Not started | - |
