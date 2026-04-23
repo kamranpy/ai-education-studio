@@ -56,6 +56,15 @@ class ExamController extends Controller
         return to_route('admin.exams.index');
     }
 
+    public function show(Exam $exam): Response
+    {
+        $exam->load('questions.choices');
+
+        return Inertia::render('Admin/Exams/Show', [
+            'exam' => $exam->loadCount('questions'),
+        ]);
+    }
+
     public function edit(Exam $exam): Response
     {
         $exam->load('questions.choices');

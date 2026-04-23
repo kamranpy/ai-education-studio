@@ -1,3 +1,4 @@
+import { index as examsIndex } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
 import { Link, usePage } from '@inertiajs/react';
 import { FileText, LayoutGrid, Settings, Users } from 'lucide-react';
@@ -8,7 +9,7 @@ import { edit as profileEdit } from '@/routes/profile';
 const navItems = [
     { title: 'Dashboard', href: adminDashboard.url(), icon: LayoutGrid },
     { title: 'Users', href: usersIndex.url(), icon: Users },
-    { title: 'Exams', href: '/admin/exams', icon: FileText },
+    { title: 'Exams', href: examsIndex.url(), icon: FileText },
     { title: 'Settings', href: profileEdit.url(), icon: Settings },
 ];
 
