@@ -20,11 +20,11 @@
 
 ### Exam Management
 
-- [ ] **EXAM-01**: Admin can create a new exam with a title, description, and settings
-- [ ] **EXAM-02**: Admin can add Multiple Choice questions
-- [ ] **EXAM-03**: Admin can add True/False questions
-- [ ] **EXAM-04**: Admin can add Written Answer questions
-- [ ] **EXAM-05**: Admin can publish or unpublish an exam
+- [x] **EXAM-01**: Admin can create a new exam with a title, description, and settings
+- [x] **EXAM-02**: Admin can add Multiple Choice questions
+- [x] **EXAM-03**: Admin can add True/False questions
+- [x] **EXAM-04**: Admin can add Written Answer questions
+- [x] **EXAM-05**: Admin can publish or unpublish an exam
 
 ### Exam Taking Experience
 
@@ -54,7 +54,7 @@
 ### Quality & Documentation
 
 - [x] **TEST-01**: Write and run unit tests at the end of every phase to ensure a bug-free script
-- [ ] **DOCS-01**: Maintain an INTEGRATION_GUIDE.md (API contract) throughout the project for future mobile/frontend integrations
+- [x] **DOCS-01**: Maintain an INTEGRATION_GUIDE.md (API contract) throughout the project for future mobile/frontend integrations
 
 ### Monetization
 
@@ -90,11 +90,11 @@
 | AUTH-02 | Phase 1 | Pending |
 | AUTH-03 | Phase 1 | Pending |
 | AUTH-04 | Phase 1 | Pending |
-| EXAM-01 | Phase 2 | Pending |
-| EXAM-02 | Phase 2 | Pending |
-| EXAM-03 | Phase 2 | Pending |
-| EXAM-04 | Phase 2 | Pending |
-| EXAM-05 | Phase 2 | Pending |
+| EXAM-01 | Phase 2 | Complete |
+| EXAM-02 | Phase 2 | Complete |
+| EXAM-03 | Phase 2 | Complete |
+| EXAM-04 | Phase 2 | Complete |
+| EXAM-05 | Phase 2 | Complete |
 | TAKE-01 | Phase 3 | Pending |
 | TAKE-02 | Phase 3 | Pending |
 | TAKE-03 | Phase 3 | Pending |
@@ -115,7 +115,7 @@
 | SADM-02 | Phase 6 | Pending |
 | SADM-03 | Phase 6 | Pending |
 | TEST-01 | All Phases | Complete |
-| DOCS-01 | All Phases | Pending |
+| DOCS-01 | All Phases | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total

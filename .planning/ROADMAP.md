@@ -41,7 +41,7 @@
 **Plans**: 4 plans
 Plans:
 - [x] 02-01-PLAN.md — User Management & Invites
-- [ ] 02-02-PLAN.md — Exam Models & API
+- [x] 02-02-PLAN.md — Exam Models & API
 - [ ] 02-03-PLAN.md — Exam Builder UI Shell & Index
 - [ ] 02-04-PLAN.md — Exam Builder Dynamic Form
 **UI hint**: yes

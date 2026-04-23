@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-04-23T15:49:11.376Z"
+last_updated: "2026-04-23T16:03:01Z"
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 8
-  completed_plans: 5
-  percent: 63
+  completed_plans: 6
+  percent: 75
 ---
 
 Phase: 01 (foundation-multi-tenancy) — COMPLETED
-Phase: 02 (user-management-exam-creation) — EXECUTING (Plan 1/4 complete)
+Phase: 02 (user-management-exam-creation) — EXECUTING (Plan 2/4 complete)
 **Current Phase:** 2
-**Current Plan:** 2 of 4
+**Current Plan:** 3 of 4
 **Status:** Executing Phase 02
 
 ## Performance Metrics
@@ -23,6 +23,7 @@ Phase: 02 (user-management-exam-creation) — EXECUTING (Plan 1/4 complete)
 | Phase | Plan | Duration | Tasks | Files |
 |-------|------|----------|-------|-------|
 | 02 | 01 | 13min | 2 | 12 |
+| 02 | 02 | 9min | 3 | 15 |
 
 ## Accumulated Context
 
@@ -34,6 +35,8 @@ Phase: 02 (user-management-exam-creation) — EXECUTING (Plan 1/4 complete)
 - EnsureInstituteAdmin middleware protects all /admin routes (Phase 02)
 - User status column (active/invited/disabled) added to users table (Phase 02)
 - Admin cannot assign super_admin role via invite form — validated server-side (Phase 02)
+- Used after() validator closures for nested conditional validation instead of required_if wildcards (Phase 02)
+- Delete-and-recreate strategy for draft exam updates to avoid orphaned records (Phase 02)
 
 ### Active Blockers
 
@@ -42,11 +45,11 @@ Phase: 02 (user-management-exam-creation) — EXECUTING (Plan 1/4 complete)
 ### Pending Todos
 
 - [x] Execute Plan 02-01 (User Management & Invites)
-- [ ] Execute Plan 02-02 (Exam Models & API)
+- [x] Execute Plan 02-02 (Exam Models & API)
 - [ ] Execute Plan 02-03 (Exam Builder UI Shell & Index)
 - [ ] Execute Plan 02-04 (Exam Builder Dynamic Form)
 
 ## Session Continuity
 
-**Last Action:** Completed 02-01-PLAN.md (User Management & Invites)
-**Next Action:** Execute Plan 02-02 (Exam Models & API)
+**Last Action:** Completed 02-02-PLAN.md (Exam Models & API)
+**Next Action:** Execute Plan 02-03 (Exam Builder UI Shell & Index)
