@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class UpdateExamRequest extends FormRequest
 {
@@ -24,19 +25,30 @@ class UpdateExamRequest extends FormRequest
             'questions.*.type' => ['required', 'string', 'in:mcq,tf,written'],
             'questions.*.text' => ['required', 'string', 'max:5000'],
             'questions.*.points' => ['required', 'integer', 'min:1', 'max:100'],
-            'questions.*.grading_guidelines' => ['nullable', 'required_if:questions.*.type,written', 'string', 'max:10000'],
-            'questions.*.choices' => ['required_if:questions.*.type,mcq', 'array', 'min:2'],
+            'questions.*.grading_guidelines' => ['nullable', 'string', 'max:10000'],
+            'questions.*.choices' => ['nullable', 'array'],
             'questions.*.choices.*.text' => ['required_with:questions.*.choices', 'string', 'max:1000'],
             'questions.*.choices.*.is_correct' => ['required_with:questions.*.choices', 'boolean'],
         ];
     }
 
-    /** @return array<string, string> */
-    public function messages(): array
+    /** @return array<int, \Closure> */
+    public function after(): array
     {
         return [
-            'questions.*.choices.required_if' => 'Multiple choice questions must have at least 2 choices.',
-            'questions.*.grading_guidelines.required_if' => 'Written questions require grading guidelines.',
+            function (Validator $validator) {
+                foreach ($this->input('questions', []) as $i => $question) {
+                    $type = $question['type'] ?? '';
+
+                    if ($type === 'mcq' && (empty($question['choices']) || count($question['choices']) < 2)) {
+                        $validator->errors()->add("questions.{$i}.choices", 'Multiple choice questions must have at least 2 choices.');
+                    }
+
+                    if ($type === 'written' && empty($question['grading_guidelines'])) {
+                        $validator->errors()->add("questions.{$i}.grading_guidelines", 'Written questions require grading guidelines.');
+                    }
+                }
+            },
         ];
     }
 }
