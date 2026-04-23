@@ -43,7 +43,7 @@ class ExamController extends Controller
     {
         $exam = DB::transaction(function () use ($request) {
             $exam = Exam::create($request->safe()->only([
-                'title', 'description', 'time_limit_minutes', 'passing_score',
+                'title', 'description', 'time_limit_minutes', 'passing_score', 'status',
             ]));
 
             $this->syncQuestions($exam, $request->validated('questions'));
@@ -78,7 +78,7 @@ class ExamController extends Controller
     {
         DB::transaction(function () use ($request, $exam) {
             $exam->update($request->safe()->only([
-                'title', 'description', 'time_limit_minutes', 'passing_score',
+                'title', 'description', 'time_limit_minutes', 'passing_score', 'status',
             ]));
 
             $exam->questions()->each(function ($question) {
@@ -135,7 +135,7 @@ class ExamController extends Controller
                 'order' => $index,
             ]);
 
-            if ($questionData['type'] === 'mcq' && ! empty($questionData['choices'])) {
+            if (in_array($questionData['type'], ['mcq', 'true_false']) && ! empty($questionData['choices'])) {
                 foreach ($questionData['choices'] as $choiceData) {
                     $question->choices()->create([
                         'text' => $choiceData['text'],

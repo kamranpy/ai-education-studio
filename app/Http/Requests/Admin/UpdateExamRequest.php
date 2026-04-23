@@ -21,8 +21,9 @@ class UpdateExamRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:5000'],
             'time_limit_minutes' => ['nullable', 'integer', 'min:1', 'max:480'],
             'passing_score' => ['required', 'integer', 'min:0', 'max:100'],
+            'status' => ['sometimes', 'string', 'in:draft,published'],
             'questions' => ['required', 'array', 'min:1'],
-            'questions.*.type' => ['required', 'string', 'in:mcq,tf,written'],
+            'questions.*.type' => ['required', 'string', 'in:mcq,true_false,written_answer'],
             'questions.*.text' => ['required', 'string', 'max:5000'],
             'questions.*.points' => ['required', 'integer', 'min:1', 'max:100'],
             'questions.*.grading_guidelines' => ['nullable', 'string', 'max:10000'],
@@ -44,7 +45,11 @@ class UpdateExamRequest extends FormRequest
                         $validator->errors()->add("questions.{$i}.choices", 'Multiple choice questions must have at least 2 choices.');
                     }
 
-                    if ($type === 'written' && empty($question['grading_guidelines'])) {
+                    if ($type === 'true_false' && (empty($question['choices']) || count($question['choices']) !== 2)) {
+                        $validator->errors()->add("questions.{$i}.choices", 'True/False questions must have exactly 2 choices.');
+                    }
+
+                    if ($type === 'written_answer' && empty($question['grading_guidelines'])) {
                         $validator->errors()->add("questions.{$i}.grading_guidelines", 'Written questions require grading guidelines.');
                     }
                 }
