@@ -25,7 +25,7 @@
   3. Student can log in and view their dedicated student portal
   4. Unit tests are written and pass for all phase features
   5. INTEGRATION_GUIDE.md is updated with any new API contracts
-**Plans**: TBD
+**Plans**: 4 plans
 **UI hint**: yes
 
 ### Phase 2: User Management & Exam Creation
@@ -38,7 +38,12 @@
   3. Admin can publish an exam to make it available to students
   4. Unit tests are written and pass for all phase features
   5. INTEGRATION_GUIDE.md is updated with any new API contracts
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [x] 02-01-PLAN.md — User Management & Invites
+- [ ] 02-02-PLAN.md — Exam Models & API
+- [ ] 02-03-PLAN.md — Exam Builder UI Shell & Index
+- [ ] 02-04-PLAN.md — Exam Builder Dynamic Form
 **UI hint**: yes
 
 ### Phase 3: Student Exam Experience
@@ -101,7 +106,7 @@
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Multi-Tenancy | 4/4 | Completed | 2026-04-12 |
-| 2. User Management & Exam Creation | 0/0 | Not started | - |
+| 2. User Management & Exam Creation | 1/4 | In Progress|  |
 | 3. Student Exam Experience | 0/0 | Not started | - |
 | 4. AI Evaluation & Grading | 0/0 | Not started | - |
 | 5. Monetization & Billing | 0/0 | Not started | - |
