@@ -9,7 +9,7 @@
 
 - [ ] **TENT-01**: System isolates database records per institute (tenant)
 - [ ] **TENT-02**: Tenant admins can configure their own institute settings
-- [ ] **TENT-03**: Tenant admins can manage their own users (students/teachers)
+- [x] **TENT-03**: Tenant admins can manage their own users (students/teachers)
 
 ### Authentication & Roles
 
@@ -20,11 +20,11 @@
 
 ### Exam Management
 
-- [ ] **EXAM-01**: Admin can create a new exam with a title, description, and settings
-- [ ] **EXAM-02**: Admin can add Multiple Choice questions
-- [ ] **EXAM-03**: Admin can add True/False questions
-- [ ] **EXAM-04**: Admin can add Written Answer questions
-- [ ] **EXAM-05**: Admin can publish or unpublish an exam
+- [x] **EXAM-01**: Admin can create a new exam with a title, description, and settings
+- [x] **EXAM-02**: Admin can add Multiple Choice questions
+- [x] **EXAM-03**: Admin can add True/False questions
+- [x] **EXAM-04**: Admin can add Written Answer questions
+- [x] **EXAM-05**: Admin can publish or unpublish an exam
 
 ### Exam Taking Experience
 
@@ -53,8 +53,8 @@
 
 ### Quality & Documentation
 
-- [ ] **TEST-01**: Write and run unit tests at the end of every phase to ensure a bug-free script
-- [ ] **DOCS-01**: Maintain an INTEGRATION_GUIDE.md (API contract) throughout the project for future mobile/frontend integrations
+- [x] **TEST-01**: Write and run unit tests at the end of every phase to ensure a bug-free script
+- [x] **DOCS-01**: Maintain an INTEGRATION_GUIDE.md (API contract) throughout the project for future mobile/frontend integrations
 
 ### Monetization
 
@@ -85,16 +85,16 @@
 |-------------|-------|--------|
 | TENT-01 | Phase 1 | Pending |
 | TENT-02 | Phase 1 | Pending |
-| TENT-03 | Phase 2 | Pending |
+| TENT-03 | Phase 2 | Complete |
 | AUTH-01 | Phase 1 | Pending |
 | AUTH-02 | Phase 1 | Pending |
 | AUTH-03 | Phase 1 | Pending |
 | AUTH-04 | Phase 1 | Pending |
-| EXAM-01 | Phase 2 | Pending |
-| EXAM-02 | Phase 2 | Pending |
-| EXAM-03 | Phase 2 | Pending |
-| EXAM-04 | Phase 2 | Pending |
-| EXAM-05 | Phase 2 | Pending |
+| EXAM-01 | Phase 2 | Complete |
+| EXAM-02 | Phase 2 | Complete |
+| EXAM-03 | Phase 2 | Complete |
+| EXAM-04 | Phase 2 | Complete |
+| EXAM-05 | Phase 2 | Complete |
 | TAKE-01 | Phase 3 | Pending |
 | TAKE-02 | Phase 3 | Pending |
 | TAKE-03 | Phase 3 | Pending |
@@ -114,8 +114,8 @@
 | SADM-01 | Phase 6 | Pending |
 | SADM-02 | Phase 6 | Pending |
 | SADM-03 | Phase 6 | Pending |
-| TEST-01 | All Phases | Pending |
-| DOCS-01 | All Phases | Pending |
+| TEST-01 | All Phases | Complete |
+| DOCS-01 | All Phases | Complete |
 
 **Coverage:**
 - v1 requirements: 33 total
