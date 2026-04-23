@@ -17,6 +17,13 @@ trait HasInstitute
             if (empty($model->institute_id) && Auth::hasUser()) {
                 $model->institute_id = Auth::user()->institute_id;
             }
+
+            if (empty($model->institute_id) && ! ($model instanceof \App\Models\User)) {
+                throw new \RuntimeException(
+                    'Cannot create '.class_basename($model).' without an institute_id. '
+                    .'The authenticated user must belong to an institute.'
+                );
+            }
         });
     }
 
