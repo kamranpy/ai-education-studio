@@ -150,12 +150,16 @@ draft → published → locked (once students begin)
       ]
     },
     {
-      "type": "tf",
+      "type": "true_false",
       "text": "The earth is flat.",
-      "points": 2
+      "points": 2,
+      "choices": [
+        { "text": "True", "is_correct": false },
+        { "text": "False", "is_correct": true }
+      ]
     },
     {
-      "type": "written",
+      "type": "written_answer",
       "text": "Explain photosynthesis.",
       "points": 10,
       "grading_guidelines": "Should mention light, CO2, water, glucose, and chlorophyll."
@@ -169,8 +173,8 @@ draft → published → locked (once students begin)
 | Type | `type` value | Choices Required | Grading Guidelines |
 |------|-------------|------------------|--------------------|
 | Multiple Choice | `mcq` | Yes (min 2) | No |
-| True/False | `tf` | No | No |
-| Written Answer | `written` | No | Yes (required) |
+| True/False | `true_false` | Yes (exactly 2) | No |
+| Written Answer | `written_answer` | No | Yes (required) |
 
 ### Validation Rules
 
@@ -180,7 +184,8 @@ draft → published → locked (once students begin)
 - `questions`: required, array, min 1
 - MCQ questions must have at least 2 choices with `text` and `is_correct` fields
 - Written questions must have `grading_guidelines`
-- Each question requires `type` (mcq/tf/written), `text`, and `points` (1-100)
+- Each question requires `type` (mcq/true_false/written_answer), `text`, and `points` (1-100)
+- True/False questions must have exactly 2 choices
 
 ### Update Behavior
 
@@ -202,7 +207,7 @@ exams
 questions
 ├── id
 ├── exam_id (FK → exams, cascade delete)
-├── type (mcq/tf/written)
+├── type (mcq/true_false/written_answer)
 ├── text
 ├── points (default: 1)
 ├── grading_guidelines (nullable)

@@ -52,12 +52,16 @@ class ExamBuilderTest extends TestCase
                     ],
                 ],
                 [
-                    'type' => 'tf',
+                    'type' => 'true_false',
                     'text' => 'The earth is flat.',
                     'points' => 2,
+                    'choices' => [
+                        ['text' => 'True', 'is_correct' => false],
+                        ['text' => 'False', 'is_correct' => true],
+                    ],
                 ],
                 [
-                    'type' => 'written',
+                    'type' => 'written_answer',
                     'text' => 'Explain photosynthesis.',
                     'points' => 10,
                     'grading_guidelines' => 'Should mention light, CO2, water, glucose, and chlorophyll.',
@@ -88,11 +92,11 @@ class ExamBuilderTest extends TestCase
         $this->assertCount(3, $mcq->choices);
         $this->assertEquals(1, $mcq->choices->where('is_correct', true)->count());
 
-        $tf = $exam->questions->where('type', 'tf')->first();
+        $tf = $exam->questions->where('type', 'true_false')->first();
         $this->assertNotNull($tf);
         $this->assertEquals(2, $tf->points);
 
-        $written = $exam->questions->where('type', 'written')->first();
+        $written = $exam->questions->where('type', 'written_answer')->first();
         $this->assertNotNull($written);
         $this->assertNotNull($written->grading_guidelines);
     }
@@ -115,7 +119,7 @@ class ExamBuilderTest extends TestCase
             'title' => 'Old Title',
         ]);
         $exam->questions()->create([
-            'type' => 'tf',
+            'type' => 'true_false',
             'text' => 'Old question',
             'points' => 1,
             'order' => 0,
@@ -165,7 +169,7 @@ class ExamBuilderTest extends TestCase
             'status' => 'draft',
         ]);
         $exam->questions()->create([
-            'type' => 'tf',
+            'type' => 'true_false',
             'text' => 'Test question',
             'points' => 1,
             'order' => 0,
@@ -254,7 +258,7 @@ class ExamBuilderTest extends TestCase
     {
         $payload = $this->validExamPayload();
         $payload['questions'] = [[
-            'type' => 'written',
+            'type' => 'written_answer',
             'text' => 'Explain something.',
             'points' => 5,
         ]];
