@@ -60,10 +60,10 @@ Plans:
   7. INTEGRATION_GUIDE.md is updated with any new API contracts
 **Plans**: 4 plans
 Plans:
-- [ ] 03-01-PLAN.md — Core Models & List Exams
-- [ ] 03-02-PLAN.md — Exam Take UI & AutoSave
-- [ ] 03-03-PLAN.md — Timer Enforcement & Anti-Cheat
-- [ ] 03-04-PLAN.md — Expiry Enforcer Job
+- [x] 03-01-PLAN.md — Core Models & List Exams
+- [x] 03-02-PLAN.md — Exam Take UI & AutoSave
+- [x] 03-03-PLAN.md — Timer Enforcement & Anti-Cheat
+- [x] 03-04-PLAN.md — Expiry Enforcer Job
 **UI hint**: yes
 
 ### Phase 4: AI Evaluation & Grading
