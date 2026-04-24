@@ -1,6 +1,6 @@
 import StudentLayout from '@/layouts/student-layout';
 import { router } from '@inertiajs/react';
-import { BookOpen, Clock, PlayCircle, RotateCcw } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, PlayCircle, RotateCcw } from 'lucide-react';
 
 interface Exam {
     id: number;
@@ -23,9 +23,10 @@ interface PaginatedExams {
 interface Props {
     exams: PaginatedExams;
     inProgressExamIds: number[];
+    submittedExamIds: number[];
 }
 
-function Dashboard({ exams, inProgressExamIds }: Props) {
+function Dashboard({ exams, inProgressExamIds, submittedExamIds }: Props) {
     const handleStartExam = (examId: number) => {
         router.post(`/student/exams/${examId}/attempts`);
     };
@@ -89,29 +90,36 @@ function Dashboard({ exams, inProgressExamIds }: Props) {
                                 </div>
 
                                 <div className="border-t border-zinc-100 px-6 py-4">
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            handleStartExam(exam.id)
-                                        }
-                                        className={`inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
-                                            isInProgress
-                                                ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
-                                                : 'bg-zinc-900 text-white hover:bg-zinc-800'
-                                        }`}
-                                    >
-                                        {isInProgress ? (
-                                            <>
-                                                <RotateCcw className="h-4 w-4" />
-                                                Resume Exam
-                                            </>
-                                        ) : (
-                                            <>
-                                                <PlayCircle className="h-4 w-4" />
-                                                Start Exam
-                                            </>
-                                        )}
-                                    </button>
+                                    {submittedExamIds.includes(exam.id) ? (
+                                        <div className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-emerald-50 px-4 py-2.5 text-sm font-medium text-emerald-700">
+                                            <CheckCircle2 className="h-4 w-4" />
+                                            Completed
+                                        </div>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleStartExam(exam.id)
+                                            }
+                                            className={`inline-flex w-full items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-colors ${
+                                                isInProgress
+                                                    ? 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                                                    : 'bg-zinc-900 text-white hover:bg-zinc-800'
+                                            }`}
+                                        >
+                                            {isInProgress ? (
+                                                <>
+                                                    <RotateCcw className="h-4 w-4" />
+                                                    Resume Exam
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <PlayCircle className="h-4 w-4" />
+                                                    Start Exam
+                                                </>
+                                            )}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         );

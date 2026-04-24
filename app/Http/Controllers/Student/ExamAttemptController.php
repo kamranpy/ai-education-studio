@@ -25,7 +25,7 @@ class ExamAttemptController extends Controller
             abort(403, __('This exam is not available.'));
         }
 
-        // Check for existing in-progress attempt
+        // Check for existing in-progress attempt — resume it
         $existingAttempt = ExamAttempt::query()
             ->where('user_id', $user->id)
             ->where('exam_id', $exam->id)
@@ -37,6 +37,19 @@ class ExamAttemptController extends Controller
                 'exam' => $exam->id,
                 'attempt' => $existingAttempt->id,
             ]);
+        }
+
+        // Block if already submitted (one attempt per exam)
+        $alreadySubmitted = ExamAttempt::query()
+            ->where('user_id', $user->id)
+            ->where('exam_id', $exam->id)
+            ->where('status', 'submitted')
+            ->exists();
+
+        if ($alreadySubmitted) {
+            Inertia::flash('toast', ['type' => 'info', 'message' => __('You have already completed this exam.')]);
+
+            return to_route('student.dashboard');
         }
 
         // Shuffle question IDs for randomized order (per D-05 / TAKE-05)

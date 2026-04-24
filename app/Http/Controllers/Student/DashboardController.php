@@ -29,9 +29,17 @@ class DashboardController extends Controller
             ->pluck('exam_id')
             ->toArray();
 
+        // Fetch submitted (completed) attempts
+        $submittedExamIds = ExamAttempt::query()
+            ->where('user_id', $user->id)
+            ->where('status', 'submitted')
+            ->pluck('exam_id')
+            ->toArray();
+
         return Inertia::render('Student/Dashboard', [
             'exams' => $exams,
             'inProgressExamIds' => $inProgressAttemptIds,
+            'submittedExamIds' => $submittedExamIds,
         ]);
     }
 }
