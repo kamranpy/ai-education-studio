@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Middleware\EnsureInstituteAdmin;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -36,7 +38,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('student')->group(function () {
-        Route::inertia('dashboard', 'Student/Dashboard')->name('student.dashboard');
+        Route::get('dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
+
+        Route::post('exams/{exam}/attempts', [ExamAttemptController::class, 'store'])->name('student.attempts.store');
+        Route::get('exams/{exam}/attempts/{attempt}', [ExamAttemptController::class, 'show'])->name('student.attempts.show');
+        Route::put('exams/{exam}/attempts/{attempt}', [ExamAttemptController::class, 'update'])->name('student.attempts.update');
+        Route::post('exams/{exam}/attempts/{attempt}/track', [ExamAttemptController::class, 'logTracking'])->name('student.attempts.track');
     });
 });
 
