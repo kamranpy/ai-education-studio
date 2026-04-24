@@ -397,7 +397,7 @@ function ExamTake({
                             answers.
                         </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="gap-2 sm:gap-0">
+                    <DialogFooter className="w-full gap-2 sm:space-x-0 sm:justify-between">
                         <Button
                             variant="outline"
                             onClick={() => setShowSubmitDialog(false)}
