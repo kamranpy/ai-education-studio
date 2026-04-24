@@ -1,3 +1,12 @@
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import StudentLayout from '@/layouts/student-layout';
 import { router } from '@inertiajs/react';
 import {
@@ -8,6 +17,7 @@ import {
     Circle,
     Clock,
     Send,
+    ShieldAlert,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -58,6 +68,7 @@ function ExamTake({
     const [timeLeft, setTimeLeft] = useState<number | null>(null);
     const [showBlurWarning, setShowBlurWarning] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [showSubmitDialog, setShowSubmitDialog] = useState(false);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     // Reset answer state when question changes
@@ -325,15 +336,7 @@ function ExamTake({
                     {isLastQuestion ? (
                         <button
                             type="button"
-                            onClick={() => {
-                                if (
-                                    window.confirm(
-                                        'Submit Exam: Are you sure you are ready to finish? You cannot undo this.',
-                                    )
-                                ) {
-                                    handleSubmit();
-                                }
-                            }}
+                            onClick={() => setShowSubmitDialog(true)}
                             disabled={isSaving}
                             className="inline-flex items-center gap-2 rounded-md bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50"
                         >
@@ -379,6 +382,41 @@ function ExamTake({
                     </div>
                 </div>
             )}
+
+            {/* Submit Confirmation Dialog */}
+            <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader className="items-center sm:items-start">
+                        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 sm:mx-0">
+                            <ShieldAlert className="h-6 w-6 text-amber-600" />
+                        </div>
+                        <DialogTitle>Submit Exam</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you are ready to finish? Once
+                            submitted, you will not be able to change your
+                            answers.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="gap-2 sm:gap-0">
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowSubmitDialog(false)}
+                        >
+                            Go Back
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                setShowSubmitDialog(false);
+                                handleSubmit();
+                            }}
+                            disabled={isSaving}
+                        >
+                            <Send className="mr-2 h-4 w-4" />
+                            {isSaving ? 'Submitting...' : 'Yes, Submit Exam'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
