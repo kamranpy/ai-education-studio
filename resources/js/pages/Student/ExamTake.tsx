@@ -246,7 +246,9 @@ function ExamTake({
                             ? 'Multiple Choice'
                             : question.type === 'true_false'
                               ? 'True / False'
-                              : 'Written Answer'}
+                              : question.type === 'written_answer'
+                                ? 'Written Answer'
+                                : question.type}
                     </span>
                     <span>{question.points} pt{question.points !== 1 ? 's' : ''}</span>
                 </div>
@@ -292,7 +294,7 @@ function ExamTake({
                         </div>
                     )}
 
-                {question.type === 'written' && (
+                {question.type === 'written_answer' && (
                     <textarea
                         value={
                             ((answer as { text?: string }).text as string) ?? ''
