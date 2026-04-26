@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Traits\HasInstitute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -70,5 +69,20 @@ class ExamAttempt extends Model
         return now()->greaterThan(
             $this->started_at->addMinutes($this->exam->time_limit_minutes)
         );
+    }
+
+    /**
+     * Finalize grading after all AI evaluations are complete.
+     * Sets attempt status to 'needs_review' if any answer needs review, otherwise 'graded'.
+     */
+    public function finalizeGrading(): void
+    {
+        $this->load('answers');
+
+        $hasNeedsReview = $this->answers->contains(fn ($ans) => $ans->status === 'needs_review');
+
+        $this->update([
+            'status' => $hasNeedsReview ? 'needs_review' : 'graded',
+        ]);
     }
 }
