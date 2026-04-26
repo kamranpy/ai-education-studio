@@ -41,6 +41,13 @@ interface Props {
     providers: Provider[];
 }
 
+const recommendedModels: Record<string, string[]> = {
+    openai: ['gpt-4o', 'gpt-4o-mini', 'gpt-4-turbo', 'o1-mini'],
+    anthropic: ['claude-3-7-sonnet-latest', 'claude-3-5-sonnet-latest', 'claude-3-5-haiku-latest'],
+    google: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-1.5-flash', 'gemini-1.5-pro'],
+    'openai-compatible': ['deepseek-chat', 'llama-3.3-70b-versatile', 'qwen-max'],
+};
+
 function Llm({ setting, providers }: Props) {
     const [showKey, setShowKey] = useState(false);
     const [replacingKey, setReplacingKey] = useState(!setting?.has_api_key);
@@ -58,6 +65,7 @@ function Llm({ setting, providers }: Props) {
     });
 
     const isOpenAICompatible = form.data.provider === 'openai-compatible';
+    const suggestedModels = recommendedModels[form.data.provider] || [];
 
     function handleSave(e: React.FormEvent) {
         e.preventDefault();
@@ -175,6 +183,12 @@ function Llm({ setting, providers }: Props) {
                                 placeholder="e.g., gpt-4o, claude-sonnet-4-20250514, gemini-2.5-pro"
                                 className="font-mono text-sm"
                             />
+                            {suggestedModels.length > 0 && (
+                                <p className="text-xs text-muted-foreground">
+                                    <span className="font-medium">Recommended:</span>{' '}
+                                    {suggestedModels.join(', ')}
+                                </p>
+                            )}
                             {form.errors.model && (
                                 <p className="text-sm text-destructive">
                                     {form.errors.model}
