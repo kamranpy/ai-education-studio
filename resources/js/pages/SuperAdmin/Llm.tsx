@@ -176,19 +176,19 @@ function Llm({ setting, providers }: Props) {
                             <Label htmlFor="model">Model</Label>
                             <Input
                                 id="model"
+                                list="suggested-models"
                                 value={form.data.model}
                                 onChange={(e) =>
                                     form.setData('model', e.target.value)
                                 }
-                                placeholder="e.g., gpt-4o, claude-sonnet-4-20250514, gemini-2.5-pro"
+                                placeholder="Select or type a model (e.g., gpt-4o)..."
                                 className="font-mono text-sm"
                             />
-                            {suggestedModels.length > 0 && (
-                                <p className="text-xs text-muted-foreground">
-                                    <span className="font-medium">Recommended:</span>{' '}
-                                    {suggestedModels.join(', ')}
-                                </p>
-                            )}
+                            <datalist id="suggested-models">
+                                {suggestedModels.map((m) => (
+                                    <option key={m} value={m} />
+                                ))}
+                            </datalist>
                             {form.errors.model && (
                                 <p className="text-sm text-destructive">
                                     {form.errors.model}
