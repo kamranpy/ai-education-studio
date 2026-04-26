@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ExamAttemptAdminController;
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
@@ -43,6 +44,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('exams/{exam}', [ExamController::class, 'update'])->name('admin.exams.update');
         Route::post('exams/{exam}/publish', [ExamController::class, 'publish'])->name('admin.exams.publish');
         Route::post('exams/{exam}/unpublish', [ExamController::class, 'unpublish'])->name('admin.exams.unpublish');
+
+        Route::get('exams/{exam}/attempts', [ExamAttemptAdminController::class, 'index'])->name('admin.exams.attempts.index');
+        Route::get('exams/{exam}/attempts/export', [ExamAttemptAdminController::class, 'export'])->name('admin.exams.attempts.export');
+        Route::get('exams/{exam}/attempts/{attempt}', [ExamAttemptAdminController::class, 'show'])->name('admin.exams.attempts.show');
+        Route::post('exams/{exam}/attempts/{attempt}/override', [ExamAttemptAdminController::class, 'override'])->name('admin.exams.attempts.override');
+        Route::post('exams/{exam}/attempts/{attempt}/mark-reviewed', [ExamAttemptAdminController::class, 'markReviewed'])->name('admin.exams.attempts.mark-reviewed');
     });
 
     Route::prefix('student')->group(function () {
