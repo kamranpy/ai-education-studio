@@ -320,13 +320,13 @@ function Llm({ setting, providers }: Props) {
                                             e.target.value,
                                         )
                                     }
-                                    placeholder="https://api.deepseek.com"
+                                    placeholder="https://api.deepseek.com/v1"
                                     className="font-mono text-sm"
                                 />
                                 <p className="text-xs text-muted-foreground">
                                     Used for OpenAI-compatible providers
                                     (DeepSeek, Qwen, Together, OpenRouter,
-                                    Groq, Ollama, …).
+                                    Groq, Ollama, …). <strong>Remember to append /v1 if required.</strong>
                                 </p>
                                 {form.errors.base_url && (
                                     <p className="text-sm text-destructive">
