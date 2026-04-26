@@ -22,7 +22,7 @@ return new class extends Migration
             // Manual override fields
             $table->decimal('override_score', 6, 2)->nullable()->after('tokens_out');
             $table->text('override_comment')->nullable()->after('override_score');
-            $table->foreignId('overridden_by')->nullable()->after('override_comment')->constrained('users')->nullOnDelete();
+            $table->foreignUuid('overridden_by')->nullable()->after('override_comment')->constrained('users')->nullOnDelete();
             $table->timestamp('overridden_at')->nullable()->after('overridden_by');
 
             // Answer grading status
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->decimal('from_score', 6, 2)->nullable();
             $table->decimal('to_score', 6, 2);
             $table->text('comment')->nullable();
-            $table->foreignId('actor_id')->constrained('users');
+            $table->foreignUuid('actor_id')->constrained('users');
             $table->timestamps();
         });
     }

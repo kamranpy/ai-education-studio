@@ -16,14 +16,14 @@ return new class extends Migration
             $table->string('base_url')->nullable();
             $table->json('extra')->nullable();
             $table->boolean('is_active')->default(false);
-            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
 
         Schema::create('llm_settings_audit', function (Blueprint $table) {
             $table->id();
             $table->foreignId('llm_setting_id')->constrained('llm_settings')->cascadeOnDelete();
-            $table->foreignId('actor_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('actor_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('field_changed'); // e.g. 'api_key', 'model', 'is_active'
             $table->timestamps();
             // intentionally no value column — security best practice
