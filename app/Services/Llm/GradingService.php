@@ -4,6 +4,7 @@ namespace App\Services\Llm;
 
 use App\Models\LlmSetting;
 use App\Models\Question;
+use Illuminate\Support\Facades\Config;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Schema\NumberSchema;
 use Prism\Prism\Schema\ObjectSchema;
@@ -34,13 +35,19 @@ class GradingService
             requiredFields: ['score', 'confidence', 'explanation', 'axes'],
         );
 
-        $providerOpts = [];
+        $prismProviderName = $setting->provider->toPrism()->value;
+
+        // Dynamically override Prism's configuration so it uses the stored credentials
+        if ($setting->api_key) {
+            Config::set("prism.providers.{$prismProviderName}.api_key", $setting->api_key);
+        }
+        
         if ($setting->base_url) {
-            $providerOpts['url'] = $setting->base_url;
+            Config::set("prism.providers.{$prismProviderName}.url", $setting->base_url);
         }
 
         $response = Prism::structured()
-            ->using($setting->provider->toPrism(), $setting->model, $providerOpts)
+            ->using($setting->provider->toPrism(), $setting->model)
             ->withSchema($schema)
             ->withSystemPrompt(view('llm.grading-system', [
                 'maxMarks' => $question->points,

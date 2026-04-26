@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -127,10 +128,24 @@ class LlmSettingController extends Controller
         ]);
 
         $provider = LlmProvider::from($validated['provider']);
+        $prismProviderName = $provider->toPrism()->value;
 
-        $providerOpts = [];
+        // Resolve __EXISTING__ to the actual stored API key if present
+        $apiKey = $validated['api_key'];
+        if ($apiKey === '__EXISTING__') {
+            $activeSetting = LlmSetting::where('is_active', true)->first();
+            if ($activeSetting && $activeSetting->api_key) {
+                $apiKey = $activeSetting->api_key;
+            } else {
+                return response()->json(['success' => false, 'message' => 'No existing API key found.'], 422);
+            }
+        }
+
+        // Dynamically override Prism's configuration so it uses the submitted credentials
+        Config::set("prism.providers.{$prismProviderName}.api_key", $apiKey);
+
         if (! empty($validated['base_url'])) {
-            $providerOpts['url'] = $validated['base_url'];
+            Config::set("prism.providers.{$prismProviderName}.url", $validated['base_url']);
         }
 
         try {
@@ -144,7 +159,7 @@ class LlmSettingController extends Controller
             );
 
             $response = Prism::structured()
-                ->using($provider->toPrism(), $validated['model'], $providerOpts)
+                ->using($provider->toPrism(), $validated['model'])
                 ->withSchema($schema)
                 ->withSystemPrompt('Reply with exactly {"ok": true}')
                 ->withPrompt('Ping')
