@@ -57,6 +57,13 @@ function Llm({ setting, providers }: Props) {
         message: string;
     } | null>(null);
 
+    const [isCustomModel, setIsCustomModel] = useState(() => {
+        const currentProvider = setting?.provider || 'openai';
+        const currentModel = setting?.model || '';
+        const suggested = recommendedModels[currentProvider] || [];
+        return currentModel !== '' && !suggested.includes(currentModel);
+    });
+
     const form = useForm({
         provider: setting?.provider || 'openai',
         model: setting?.model || '',
@@ -146,9 +153,10 @@ function Llm({ setting, providers }: Props) {
                             <Label htmlFor="provider">Provider</Label>
                             <Select
                                 value={form.data.provider}
-                                onValueChange={(value) =>
-                                    form.setData('provider', value)
-                                }
+                                onValueChange={(value) => {
+                                    form.setData('provider', value);
+                                    setIsCustomModel(false);
+                                }}
                             >
                                 <SelectTrigger id="provider">
                                     <SelectValue placeholder="Select provider" />
@@ -174,21 +182,56 @@ function Llm({ setting, providers }: Props) {
                         {/* Model */}
                         <div className="space-y-2">
                             <Label htmlFor="model">Model</Label>
-                            <Input
-                                id="model"
-                                list="suggested-models"
-                                value={form.data.model}
-                                onChange={(e) =>
-                                    form.setData('model', e.target.value)
-                                }
-                                placeholder="Select or type a model (e.g., gpt-4o)..."
-                                className="font-mono text-sm"
-                            />
-                            <datalist id="suggested-models">
-                                {suggestedModels.map((m) => (
-                                    <option key={m} value={m} />
-                                ))}
-                            </datalist>
+
+                            {!isCustomModel && suggestedModels.length > 0 ? (
+                                <Select
+                                    value={form.data.model}
+                                    onValueChange={(val) => {
+                                        if (val === '__custom__') {
+                                            setIsCustomModel(true);
+                                            form.setData('model', '');
+                                        } else {
+                                            form.setData('model', val);
+                                        }
+                                    }}
+                                >
+                                    <SelectTrigger id="model" className="font-mono text-sm">
+                                        <SelectValue placeholder="Select a recommended model" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {suggestedModels.map((m) => (
+                                            <SelectItem key={m} value={m}>
+                                                {m}
+                                            </SelectItem>
+                                        ))}
+                                        <SelectItem value="__custom__" className="font-sans font-medium text-primary">
+                                            Other (Type custom model)...
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            ) : (
+                                <div className="space-y-1">
+                                    <Input
+                                        id="model"
+                                        value={form.data.model}
+                                        onChange={(e) =>
+                                            form.setData('model', e.target.value)
+                                        }
+                                        placeholder="Type custom model string..."
+                                        className="font-mono text-sm"
+                                    />
+                                    {suggestedModels.length > 0 && (
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setIsCustomModel(false)}
+                                            className="text-xs text-primary hover:underline transition-colors"
+                                        >
+                                            ← Back to recommended list
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+
                             {form.errors.model && (
                                 <p className="text-sm text-destructive">
                                     {form.errors.model}
