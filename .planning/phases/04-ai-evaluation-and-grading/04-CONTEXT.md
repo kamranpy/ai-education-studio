@@ -151,6 +151,7 @@ Evaluate submitted exam attempts end-to-end:
 - API key UI must NEVER re-display the stored key. Show masked `sk-•••XYZ`, require explicit "Replace key" toggle to reveal a fresh input.
 - Test-connection button is mandatory — it's the single feature that makes the whole "swap providers without code" promise feel safe.
 - All `ai_*` columns are write-once / immutable from controllers (only the job writes them); admin override goes to separate `override_*` columns. This preserves the AI's original output for audit.
+- **CSV Export**: The Attempts List will include a "Download CSV" action (added post-planning) to allow Institute Admins to export all candidates and their results for a specific exam as an easy offline report format before Phase 6 analytics arrive.
 
 </specifics>
 

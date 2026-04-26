@@ -149,6 +149,7 @@ Accent reserved for: primary CTA buttons only (`<Button>` default variant). Expl
 | Empty state body | `Once students submit this exam, their attempts and AI grades will appear here.` |
 | Column headers | `Student`, `Submitted`, `Status`, `Score`, `` (actions) |
 | Row action | `Review` (text link, not button) |
+| Header action | `Download CSV` |
 | Filter (status) | `All`, `Grading`, `Needs review`, `Graded` |
 | **Surface 4 — Attempt Drill-In** | |
 | Page title | `{Student name} — {exam title}` |
