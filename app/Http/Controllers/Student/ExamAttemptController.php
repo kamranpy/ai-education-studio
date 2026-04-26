@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\GradeAttemptJob;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -142,10 +144,27 @@ class ExamAttemptController extends Controller
         if ($exam->time_limit_minutes) {
             $deadline = $attempt->started_at->addMinutes($exam->time_limit_minutes)->addSeconds(30);
             if (now()->greaterThan($deadline)) {
-                $attempt->update([
-                    'status' => 'submitted',
-                    'submitted_at' => now(),
-                ]);
+                $attempt->load('answers.question.choices');
+
+                DB::transaction(function () use ($attempt) {
+                    foreach ($attempt->answers as $answer) {
+                        if ($answer->question->type !== 'written') {
+                            $isCorrect = $answer->isObjectiveCorrect();
+                            $answer->fill([
+                                'ai_score' => $isCorrect ? $answer->question->points : 0,
+                                'ai_confidence' => 1.0,
+                                'status' => 'graded',
+                            ])->save();
+                        }
+                    }
+
+                    $attempt->update([
+                        'status' => 'grading',
+                        'submitted_at' => now(),
+                    ]);
+                });
+
+                GradeAttemptJob::dispatch($attempt->id)->afterCommit();
 
                 Inertia::flash('toast', ['type' => 'warning', 'message' => __('Time expired. Your exam has been submitted automatically.')]);
 
@@ -171,14 +190,34 @@ class ExamAttemptController extends Controller
             ['answer_data' => $validated['answer_data']],
         );
 
-        // Submit exam (per TAKE-07)
+        // Submit exam (per TAKE-07) with instant grading for MC/TF
         if ($validated['action'] === 'submit') {
-            $attempt->update([
-                'status' => 'submitted',
-                'submitted_at' => now(),
-            ]);
+            // Eager-load answers with their questions for grading
+            $attempt->load('answers.question.choices');
 
-            Inertia::flash('toast', ['type' => 'success', 'message' => __('Exam submitted successfully!')]);
+            DB::transaction(function () use ($attempt) {
+                // Instantly grade all objective questions (MC/TF)
+                foreach ($attempt->answers as $answer) {
+                    if ($answer->question->type !== 'written') {
+                        $isCorrect = $answer->isObjectiveCorrect();
+                        $answer->fill([
+                            'ai_score' => $isCorrect ? $answer->question->points : 0,
+                            'ai_confidence' => 1.0,
+                            'status' => 'graded',
+                        ])->save();
+                    }
+                }
+
+                $attempt->update([
+                    'status' => 'grading',
+                    'submitted_at' => now(),
+                ]);
+            });
+
+            // Dispatch async job for written answer AI grading
+            GradeAttemptJob::dispatch($attempt->id)->afterCommit();
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('Exam submitted successfully! Your answers are being graded.')]);
 
             return to_route('student.dashboard');
         }
