@@ -154,7 +154,18 @@ function Llm({ setting, providers }: Props) {
                             <Select
                                 value={form.data.provider}
                                 onValueChange={(value) => {
-                                    form.setData('provider', value);
+                                    const isDifferentProvider = value !== setting?.provider;
+                                    form.setData((data) => ({
+                                        ...data,
+                                        provider: value,
+                                        model: '',
+                                        api_key: isDifferentProvider ? '' : data.api_key,
+                                    }));
+                                    if (isDifferentProvider) {
+                                        setReplacingKey(true);
+                                    } else if (setting?.has_api_key) {
+                                        setReplacingKey(false);
+                                    }
                                     setIsCustomModel(false);
                                 }}
                             >
@@ -320,13 +331,13 @@ function Llm({ setting, providers }: Props) {
                                             e.target.value,
                                         )
                                     }
-                                    placeholder="https://api.deepseek.com/v1"
+                                    placeholder="https://api.deepseek.com"
                                     className="font-mono text-sm"
                                 />
                                 <p className="text-xs text-muted-foreground">
                                     Used for OpenAI-compatible providers
                                     (DeepSeek, Qwen, Together, OpenRouter,
-                                    Groq, Ollama, …). <strong>Remember to append /v1 if required.</strong>
+                                    Groq, Ollama, …).
                                 </p>
                                 {form.errors.base_url && (
                                     <p className="text-sm text-destructive">

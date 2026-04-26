@@ -134,10 +134,10 @@ class LlmSettingController extends Controller
         $apiKey = $validated['api_key'];
         if ($apiKey === '__EXISTING__') {
             $activeSetting = LlmSetting::where('is_active', true)->first();
-            if ($activeSetting && $activeSetting->api_key) {
+            if ($activeSetting && $activeSetting->api_key && $activeSetting->provider->value === $validated['provider']) {
                 $apiKey = $activeSetting->api_key;
             } else {
-                return response()->json(['success' => false, 'message' => 'No existing API key found.'], 422);
+                return response()->json(['success' => false, 'message' => 'Please provide a valid API key for the selected provider. Existing key mismatch.'], 422);
             }
         }
 
