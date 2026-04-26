@@ -59,6 +59,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('exams/{exam}/attempts/{attempt}', [ExamAttemptController::class, 'show'])->name('student.attempts.show');
         Route::put('exams/{exam}/attempts/{attempt}', [ExamAttemptController::class, 'update'])->name('student.attempts.update');
         Route::post('exams/{exam}/attempts/{attempt}/track', [ExamAttemptController::class, 'logTracking'])->name('student.attempts.track');
+        Route::get('exams/{exam}/attempts/{attempt}/results', [ExamAttemptController::class, 'results'])->name('student.attempts.results');
     });
 });
 

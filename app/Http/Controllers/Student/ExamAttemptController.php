@@ -219,7 +219,7 @@ class ExamAttemptController extends Controller
 
             Inertia::flash('toast', ['type' => 'success', 'message' => __('Exam submitted successfully! Your answers are being graded.')]);
 
-            return to_route('student.dashboard');
+            return to_route('student.attempts.results', [$exam, $attempt]);
         }
 
         // Redirect to the next question index
@@ -254,6 +254,62 @@ class ExamAttemptController extends Controller
         $attempt->update(['tracking_logs' => $logs]);
 
         return response()->json(['status' => 'ok']);
+    }
+
+    /**
+     * Show the student's results for a completed attempt.
+     * If grading is in progress, show the interstitial loading page.
+     * Per D-25: AI explanation is NOT shown to students.
+     */
+    public function results(Exam $exam, ExamAttempt $attempt): Response
+    {
+        abort_unless($attempt->exam_id === $exam->id, 404);
+        $this->authorizeAttempt($attempt);
+
+        // Must be submitted/graded — not in_progress
+        if ($attempt->isInProgress()) {
+            abort(403, __('This exam has not been submitted yet.'));
+        }
+
+        // Grading in progress — show interstitial
+        if ($attempt->status === 'grading') {
+            return Inertia::render('Student/Interstitial', [
+                'exam' => $exam->only('id', 'title'),
+                'attempt' => $attempt->only('id', 'status'),
+            ]);
+        }
+
+        $attempt->load('answers.question');
+
+        $totalPoints = $attempt->answers->sum(fn ($a) => $a->question->points);
+        $finalScore = $attempt->answers->sum(fn ($a) => $a->final_score ?? 0);
+
+        // Strip AI explanation — student must not see it (D-25)
+        $answers = $attempt->answers->map(fn ($a) => [
+            'id' => $a->id,
+            'question' => [
+                'id' => $a->question->id,
+                'type' => $a->question->type,
+                'text' => $a->question->text,
+                'points' => $a->question->points,
+            ],
+            'answer_data' => $a->answer_data,
+            'final_score' => $a->final_score,
+            'status' => $a->status,
+            'ai_score' => $a->ai_score,
+        ]);
+
+        return Inertia::render('Student/Results', [
+            'exam' => $exam->only('id', 'title'),
+            'attempt' => [
+                'id' => $attempt->id,
+                'status' => $attempt->status,
+                'submitted_at' => $attempt->submitted_at,
+                'total_points' => $totalPoints,
+                'final_score' => $finalScore,
+                'answers' => $answers,
+            ],
+        ]);
     }
 
     /**
