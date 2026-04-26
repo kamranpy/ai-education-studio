@@ -38,6 +38,11 @@ class Exam extends Model
         return $this->hasMany(Question::class)->orderBy('order');
     }
 
+    public function attempts(): HasMany
+    {
+        return $this->hasMany(ExamAttempt::class);
+    }
+
     public function isDraft(): bool
     {
         return $this->status === 'draft';

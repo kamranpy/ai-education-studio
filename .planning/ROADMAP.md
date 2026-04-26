@@ -7,8 +7,8 @@
 ## Phases
 
 - [x] **Phase 1: Foundation & Multi-Tenancy** - Institutes can onboard and access their isolated environments
-- [ ] **Phase 2: User Management & Exam Creation** - Admins can manage their users and build complete exams
-- [ ] **Phase 3: Student Exam Experience** - Students can securely take and submit exams with resilience against interruptions
+- [x] **Phase 2: User Management & Exam Creation** - Admins can manage their users and build complete exams
+- [x] **Phase 3: Student Exam Experience** - Students can securely take and submit exams with resilience against interruptions
 - [ ] **Phase 4: AI Evaluation & Grading** - Exams are automatically evaluated and graded using configured AI models
 - [ ] **Phase 5: Monetization & Billing** - Institutes are billed per exam attempt using a credit system
 - [ ] **Phase 6: Super Admin & Global Management** - Super Admin oversees institutes, manages global billing, and views global analytics
@@ -58,7 +58,12 @@ Plans:
   5. Student can successfully submit their completed exam
   6. Unit tests are written and pass for all phase features
   7. INTEGRATION_GUIDE.md is updated with any new API contracts
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [x] 03-01-PLAN.md — Core Models & List Exams
+- [x] 03-02-PLAN.md — Exam Take UI & AutoSave
+- [x] 03-03-PLAN.md — Timer Enforcement & Anti-Cheat
+- [x] 03-04-PLAN.md — Expiry Enforcer Job
 **UI hint**: yes
 
 ### Phase 4: AI Evaluation & Grading
@@ -106,8 +111,8 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Multi-Tenancy | 4/4 | Completed | 2026-04-12 |
-| 2. User Management & Exam Creation | 1/4 | In Progress|  |
-| 3. Student Exam Experience | 0/0 | Not started | - |
+| 2. User Management & Exam Creation | 4/4 | Completed | 2026-04-24 |
+| 3. Student Exam Experience | 4/4 | Completed | 2026-04-25 |
 | 4. AI Evaluation & Grading | 0/0 | Not started | - |
 | 5. Monetization & Billing | 0/0 | Not started | - |
 | 6. Super Admin & Global Management | 0/0 | Not started | - |
