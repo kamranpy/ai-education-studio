@@ -5,7 +5,7 @@ milestone_name: milestone
 current_phase: 4
 current_plan: Not started
 status: ready_to_plan
-last_updated: "2026-04-26T08:31:00.000Z"
+last_updated: "2026-04-26T08:51:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 3
@@ -45,6 +45,11 @@ Phase: 03 (student-exam-experience) — COMPLETED (verification passed)
 - Delete-and-recreate strategy for draft exam updates to avoid orphaned records (Phase 02)
 - Used Collapsible (not Accordion) for question cards to allow multiple open simultaneously (Phase 02)
 - ExamController show eager-loads questions.choices and loadCount for questions_count (Phase 02)
+- LLM provider configuration is Super-Admin global, NOT per-institute (Phase 04 D-01)
+- LLM API keys stored encrypted in DB via Crypt::encryptString() keyed off APP_KEY; not in .env (Phase 04 D-02)
+- Provider abstraction via driver layer: openai, anthropic, google, openai-compatible (catch-all for DeepSeek/Qwen/Together/Ollama/etc.) (Phase 04 D-04)
+- ai_* columns immutable; override_* columns separate; final_score = override_score ?? ai_score (Phase 04 D-21)
+- Confidence < 0.7 auto-flags answer as needs_review (Phase 04 D-19)
 
 ### Active Blockers
 
@@ -57,9 +62,12 @@ Phase: 03 (student-exam-experience) — COMPLETED (verification passed)
 - [x] Execute Plan 02-03 (Exam Builder UI Shell & Index)
 - [x] Execute Plan 02-04 (Exam Builder Dynamic Form)
 - [x] Execute Phase 03 plans 01–04 (Student Exam Experience)
+- [x] Gather Phase 4 context (CONTEXT.md + DISCUSSION-LOG.md)
+- [ ] Update PROJECT.md / REQUIREMENTS.md to reflect Super-Admin LLM scope (AIEV-01 wording)
 - [ ] Plan Phase 4 (AI Evaluation & Grading)
 
 ## Session Continuity
 
-**Last Action:** Phase 03 verification passed (2026-04-25); SubmitExpiredExams scheduler registered
-**Next Action:** Run `/gsd-discuss-phase 4` to gather context for AI Evaluation & Grading
+**Last Action:** Phase 04 context gathered (2026-04-26) — Super-Admin global LLM config, encrypted-in-DB keys, multi-provider driver layer (OpenAI / Anthropic / Google / openai-compatible)
+**Next Action:** Run `/gsd-plan-phase 4` to plan Phase 4 (AI Evaluation & Grading)
+**Resume File:** `.planning/phases/04-ai-evaluation-and-grading/04-CONTEXT.md`
