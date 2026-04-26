@@ -63,10 +63,12 @@ class LlmSettingController extends Controller
 
             $activeSetting = LlmSetting::where('is_active', false)->first();
 
+            $providerEnum = LlmProvider::from($validated['provider']);
+
             $data = [
                 'provider' => $validated['provider'],
                 'model' => $validated['model'],
-                'base_url' => $validated['base_url'] ?? null,
+                'base_url' => $providerEnum === LlmProvider::OpenAICompatible ? ($validated['base_url'] ?? null) : null,
                 'is_active' => true,
                 'updated_by' => Auth::id(),
             ];
@@ -129,6 +131,11 @@ class LlmSettingController extends Controller
 
         $provider = LlmProvider::from($validated['provider']);
         $prismProviderName = $provider->toPrism()->value;
+
+        // Force clear base_url if the provider isn't openai-compatible, to prevent stale hidden values from poisoning the URL
+        if ($provider !== LlmProvider::OpenAICompatible) {
+            $validated['base_url'] = null;
+        }
 
         // Resolve __EXISTING__ to the actual stored API key if present
         $apiKey = $validated['api_key'];
