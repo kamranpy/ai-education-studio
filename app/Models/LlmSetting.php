@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\LlmProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LlmSetting extends Model
 {
@@ -30,6 +31,11 @@ class LlmSetting extends Model
     public function updatedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    public function audits(): HasMany
+    {
+        return $this->hasMany(LlmSettingsAudit::class);
     }
 
     /**

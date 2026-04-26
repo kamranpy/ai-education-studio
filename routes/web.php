@@ -5,7 +5,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExamAttemptController;
+use App\Http\Controllers\SuperAdmin\LlmSettingController;
 use App\Http\Middleware\EnsureInstituteAdmin;
+use App\Http\Middleware\EnsureSuperAdmin;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -16,8 +18,14 @@ Route::inertia('/', 'welcome', [
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 
-    Route::prefix('super-admin')->group(function () {
+    Route::prefix('super-admin')->middleware(EnsureSuperAdmin::class)->group(function () {
         Route::inertia('dashboard', 'SuperAdmin/Dashboard')->name('super_admin.dashboard');
+
+        Route::get('llm', [LlmSettingController::class, 'index'])->name('super_admin.llm.index');
+        Route::post('llm', [LlmSettingController::class, 'store'])->name('super_admin.llm.store');
+        Route::post('llm/test', [LlmSettingController::class, 'testConnection'])
+            ->middleware('throttle:5,1')
+            ->name('super_admin.llm.test');
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {
