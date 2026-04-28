@@ -36,7 +36,7 @@ class SubmitExpiredExams extends Command
                 DB::transaction(function () use ($attempt) {
                     // Instantly grade all objective questions (MC/TF)
                     foreach ($attempt->answers as $answer) {
-                        if ($answer->question->type !== 'written') {
+                        if ($answer->question->type !== 'written_answer') {
                             $isCorrect = $answer->isObjectiveCorrect();
                             $answer->fill([
                                 'ai_score' => $isCorrect ? $answer->question->points : 0,

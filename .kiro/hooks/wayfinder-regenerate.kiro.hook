@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Regenerate Wayfinder on Controller Change",
+  "description": "Regenerates Wayfinder typed route functions whenever a controller or route file is modified, keeping frontend route imports in sync",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/Http/Controllers/**/*.php",
+      "routes/**/*.php"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "php artisan wayfinder:generate"
+  }
+}

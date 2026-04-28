@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 05
-current_plan: 1
-status: phase_complete
-last_updated: "2026-04-26T18:30:00.000Z"
+current_phase: "04.1"
+current_plan: Not started
+status: planning
+last_updated: "2026-04-26T18:45:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 4
@@ -17,10 +17,11 @@ progress:
 Phase: 01 (foundation-multi-tenancy) — COMPLETED
 Phase: 02 (user-management-exam-creation) — COMPLETED (verification passed)
 Phase: 03 (student-exam-experience) — COMPLETED (verification passed)
-Phase: 04 (ai-evaluation-and-grading) — COMPLETED
-**Current Phase:** 05
-**Current Plan:** 1
-**Status:** Phase 04 complete — ready for Phase 05
+Phase: 04 (ai-evaluation-and-grading) — COMPLETED (verification passed)
+Phase: 04.1 (exam-creation-enhancements-evaluation-settings) — INSERTED
+**Current Phase:** 04.1
+**Current Plan:** Not started
+**Status:** Ready to plan
 
 ## Performance Metrics
 
@@ -56,25 +57,22 @@ Phase: 04 (ai-evaluation-and-grading) — COMPLETED
 - ai_* columns immutable; override_* columns separate; final_score = override_score ?? ai_score (Phase 04 D-21)
 - Confidence < 0.7 auto-flags answer as needs_review (Phase 04 D-19)
 
+### Roadmap Evolution
+
+- Phase 4.1 inserted after Phase 4: Exam Creation Enhancements & Evaluation Settings (URGENT)
+
 ### Active Blockers
 
 - None
 
 ### Pending Todos
 
-- [x] Execute Plan 02-01 (User Management & Invites)
-- [x] Execute Plan 02-02 (Exam Models & API)
-- [x] Execute Plan 02-03 (Exam Builder UI Shell & Index)
-- [x] Execute Plan 02-04 (Exam Builder Dynamic Form)
-- [x] Execute Phase 03 plans 01–04 (Student Exam Experience)
-- [x] Gather Phase 4 context (CONTEXT.md + DISCUSSION-LOG.md)
-- [x] Phase 4 research (RESEARCH.md — Prism PHP, encrypted cast, queue patterns)
-- [x] Phase 4 UI-SPEC (UI-SPEC.md — 4 surfaces speced)
-- [ ] Update PROJECT.md / REQUIREMENTS.md to reflect Super-Admin LLM scope (AIEV-01 wording)
-- [x] Plan Phase 4 (AI Evaluation & Grading)
+- [ ] Gather Phase 5 context (CONTEXT.md + RESEARCH.md + UI-SPEC.md)
+- [ ] Plan Phase 5 (Monetization & Billing)
+- [ ] Execute Phase 5 plans
 
 ## Session Continuity
 
-**Last Action:** Completed Phase 04 (AI Evaluation & Grading) — all 4 plans executed successfully
-**Next Action:** Plan and execute Phase 05
-**Resume File:** `.planning/ROADMAP.md`
+**Last Action:** Inserted Phase 4.1: Exam Creation Enhancements & Evaluation Settings
+**Next Action:** Plan Phase 4.1
+**Resume File:** `.planning/phases/04.1-exam-creation-enhancements-evaluation-settings/04.1-PLAN.md`

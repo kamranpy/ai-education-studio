@@ -35,7 +35,7 @@ class GradeAttemptJob implements ShouldBeUnique, ShouldQueue
         $attempt = ExamAttempt::with('answers.question')->findOrFail($this->attemptId);
 
         foreach ($attempt->answers as $answer) {
-            if ($answer->question->type !== 'written') {
+            if ($answer->question->type !== 'written_answer') {
                 continue;
             }
 

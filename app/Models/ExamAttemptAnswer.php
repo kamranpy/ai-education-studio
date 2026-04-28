@@ -80,12 +80,12 @@ class ExamAttemptAnswer extends Model
     {
         $question = $this->question;
 
-        if ($question->type === 'written') {
+        if ($question->type === 'written_answer') {
             return false;
         }
 
-        // answer_data stores the selected choice ID
-        $selectedChoiceId = $this->answer_data['choice_id'] ?? null;
+        // answer_data stores the selected choice ID (key: selected_choice_id)
+        $selectedChoiceId = $this->answer_data['selected_choice_id'] ?? null;
 
         if (! $selectedChoiceId) {
             return false;

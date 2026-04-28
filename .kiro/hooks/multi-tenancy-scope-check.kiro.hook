@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Multi-Tenancy Scope Check",
+  "description": "Checks controllers and models for queries that could leak data across tenants in the multi-tenant SaaS architecture",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/Http/Controllers/**/*.php",
+      "app/Models/**/*.php"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review this file for multi-tenancy safety. This is a multi-tenant SaaS exam platform where each institute is a separate tenant. Check that all Eloquent queries are scoped to the current tenant/institute. Flag any query that could return or modify data across tenant boundaries, and suggest the correct scoping fix."
+  }
+}

@@ -148,7 +148,7 @@ class ExamAttemptController extends Controller
 
                 DB::transaction(function () use ($attempt) {
                     foreach ($attempt->answers as $answer) {
-                        if ($answer->question->type !== 'written') {
+                        if ($answer->question->type !== 'written_answer') {
                             $isCorrect = $answer->isObjectiveCorrect();
                             $answer->fill([
                                 'ai_score' => $isCorrect ? $answer->question->points : 0,
@@ -187,7 +187,7 @@ class ExamAttemptController extends Controller
         // Upsert the answer
         $attempt->answers()->updateOrCreate(
             ['question_id' => $validated['question_id']],
-            ['answer_data' => $validated['answer_data']],
+            ['answer_data' => $validated['answer_data'] ?? []],
         );
 
         // Submit exam (per TAKE-07) with instant grading for MC/TF
@@ -198,7 +198,7 @@ class ExamAttemptController extends Controller
             DB::transaction(function () use ($attempt) {
                 // Instantly grade all objective questions (MC/TF)
                 foreach ($attempt->answers as $answer) {
-                    if ($answer->question->type !== 'written') {
+                    if ($answer->question->type !== 'written_answer') {
                         $isCorrect = $answer->isObjectiveCorrect();
                         $answer->fill([
                             'ai_score' => $isCorrect ? $answer->question->points : 0,

@@ -86,8 +86,8 @@ class ExamAttemptAdminController extends Controller
         ExamAttemptAnswerOverride::create([
             'exam_attempt_answer_id' => $answer->id,
             'actor_id' => Auth::id(),
-            'previous_score' => $answer->final_score,
-            'new_score' => $score,
+            'from_score' => $answer->final_score,
+            'to_score' => $score,
             'comment' => $validated['override_comment'],
         ]);
 

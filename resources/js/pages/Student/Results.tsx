@@ -90,7 +90,7 @@ function Results({ exam, attempt }: Props) {
                         const q = answer.question;
                         const score = answer.final_score ?? 0;
                         const isCorrect =
-                            q.type !== 'written' &&
+                            q.type !== 'written_answer' &&
                             answer.ai_score !== null &&
                             answer.ai_score > 0;
 
@@ -107,7 +107,7 @@ function Results({ exam, attempt }: Props) {
                                     </div>
 
                                     <div className="flex flex-shrink-0 items-center gap-3">
-                                        {q.type !== 'written' &&
+                                        {q.type !== 'written_answer' &&
                                             answer.ai_score !==
                                                 null && (
                                                 <>

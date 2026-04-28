@@ -38,8 +38,8 @@ interface Question {
 
 interface Override {
     id: number;
-    previous_score: number | null;
-    new_score: number;
+    from_score: number | null;
+    to_score: number;
     comment: string | null;
     actor: { id: string; name: string };
     created_at: string;
@@ -83,23 +83,27 @@ interface Props {
 function ConfidenceIndicator({
     confidence,
 }: {
-    confidence: number | null;
+    confidence: number | string | null;
 }) {
-    if (confidence === null) return null;
+    if (confidence === null || confidence === undefined) return null;
 
-    if (confidence >= 0.85) {
+    const value = typeof confidence === 'string' ? parseFloat(confidence) : confidence;
+
+    if (isNaN(value)) return null;
+
+    if (value >= 0.85) {
         return (
             <span className="text-sm text-foreground">
-                Confidence: {confidence.toFixed(2)}
+                Confidence: {value.toFixed(2)}
             </span>
         );
     }
 
-    if (confidence >= 0.7) {
+    if (value >= 0.7) {
         return (
             <span className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Info className="size-3.5" />
-                Confidence: {confidence.toFixed(2)}
+                Confidence: {value.toFixed(2)}
             </span>
         );
     }
@@ -107,7 +111,7 @@ function ConfidenceIndicator({
     return (
         <span className="flex items-center gap-1 text-sm text-destructive">
             <AlertTriangle className="size-3.5" />
-            Confidence: {confidence.toFixed(2)}
+            Confidence: {value.toFixed(2)}
         </span>
     );
 }
@@ -139,7 +143,7 @@ function OverrideForm({
         form.data.override_score &&
         answer.ai_score !== null &&
         Math.abs(
-            parseFloat(form.data.override_score) - answer.ai_score,
+            parseFloat(form.data.override_score) - parseFloat(String(answer.ai_score)),
         ) >
             answer.question.points * 0.3;
 
@@ -229,17 +233,17 @@ function QuestionBlock({
 
     // Get student's answer text
     const studentAnswer =
-        q.type === 'written'
+        q.type === 'written_answer'
             ? ((answer.answer_data as Record<string, string>)?.text ||
               '(no answer submitted)')
             : q.choices?.find(
                   (c) =>
                       c.id ===
                       (answer.answer_data as Record<string, number>)
-                          ?.choice_id,
+                          ?.selected_choice_id,
               )?.text || '(no answer submitted)';
 
-    const finalScore = answer.override_score ?? answer.ai_score ?? 0;
+    const finalScore = parseFloat(String(answer.override_score ?? answer.ai_score ?? 0));
 
     return (
         <Collapsible open={open} onOpenChange={setOpen}>
@@ -290,10 +294,10 @@ function QuestionBlock({
                 </div>
 
                 {/* MC/TF: show correct answer */}
-                {q.type !== 'written' && (
+                {q.type !== 'written_answer' && (
                     <div className="flex items-center gap-2">
                         {answer.ai_score !== null &&
-                        answer.ai_score > 0 ? (
+                        parseFloat(String(answer.ai_score)) > 0 ? (
                             <span className="flex items-center gap-1 text-sm text-foreground">
                                 <CheckCircle2 className="size-4" />
                                 Correct
@@ -308,7 +312,7 @@ function QuestionBlock({
                 )}
 
                 {/* AI Grading block — only for written questions */}
-                {q.type === 'written' && answer.ai_score !== null && (
+                {q.type === 'written_answer' && answer.ai_score !== null && (
                     <>
                         <Separator />
                         <div className="space-y-3">
@@ -339,9 +343,7 @@ function QuestionBlock({
                                                 </span>
                                                 :{' '}
                                                 <span className="font-mono">
-                                                    {(
-                                                        value as number
-                                                    ).toFixed(1)}
+                                                    {parseFloat(String(value)).toFixed(1)}
                                                 </span>
                                             </div>
                                         ),
@@ -393,8 +395,8 @@ function QuestionBlock({
                                         className="text-xs text-muted-foreground"
                                     >
                                         {o.actor.name} changed{' '}
-                                        {o.previous_score ?? '—'} →{' '}
-                                        {o.new_score}
+                                        {o.from_score ?? '—'} →{' '}
+                                        {o.to_score}
                                         {o.comment && ` — "${o.comment}"`}{' '}
                                         ·{' '}
                                         {new Date(
