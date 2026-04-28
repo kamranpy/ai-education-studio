@@ -77,6 +77,7 @@ class ExamAttemptController extends Controller
 
     /**
      * Show a single question from the exam attempt (per D-01: one question at a time).
+     * Also passes section submission status for sectional exam UI.
      */
     public function show(Request $request, Exam $exam, ExamAttempt $attempt): Response|RedirectResponse
     {
@@ -103,6 +104,35 @@ class ExamAttemptController extends Controller
             ->where('question_id', $questionId)
             ->first();
 
+        // Load all questions grouped by type for sectional view
+        $allQuestions = $exam->questions()->with('choices')
+            ->orderBy('order')
+            ->get();
+
+        // Load all existing answers for this attempt
+        $allAnswers = $attempt->answers()->get()->keyBy('question_id');
+
+        // Group questions by type with existing answers
+        $sectionQuestions = [];
+        foreach (['true_false', 'mcq', 'written_answer'] as $type) {
+            $sectionQuestions[$type] = $allQuestions
+                ->where('type', $type)
+                ->values()
+                ->map(fn ($q) => [
+                    'id' => $q->id,
+                    'type' => $q->type,
+                    'text' => $q->text,
+                    'points' => $q->points,
+                    'choices' => $q->choices->map(fn ($c) => [
+                        'id' => $c->id,
+                        'text' => $c->text,
+                    ]),
+                    'existing_answer' => $allAnswers->has($q->id)
+                        ? $allAnswers[$q->id]->answer_data
+                        : null,
+                ]);
+        }
+
         return Inertia::render('Student/ExamTake', [
             'exam' => [
                 'id' => $exam->id,
@@ -112,6 +142,9 @@ class ExamAttemptController extends Controller
             'attempt' => [
                 'id' => $attempt->id,
                 'started_at' => $attempt->started_at->toISOString(),
+                'tf_submitted_at' => $attempt->tf_submitted_at?->toISOString(),
+                'mcqs_submitted_at' => $attempt->mcqs_submitted_at?->toISOString(),
+                'written_submitted_at' => $attempt->written_submitted_at?->toISOString(),
             ],
             'question' => [
                 'id' => $question->id,
@@ -126,6 +159,7 @@ class ExamAttemptController extends Controller
             'questionIndex' => $questionIndex,
             'totalQuestions' => $totalQuestions,
             'existingAnswer' => $existingAnswer?->answer_data,
+            'sectionQuestions' => $sectionQuestions,
         ]);
     }
 
