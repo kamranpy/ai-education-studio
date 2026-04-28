@@ -20,6 +20,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -51,9 +59,12 @@ type Exam = {
     id: number;
     title: string;
     description: string | null;
+    class_name: string | null;
+    subject_name: string | null;
     status: string;
     time_limit_minutes: number | null;
     passing_score: number;
+    evaluation_strategy: 'instant' | 'manual';
     questions: Question[];
 };
 
@@ -95,11 +106,27 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
     const { data, setData, post, put, processing, errors } = useForm({
         title: exam?.title ?? '',
         description: exam?.description ?? '',
+        class_name: exam?.class_name ?? '',
+        subject_name: exam?.subject_name ?? '',
         time_limit_minutes: exam?.time_limit_minutes ?? (null as number | null),
         passing_score: exam?.passing_score ?? 70,
+        evaluation_strategy: exam?.evaluation_strategy ?? ('instant' as 'instant' | 'manual'),
         status: 'draft' as 'draft' | 'published',
         questions: exam ? transformExamQuestions(exam.questions) : ([] as QuestionData[]),
     });
+
+    // Filter questions by type for each tab
+    const tfQuestions = data.questions
+        .map((q, i) => ({ question: q, originalIndex: i }))
+        .filter((item) => item.question.type === 'true_false');
+
+    const mcqQuestions = data.questions
+        .map((q, i) => ({ question: q, originalIndex: i }))
+        .filter((item) => item.question.type === 'mcq');
+
+    const writtenQuestions = data.questions
+        .map((q, i) => ({ question: q, originalIndex: i }))
+        .filter((item) => item.question.type === 'written_answer');
 
     function addQuestion(type: QuestionType) {
         setData('questions', [
@@ -221,6 +248,74 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
     const pageTitle = isEditing ? `Edit: ${exam.title}` : 'Create Exam';
     const breadcrumbLabel = isEditing ? exam.title : 'Create';
 
+    function renderQuestionList(
+        items: { question: QuestionData; originalIndex: number }[],
+        emptyMessage: string,
+        addType: QuestionType,
+        addLabel: string,
+        addIcon: React.ReactNode,
+    ) {
+        return (
+            <div className="space-y-3">
+                {items.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
+                        <p className="mb-3 text-sm text-muted-foreground">
+                            {emptyMessage}
+                        </p>
+                        {!isLocked && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => addQuestion(addType)}
+                            >
+                                {addIcon}
+                                <span className="ml-1.5">{addLabel}</span>
+                            </Button>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <div className="space-y-3">
+                            {items.map(({ question, originalIndex }) => (
+                                <QuestionCard
+                                    key={originalIndex}
+                                    question={question}
+                                    index={originalIndex}
+                                    errors={errors}
+                                    isFirst={originalIndex === 0}
+                                    isLast={
+                                        originalIndex ===
+                                        data.questions.length - 1
+                                    }
+                                    disabled={isLocked}
+                                    onUpdate={updateQuestion}
+                                    onRemove={removeQuestion}
+                                    onMove={moveQuestion}
+                                    onUpdateChoice={updateChoice}
+                                    onAddChoice={addChoice}
+                                    onRemoveChoice={removeChoice}
+                                    onSetCorrectChoice={setCorrectChoice}
+                                />
+                            ))}
+                        </div>
+                        {!isLocked && (
+                            <div className="flex justify-center pt-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => addQuestion(addType)}
+                                >
+                                    <Plus className="mr-1.5 size-4" />
+                                    Add {addLabel}
+                                </Button>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        );
+    }
+
     return (
         <>
             <Head title={pageTitle} />
@@ -285,6 +380,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                     </Alert>
                 )}
 
+                {/* Exam Details Card */}
                 <Card>
                     <CardContent className="space-y-4 pt-6">
                         <div className="space-y-1.5">
@@ -318,6 +414,43 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                         </div>
 
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="class_name">Class Name</Label>
+                                <Input
+                                    id="class_name"
+                                    value={data.class_name}
+                                    onChange={(e) =>
+                                        setData('class_name', e.target.value)
+                                    }
+                                    placeholder="e.g. Grade 10-A"
+                                    maxLength={255}
+                                    disabled={isLocked}
+                                />
+                                <InputError message={errors.class_name} />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="subject_name">
+                                    Subject Name
+                                </Label>
+                                <Input
+                                    id="subject_name"
+                                    value={data.subject_name}
+                                    onChange={(e) =>
+                                        setData(
+                                            'subject_name',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder="e.g. Mathematics"
+                                    maxLength={255}
+                                    disabled={isLocked}
+                                />
+                                <InputError message={errors.subject_name} />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="space-y-1.5">
                                 <Label htmlFor="time_limit_minutes">
                                     Time Limit (minutes)
@@ -364,85 +497,106 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                 />
                                 <InputError message={errors.passing_score} />
                             </div>
+
+                            <div className="space-y-1.5">
+                                <Label htmlFor="evaluation_strategy">
+                                    Evaluation Strategy
+                                </Label>
+                                <Select
+                                    value={data.evaluation_strategy}
+                                    onValueChange={(val: 'instant' | 'manual') =>
+                                        setData('evaluation_strategy', val)
+                                    }
+                                    disabled={isLocked}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select strategy" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="instant">
+                                            Instant — Show results immediately
+                                        </SelectItem>
+                                        <SelectItem value="manual">
+                                            Manual — Admin announces results
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <InputError
+                                    message={errors.evaluation_strategy}
+                                />
+                            </div>
                         </div>
                     </CardContent>
                 </Card>
 
+                {/* Questions Section — Tabbed */}
                 <div className="space-y-3">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
                             Questions ({data.questions.length})
                         </h2>
-
-                        {!isLocked && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" size="sm">
-                                        <Plus className="mr-1.5 size-4" />
-                                        Add Question
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem
-                                        onClick={() => addQuestion('mcq')}
-                                    >
-                                        <ListChecks className="mr-2 size-4" />
-                                        Multiple Choice
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            addQuestion('true_false')
-                                        }
-                                    >
-                                        <CircleCheck className="mr-2 size-4" />
-                                        True / False
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            addQuestion('written_answer')
-                                        }
-                                    >
-                                        <PenLine className="mr-2 size-4" />
-                                        Written Answer
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
                     </div>
 
                     <InputError message={errors.questions} />
 
-                    {data.questions.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
-                            <p className="text-sm text-muted-foreground">
-                                No questions added yet. Click "Add Question"
-                                to get started.
-                            </p>
-                        </div>
-                    ) : (
-                        <div className="space-y-3">
-                            {data.questions.map((question, idx) => (
-                                <QuestionCard
-                                    key={idx}
-                                    question={question}
-                                    index={idx}
-                                    errors={errors}
-                                    isFirst={idx === 0}
-                                    isLast={
-                                        idx === data.questions.length - 1
-                                    }
-                                    disabled={isLocked}
-                                    onUpdate={updateQuestion}
-                                    onRemove={removeQuestion}
-                                    onMove={moveQuestion}
-                                    onUpdateChoice={updateChoice}
-                                    onAddChoice={addChoice}
-                                    onRemoveChoice={removeChoice}
-                                    onSetCorrectChoice={setCorrectChoice}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    <Tabs defaultValue="true_false" className="w-full">
+                        <TabsList className="w-full justify-start">
+                            <TabsTrigger value="true_false" className="gap-1.5">
+                                <CircleCheck className="size-4" />
+                                True/False
+                                <span className="ml-1 rounded-full bg-zinc-200 px-1.5 text-xs dark:bg-zinc-700">
+                                    {tfQuestions.length}
+                                </span>
+                            </TabsTrigger>
+                            <TabsTrigger value="mcq" className="gap-1.5">
+                                <ListChecks className="size-4" />
+                                MCQs
+                                <span className="ml-1 rounded-full bg-zinc-200 px-1.5 text-xs dark:bg-zinc-700">
+                                    {mcqQuestions.length}
+                                </span>
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="written_answer"
+                                className="gap-1.5"
+                            >
+                                <PenLine className="size-4" />
+                                Written
+                                <span className="ml-1 rounded-full bg-zinc-200 px-1.5 text-xs dark:bg-zinc-700">
+                                    {writtenQuestions.length}
+                                </span>
+                            </TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="true_false" className="mt-4">
+                            {renderQuestionList(
+                                tfQuestions,
+                                'No True/False questions added yet.',
+                                'true_false',
+                                'True/False Question',
+                                <CircleCheck className="size-4" />,
+                            )}
+                        </TabsContent>
+
+                        <TabsContent value="mcq" className="mt-4">
+                            {renderQuestionList(
+                                mcqQuestions,
+                                'No Multiple Choice questions added yet.',
+                                'mcq',
+                                'MCQ Question',
+                                <ListChecks className="size-4" />,
+                            )}
+                        </TabsContent>
+
+                        <TabsContent value="written_answer" className="mt-4">
+                            {renderQuestionList(
+                                writtenQuestions,
+                                'No Written Answer questions added yet.',
+                                'written_answer',
+                                'Written Question',
+                                <PenLine className="size-4" />,
+                            )}
+                        </TabsContent>
+                    </Tabs>
                 </div>
 
                 {!isLocked && (
