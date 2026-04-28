@@ -43,7 +43,8 @@ class ExamController extends Controller
     {
         $exam = DB::transaction(function () use ($request) {
             $exam = Exam::create($request->safe()->only([
-                'title', 'description', 'time_limit_minutes', 'passing_score', 'status',
+                'title', 'description', 'class_name', 'subject_name',
+                'time_limit_minutes', 'passing_score', 'evaluation_strategy', 'status',
             ]));
 
             $this->syncQuestions($exam, $request->validated('questions'));
@@ -78,7 +79,8 @@ class ExamController extends Controller
     {
         DB::transaction(function () use ($request, $exam) {
             $exam->update($request->safe()->only([
-                'title', 'description', 'time_limit_minutes', 'passing_score', 'status',
+                'title', 'description', 'class_name', 'subject_name',
+                'time_limit_minutes', 'passing_score', 'evaluation_strategy', 'status',
             ]));
 
             $exam->questions()->each(function ($question) {
@@ -122,6 +124,26 @@ class ExamController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Exam unpublished successfully.')]);
 
         return to_route('admin.exams.index');
+    }
+
+    /**
+     * Announce results for an exam (manual evaluation strategy only).
+     */
+    public function announceResults(Exam $exam): RedirectResponse
+    {
+        if (! $exam->isManualEvaluation()) {
+            abort(422, __('Results announcement is only available for manual evaluation exams.'));
+        }
+
+        if ($exam->isResultsAnnounced()) {
+            abort(422, __('Results have already been announced for this exam.'));
+        }
+
+        $exam->update(['results_announced_at' => now()]);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __('Results announced successfully. Students can now view their results.')]);
+
+        return to_route('admin.exams.show', $exam);
     }
 
     private function syncQuestions(Exam $exam, array $questions): void

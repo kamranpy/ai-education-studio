@@ -271,6 +271,14 @@ class ExamAttemptController extends Controller
             abort(403, __('This exam has not been submitted yet.'));
         }
 
+        // Manual evaluation: block until results are announced
+        if ($exam->isManualEvaluation() && ! $exam->isResultsAnnounced()) {
+            return Inertia::render('Student/ResultsPending', [
+                'exam' => $exam->only('id', 'title'),
+                'attempt' => $attempt->only('id', 'status', 'submitted_at'),
+            ]);
+        }
+
         // Grading in progress — show interstitial
         if ($attempt->status === 'grading') {
             return Inertia::render('Student/Interstitial', [
@@ -309,6 +317,128 @@ class ExamAttemptController extends Controller
                 'final_score' => $finalScore,
                 'answers' => $answers,
             ],
+        ]);
+    }
+
+    /**
+     * Submit a specific section (TF, MCQs, or Written) independently.
+     * Once submitted, the section is locked via backend validation.
+     */
+    public function submitSection(Request $request, Exam $exam, ExamAttempt $attempt): RedirectResponse
+    {
+        $this->authorizeAttempt($attempt);
+
+        if (! $attempt->isInProgress()) {
+            abort(403, __('This exam has already been submitted.'));
+        }
+
+        $validated = $request->validate([
+            'section' => 'required|string|in:true_false,mcq,written_answer',
+            'answers' => 'nullable|array',
+            'answers.*.question_id' => 'required|integer|exists:questions,id',
+            'answers.*.answer_data' => 'nullable|array',
+        ]);
+
+        $section = $validated['section'];
+
+        // Prevent re-submission of an already submitted section
+        if ($attempt->isSectionSubmitted($section)) {
+            abort(403, __('This section has already been submitted.'));
+        }
+
+        // Determine the timestamp field
+        $timestampField = match ($section) {
+            'true_false' => 'tf_submitted_at',
+            'mcq' => 'mcqs_submitted_at',
+            'written_answer' => 'written_submitted_at',
+        };
+
+        DB::transaction(function () use ($attempt, $exam, $validated, $section, $timestampField) {
+            // Save/update all answers for this section
+            foreach ($validated['answers'] ?? [] as $answerData) {
+                // Validate question belongs to this exam and is of the correct type
+                $question = $exam->questions()
+                    ->where('id', $answerData['question_id'])
+                    ->where('type', $section)
+                    ->first();
+
+                if (! $question) {
+                    continue;
+                }
+
+                $attempt->answers()->updateOrCreate(
+                    ['question_id' => $answerData['question_id']],
+                    ['answer_data' => $answerData['answer_data'] ?? []],
+                );
+            }
+
+            // Instantly grade objective questions (MC/TF)
+            if (in_array($section, ['true_false', 'mcq'])) {
+                $sectionAnswers = $attempt->answers()
+                    ->whereHas('question', fn ($q) => $q->where('type', $section))
+                    ->with('question.choices')
+                    ->get();
+
+                foreach ($sectionAnswers as $answer) {
+                    $isCorrect = $answer->isObjectiveCorrect();
+                    $answer->fill([
+                        'ai_score' => $isCorrect ? $answer->question->points : 0,
+                        'ai_confidence' => 1.0,
+                        'status' => 'graded',
+                    ])->save();
+                }
+            }
+
+            // Mark section as submitted
+            $attempt->update([$timestampField => now()]);
+        });
+
+        $sectionLabel = match ($section) {
+            'true_false' => 'True/False',
+            'mcq' => 'Multiple Choice',
+            'written_answer' => 'Written Answers',
+        };
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => __("{$sectionLabel} section submitted successfully.")]);
+
+        // Check if all sections with questions are now submitted — auto-submit exam
+        $hasWritten = $exam->questions()->where('type', 'written_answer')->exists();
+        $hasTf = $exam->questions()->where('type', 'true_false')->exists();
+        $hasMcq = $exam->questions()->where('type', 'mcq')->exists();
+
+        $attempt->refresh();
+
+        $allSubmitted = true;
+        if ($hasTf && ! $attempt->tf_submitted_at) {
+            $allSubmitted = false;
+        }
+        if ($hasMcq && ! $attempt->mcqs_submitted_at) {
+            $allSubmitted = false;
+        }
+        if ($hasWritten && ! $attempt->written_submitted_at) {
+            $allSubmitted = false;
+        }
+
+        if ($allSubmitted) {
+            $attempt->update([
+                'status' => 'grading',
+                'submitted_at' => now(),
+            ]);
+
+            GradeAttemptJob::dispatch($attempt->id)->afterCommit();
+
+            Inertia::flash('toast', ['type' => 'success', 'message' => __('All sections submitted! Your exam is being graded.')]);
+
+            if ($exam->evaluation_strategy === 'instant') {
+                return to_route('student.attempts.results', [$exam, $attempt]);
+            }
+
+            return to_route('student.dashboard');
+        }
+
+        return to_route('student.attempts.show', [
+            'exam' => $exam->id,
+            'attempt' => $attempt->id,
         ]);
     }
 
