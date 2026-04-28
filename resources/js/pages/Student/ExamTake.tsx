@@ -197,7 +197,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
                 attemptUpdate.url({ exam: exam.id, attempt: attempt.id }),
                 {
                     question_id: questionId,
-                    answer_data: answerData,
+                    answer_data: answerData as Record<string, string | number | boolean>,
                     action: 'save',
                     next_index: 0,
                 },
@@ -223,7 +223,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
         const sectionData = sectionQuestions[submitTarget];
         const sectionAnswers = sectionData.map((q) => ({
             question_id: q.id,
-            answer_data: answers[q.id] ?? {},
+            answer_data: (answers[q.id] ?? {}) as Record<string, string | number | boolean>,
         }));
 
         router.post(
@@ -233,7 +233,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
             }),
             {
                 section: submitTarget,
-                answers: sectionAnswers,
+                answers: sectionAnswers as unknown as Record<string, string | number | boolean>,
             },
             {
                 preserveState: false,
