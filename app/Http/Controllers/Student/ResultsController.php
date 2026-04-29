@@ -23,8 +23,7 @@ class ResultsController extends Controller
             ->whereIn('status', ['graded', 'needs_review', 'reviewed'])
             ->with(['exam' => function ($q) {
                 $q->select('id', 'title', 'class_name', 'subject_name', 'passing_score', 'evaluation_strategy', 'results_announced_at');
-            }])
-            ->withSum('answers as total_points_possible', 'question.points')
+            }, 'answers.question'])
             ->latest('submitted_at')
             ->paginate(15)
             ->withQueryString();

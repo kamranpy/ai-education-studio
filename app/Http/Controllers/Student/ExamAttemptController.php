@@ -45,7 +45,7 @@ class ExamAttemptController extends Controller
         $alreadySubmitted = ExamAttempt::query()
             ->where('user_id', $user->id)
             ->where('exam_id', $exam->id)
-            ->where('status', 'submitted')
+            ->where('status', '!=', 'in_progress')
             ->exists();
 
         if ($alreadySubmitted) {

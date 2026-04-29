@@ -103,7 +103,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
     const isEditing = !!exam;
     const isLocked = exam?.status === 'locked';
 
-    const { data, setData, post, put, processing, errors } = useForm({
+    const { data, setData, post, put, processing, errors, transform } = useForm({
         title: exam?.title ?? '',
         description: exam?.description ?? '',
         class_name: exam?.class_name ?? '',
@@ -236,6 +236,9 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
     }
 
     function handleSubmit(status: 'draft' | 'published') {
+        transform((data) => ({ ...data, status }));
+        
+        // Also update local state for the UI, though it won't affect the immediate request
         setData('status', status);
 
         if (isEditing && exam) {

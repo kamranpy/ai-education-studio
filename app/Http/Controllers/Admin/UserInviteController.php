@@ -26,13 +26,18 @@ class UserInviteController extends Controller
 
     public function store(StoreUserInviteRequest $request): RedirectResponse
     {
-        User::create([
+        $user = User::create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
             'password' => Hash::make(Str::random(32)),
             'role_id' => $request->validated('role_id'),
             'status' => 'invited',
         ]);
+
+        if ($request->validated('send_email', false)) {
+            $token = \Illuminate\Support\Facades\Password::broker()->createToken($user);
+            $user->notify(new \App\Notifications\UserInvitedNotification($token));
+        }
 
         $message = $request->validated('send_email', false)
             ? __('User invited and email sent.')

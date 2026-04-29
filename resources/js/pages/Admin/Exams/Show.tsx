@@ -5,6 +5,7 @@ import {
     unpublish as examsUnpublish,
     announceResults as examsAnnounceResults,
 } from '@/actions/App/Http/Controllers/Admin/ExamController';
+import { index as attemptsIndex } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
 import { ExamStatusBadge } from '@/components/exam/exam-status-badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -189,6 +190,13 @@ function ExamShow({ exam }: { exam: Exam }) {
                                     Unpublish
                                 </Button>
                             </>
+                        )}
+                        {exam.status !== 'draft' && (
+                            <Button variant="secondary" asChild>
+                                <Link href={attemptsIndex.url({ exam: exam.id })}>
+                                    View Results
+                                </Link>
+                            </Button>
                         )}
                     </div>
                 </div>
