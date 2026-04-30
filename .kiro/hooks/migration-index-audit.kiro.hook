@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Migration Index Audit",
+  "description": "Audits new migrations for missing indexes on foreign keys and frequently queried columns",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "database/migrations/**/*.php"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new migration was just created. Review it for missing indexes on: foreign key columns, columns used in WHERE clauses, columns used in ORDER BY, and columns used in GROUP BY. Suggest any missing indexes with the correct Laravel migration syntax."
+  }
+}

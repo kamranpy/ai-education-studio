@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Check for Duplicate Components",
+  "description": "When a new React component is created, checks for existing similar components to prevent duplication",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "resources/js/components/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new React component was just created. Search resources/js/components/ for any existing components with similar names or functionality. If duplicates or near-duplicates exist, flag them and suggest consolidation to keep the codebase DRY."
+  }
+}

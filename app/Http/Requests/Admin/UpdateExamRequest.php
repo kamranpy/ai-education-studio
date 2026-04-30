@@ -19,8 +19,11 @@ class UpdateExamRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'class_name' => ['required', 'string', 'max:255'],
+            'subject_name' => ['required', 'string', 'max:255'],
             'time_limit_minutes' => ['nullable', 'integer', 'min:1', 'max:480'],
             'passing_score' => ['required', 'integer', 'min:0', 'max:100'],
+            'evaluation_strategy' => ['required', 'string', 'in:instant,manual'],
             'status' => ['sometimes', 'string', 'in:draft,published'],
             'questions' => ['required', 'array', 'min:1'],
             'questions.*.type' => ['required', 'string', 'in:mcq,true_false,written_answer'],

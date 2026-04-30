@@ -14,9 +14,13 @@ class Exam extends Model
     protected $fillable = [
         'title',
         'description',
+        'class_name',
+        'subject_name',
         'time_limit_minutes',
         'passing_score',
         'status',
+        'evaluation_strategy',
+        'results_announced_at',
         'institute_id',
     ];
 
@@ -30,6 +34,7 @@ class Exam extends Model
         return [
             'time_limit_minutes' => 'integer',
             'passing_score' => 'integer',
+            'results_announced_at' => 'datetime',
         ];
     }
 
@@ -56,5 +61,27 @@ class Exam extends Model
     public function isLocked(): bool
     {
         return $this->status === 'locked';
+    }
+
+    public function isManualEvaluation(): bool
+    {
+        return $this->evaluation_strategy === 'manual';
+    }
+
+    public function isResultsAnnounced(): bool
+    {
+        return $this->results_announced_at !== null;
+    }
+
+    /**
+     * Check if a student can see their results based on evaluation strategy.
+     */
+    public function canStudentSeeResults(): bool
+    {
+        if ($this->evaluation_strategy === 'instant') {
+            return true;
+        }
+
+        return $this->isResultsAnnounced();
     }
 }

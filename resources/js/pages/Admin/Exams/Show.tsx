@@ -3,7 +3,9 @@ import {
     edit as examsEdit,
     publish as examsPublish,
     unpublish as examsUnpublish,
+    announceResults as examsAnnounceResults,
 } from '@/actions/App/Http/Controllers/Admin/ExamController';
+import { index as attemptsIndex } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
 import { ExamStatusBadge } from '@/components/exam/exam-status-badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -54,9 +56,13 @@ type Exam = {
     id: number;
     title: string;
     description: string | null;
+    class_name: string | null;
+    subject_name: string | null;
     status: string;
     time_limit_minutes: number | null;
     passing_score: number;
+    evaluation_strategy: 'instant' | 'manual';
+    results_announced_at: string | null;
     questions_count: number;
     questions: Question[];
     created_at: string;
@@ -91,10 +97,10 @@ function questionTypeLabel(type: string) {
 function ExamShow({ exam }: { exam: Exam }) {
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmAction, setConfirmAction] = useState<
-        'publish' | 'unpublish' | null
+        'publish' | 'unpublish' | 'announce' | null
     >(null);
 
-    function openConfirm(action: 'publish' | 'unpublish') {
+    function openConfirm(action: 'publish' | 'unpublish' | 'announce') {
         setConfirmAction(action);
         setConfirmOpen(true);
     }
@@ -105,6 +111,9 @@ function ExamShow({ exam }: { exam: Exam }) {
         }
         if (confirmAction === 'unpublish') {
             router.post(examsUnpublish.url(exam.id));
+        }
+        if (confirmAction === 'announce') {
+            router.post(examsAnnounceResults.url(exam.id));
         }
         setConfirmOpen(false);
     }
@@ -119,6 +128,11 @@ function ExamShow({ exam }: { exam: Exam }) {
             title: 'Unpublish Exam',
             description:
                 'Unpublish this exam? Active student attempts will not be affected.',
+        },
+        announce: {
+            title: 'Announce Results',
+            description:
+                'Announce results for this exam? Students will immediately be able to see their scores.',
         },
     };
 
@@ -177,6 +191,13 @@ function ExamShow({ exam }: { exam: Exam }) {
                                 </Button>
                             </>
                         )}
+                        {exam.status !== 'draft' && (
+                            <Button variant="secondary" asChild>
+                                <Link href={attemptsIndex.url({ exam: exam.id })}>
+                                    View Results
+                                </Link>
+                            </Button>
+                        )}
                     </div>
                 </div>
 
@@ -194,6 +215,16 @@ function ExamShow({ exam }: { exam: Exam }) {
 
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <ExamStatusBadge status={exam.status} />
+                    {exam.class_name && (
+                        <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                            {exam.class_name}
+                        </span>
+                    )}
+                    {exam.subject_name && (
+                        <span className="rounded-md bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                            {exam.subject_name}
+                        </span>
+                    )}
                     <span className="flex items-center gap-1.5">
                         <ListChecks className="size-4" />
                         {exam.questions_count} question
@@ -209,7 +240,52 @@ function ExamShow({ exam }: { exam: Exam }) {
                         <Target className="size-4" />
                         Passing: {exam.passing_score}%
                     </span>
+                    <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                        {exam.evaluation_strategy === 'instant'
+                            ? 'Instant Results'
+                            : 'Manual Results'}
+                    </span>
+                    {exam.evaluation_strategy === 'manual' && (
+                        <span
+                            className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                                exam.results_announced_at
+                                    ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                                    : 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                            }`}
+                        >
+                            {exam.results_announced_at
+                                ? 'Results Announced'
+                                : 'Results Pending'}
+                        </span>
+                    )}
                 </div>
+
+                {exam.evaluation_strategy === 'manual' &&
+                    !exam.results_announced_at &&
+                    exam.status !== 'draft' && (
+                        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
+                            <div className="flex items-center justify-between gap-4">
+                                <div>
+                                    <h3 className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                                        Manual Evaluation Mode
+                                    </h3>
+                                    <p className="mt-0.5 text-xs text-amber-600 dark:text-amber-400">
+                                        Results are hidden from students until
+                                        you announce them. Review graded attempts
+                                        before announcing.
+                                    </p>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="shrink-0"
+                                    onClick={() => openConfirm('announce')}
+                                >
+                                    Announce Results
+                                </Button>
+                            </div>
+                        </div>
+                    )}
 
                 {exam.description && (
                     <div className="rounded-lg border p-6">

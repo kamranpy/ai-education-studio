@@ -1,0 +1,16 @@
+{
+  "name": "Service/Facade Pattern Enforcement",
+  "version": "1.0.0",
+  "description": "Checks controllers and service files to ensure reusable logic uses the service -> facade -> register pattern, and avoids direct service injection when a facade exists",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "app/Http/Controllers/**/*.php",
+      "app/Services/**/*.php"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review this file for service/facade pattern compliance:\n\n1. **Check for existing services/facades first**: If the logic being written is used (or could be used) in multiple places, check if an existing service or facade already covers it before implementing inline.\n2. **Reusable logic pattern**: If logic belongs in a service, follow: Service class (app/Services/) -> Facade (app/Facades/) -> register binding in a service provider -> use the Facade everywhere.\n3. **No direct service injection**: If a facade exists for a service, never inject the service class directly via constructor or new. Use the facade instead.\n4. **No over-engineering**: If logic is only used in one place and unlikely to be reused, keep it inline. Do not create a service/facade for it.\n\nFlag any violations and suggest the correct pattern. Do not block — this is a review only."
+  }
+}

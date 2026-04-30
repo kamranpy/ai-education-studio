@@ -32,7 +32,7 @@ class DashboardController extends Controller
         // Fetch submitted (completed) attempts
         $submittedExamIds = ExamAttempt::query()
             ->where('user_id', $user->id)
-            ->where('status', 'submitted')
+            ->where('status', '!=', 'in_progress')
             ->pluck('exam_id')
             ->toArray();
 

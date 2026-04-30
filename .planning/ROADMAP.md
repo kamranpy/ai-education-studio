@@ -9,7 +9,8 @@
 - [x] **Phase 1: Foundation & Multi-Tenancy** - Institutes can onboard and access their isolated environments
 - [x] **Phase 2: User Management & Exam Creation** - Admins can manage their users and build complete exams
 - [x] **Phase 3: Student Exam Experience** - Students can securely take and submit exams with resilience against interruptions
-- [ ] **Phase 4: AI Evaluation & Grading** - Exams are automatically evaluated and graded using configured AI models
+- [x] **Phase 4: AI Evaluation & Grading** - Exams are automatically evaluated and graded using configured AI models
+- [x] **Phase 04.1: Exam Creation Enhancements & Evaluation Settings** - Enhance Exam Builder UI and student experience
 - [ ] **Phase 5: Monetization & Billing** - Institutes are billed per exam attempt using a credit system
 - [ ] **Phase 6: Super Admin & Global Management** - Super Admin oversees institutes, manages global billing, and views global analytics
 
@@ -80,6 +81,16 @@ Plans:
 **Plans**: TBD
 **UI hint**: yes
 
+### Phase 04.1: Exam Creation Enhancements & Evaluation Settings (INSERTED)
+
+**Goal:** Enhance the Exam Builder UI with tabs, add class/subject fields, and introduce flexible result release strategies.
+**Requirements**: AIEV-07, TAKE-08
+**Depends on:** Phase 4
+**Plans:** 1 plan
+
+Plans:
+- [x] 04.1-PLAN.md — Exam Builder & Student Experience Enhancements
+
 ### Phase 5: Monetization & Billing
 **Goal**: Institutes are billed per exam attempt using a credit system
 **Depends on**: Phase 3
@@ -113,6 +124,7 @@ Plans:
 | 1. Foundation & Multi-Tenancy | 4/4 | Completed | 2026-04-12 |
 | 2. User Management & Exam Creation | 4/4 | Completed | 2026-04-24 |
 | 3. Student Exam Experience | 4/4 | Completed | 2026-04-25 |
-| 4. AI Evaluation & Grading | 0/0 | Not started | - |
+| 4. AI Evaluation & Grading | 4/4 | Completed | 2026-04-26 |
+| 04.1. Enhancements & Settings | 1/1 | Completed | 2026-04-30 |
 | 5. Monetization & Billing | 0/0 | Not started | - |
 | 6. Super Admin & Global Management | 0/0 | Not started | - |

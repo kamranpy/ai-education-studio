@@ -54,6 +54,8 @@ import { useState } from 'react';
 type ExamRecord = {
     id: number;
     title: string;
+    class_name: string | null;
+    subject_name: string | null;
     status: string;
     questions_count: number;
     time_limit_minutes: number | null;
@@ -185,6 +187,12 @@ function ExamsIndex({
                                             Exam Name
                                         </TableHead>
                                         <TableHead scope="col">
+                                            Class
+                                        </TableHead>
+                                        <TableHead scope="col">
+                                            Subject
+                                        </TableHead>
+                                        <TableHead scope="col">
                                             Questions
                                         </TableHead>
                                         <TableHead scope="col">
@@ -209,6 +217,12 @@ function ExamsIndex({
                                                 >
                                                     {exam.title}
                                                 </Link>
+                                            </TableCell>
+                                            <TableCell>
+                                                {exam.class_name || '-'}
+                                            </TableCell>
+                                            <TableCell>
+                                                {exam.subject_name || '-'}
                                             </TableCell>
                                             <TableCell>
                                                 {exam.questions_count}
