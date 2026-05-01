@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
 use App\Http\Controllers\Institute\BillingController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Controllers\Student\ResultsController;
@@ -73,5 +74,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('results', [ResultsController::class, 'index'])->name('student.results.index');
     });
 });
+
+// Stripe webhook — outside auth middleware, CSRF excluded in bootstrap/app.php
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 
 require __DIR__.'/settings.php';
