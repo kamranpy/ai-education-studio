@@ -58,9 +58,9 @@
 
 ### Monetization
 
-- [ ] **BILL-01**: Institute Admin can purchase exam credits
-- [ ] **BILL-02**: System deducts credits per student exam attempt before allowing the exam to start
-- [ ] **BILL-03**: System prevents exam starts if the institute has insufficient credits
+- [x] **BILL-01**: Institute Admin can purchase exam credits
+- [x] **BILL-02**: System deducts credits per student exam attempt before allowing the exam to start
+- [x] **BILL-03**: System prevents exam starts if the institute has insufficient credits
 
 ## v2 Requirements
 
@@ -108,9 +108,9 @@
 | AIEV-04 | Phase 4 | Pending |
 | AIEV-05 | Phase 4 | Pending |
 | AIEV-06 | Phase 4 | Pending |
-| BILL-01 | Phase 5 | Pending |
-| BILL-02 | Phase 5 | Pending |
-| BILL-03 | Phase 5 | Pending |
+| BILL-01 | Phase 5 | Complete |
+| BILL-02 | Phase 5 | Complete |
+| BILL-03 | Phase 5 | Complete |
 | SADM-01 | Phase 6 | Pending |
 | SADM-02 | Phase 6 | Pending |
 | SADM-03 | Phase 6 | Pending |
