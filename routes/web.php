@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ExamAttemptAdminController;
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
+use App\Http\Controllers\Institute\BillingController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Controllers\Student\ResultsController;
@@ -52,6 +53,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('exams/{exam}/attempts/{attempt}', [ExamAttemptAdminController::class, 'show'])->name('admin.exams.attempts.show');
         Route::post('exams/{exam}/attempts/{attempt}/override', [ExamAttemptAdminController::class, 'override'])->name('admin.exams.attempts.override');
         Route::post('exams/{exam}/attempts/{attempt}/mark-reviewed', [ExamAttemptAdminController::class, 'markReviewed'])->name('admin.exams.attempts.mark-reviewed');
+
+        Route::get('billing', [BillingController::class, 'index'])->name('admin.billing.index');
+        Route::post('billing/checkout', [BillingController::class, 'checkout'])->name('admin.billing.checkout');
+        Route::get('billing/success', [BillingController::class, 'success'])->name('admin.billing.success');
+        Route::get('billing/cancel', [BillingController::class, 'cancel'])->name('admin.billing.cancel');
     });
 
     Route::prefix('student')->group(function () {
