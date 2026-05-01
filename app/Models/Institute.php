@@ -13,16 +13,19 @@ class Institute extends Model
     protected $fillable = [
         'name',
         'status',
+        'credits',
     ];
 
     protected $attributes = [
         'status' => true,
+        'credits' => 0,
     ];
 
     protected function casts(): array
     {
         return [
             'status' => 'boolean',
+            'credits' => 'integer',
         ];
     }
 
