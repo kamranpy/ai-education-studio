@@ -1,10 +1,12 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Bot, LayoutGrid } from 'lucide-react';
+import { index as creditPackagesIndex } from '@/actions/App/Http/Controllers/SuperAdmin/CreditPackageController';
+import { Bot, CreditCard, LayoutGrid } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 const navItems = [
     { title: 'Dashboard', href: '/super-admin/dashboard', icon: LayoutGrid },
     { title: 'LLM Provider', href: '/super-admin/llm', icon: Bot },
+    { title: 'Billing Config', href: creditPackagesIndex.url(), icon: CreditCard },
 ];
 
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {

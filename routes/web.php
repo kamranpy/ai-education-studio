@@ -10,6 +10,7 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Controllers\Student\ResultsController;
 use App\Http\Controllers\SuperAdmin\LlmSettingController;
+use App\Http\Controllers\SuperAdmin\CreditPackageController;
 use App\Http\Middleware\EnsureInstituteAdmin;
 use App\Http\Middleware\EnsureSuperAdmin;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('llm/test', [LlmSettingController::class, 'testConnection'])
             ->middleware('throttle:5,1')
             ->name('super_admin.llm.test');
+
+        Route::get('credit-packages', [CreditPackageController::class, 'index'])->name('super_admin.credit_packages.index');
+        Route::get('credit-packages/create', [CreditPackageController::class, 'create'])->name('super_admin.credit_packages.create');
+        Route::post('credit-packages', [CreditPackageController::class, 'store'])->name('super_admin.credit_packages.store');
+        Route::get('credit-packages/{package}/edit', [CreditPackageController::class, 'edit'])->name('super_admin.credit_packages.edit');
+        Route::put('credit-packages/{package}', [CreditPackageController::class, 'update'])->name('super_admin.credit_packages.update');
+        Route::delete('credit-packages/{package}', [CreditPackageController::class, 'destroy'])->name('super_admin.credit_packages.destroy');
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {
