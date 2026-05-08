@@ -27,6 +27,9 @@ class CreditPackageController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'features' => 'nullable|array',
+            'features.*' => 'string|max:255',
             'credits' => 'required|integer|min:1',
             'price_cents' => 'required|integer|min:0',
             'currency' => 'required|string|size:3',
@@ -51,6 +54,9 @@ class CreditPackageController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'features' => 'nullable|array',
+            'features.*' => 'string|max:255',
             'credits' => 'required|integer|min:1',
             'price_cents' => 'required|integer|min:0',
             'currency' => 'required|string|size:3',

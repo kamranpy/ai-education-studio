@@ -84,7 +84,7 @@ class ExamAttemptController extends Controller
         if (! $attempt) {
             Inertia::flash('toast', [
                 'type' => 'error',
-                'message' => __('Your institute does not have enough credits to start this exam. Please contact your administrator.'),
+                'message' => __('You cannot start this exam. Please contact your administrator.'),
             ]);
 
             return to_route('student.dashboard');

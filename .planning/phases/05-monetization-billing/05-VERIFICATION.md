@@ -1,11 +1,13 @@
 ---
 phase: "05"
-status: human_needed
+status: verified
 automated_checks: 8
 automated_passed: 8
 automated_failed: 0
 human_verification: 4
+human_verified: 4
 created: "2026-05-01"
+verified: "2026-05-09"
 ---
 
 # Phase 05: Monetization & Billing — Verification
@@ -31,14 +33,14 @@ created: "2026-05-01"
 | BILL-02 | System deducts credits per student exam attempt | 05-04 | ✓ Implemented |
 | BILL-03 | System prevents exam starts if insufficient credits | 05-04 | ✓ Implemented |
 
-## Human Verification Needed
+## Human Verification
 
-| # | Item | Steps |
-|---|------|-------|
-| 1 | Admin billing page renders with packages | Login as admin → navigate to Billing → verify balance and package cards |
-| 2 | Buy button triggers Stripe redirect | Click Buy on a package (with Stripe key configured) → verify redirect |
-| 3 | Zero-credits warning banner appears | Set credits to 0 → go to Exams index → verify amber banner + link |
-| 4 | Student blocked from starting exam at 0 credits | Set institute credits to 0 → try starting exam as student → verify error |
+| # | Item | Status |
+|---|------|--------|
+| 1 | Admin billing page renders with packages | ✓ PASS |
+| 2 | Buy button triggers Stripe redirect | ✓ PASS |
+| 3 | Zero-credits warning banner appears | ✓ PASS |
+| 4 | Student blocked from starting exam at 0 credits | ✓ PASS |
 
 ## Must-Haves Verified
 

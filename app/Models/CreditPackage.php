@@ -8,6 +8,8 @@ class CreditPackage extends Model
 {
     protected $fillable = [
         'name',
+        'description',
+        'features',
         'credits',
         'price_cents',
         'currency',
@@ -20,6 +22,7 @@ class CreditPackage extends Model
             'is_active' => 'boolean',
             'credits' => 'integer',
             'price_cents' => 'integer',
+            'features' => 'array',
         ];
     }
 }

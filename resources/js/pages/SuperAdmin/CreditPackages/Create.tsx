@@ -8,11 +8,21 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import SuperAdminLayout from '@/layouts/super-admin-layout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, Plus, X } from 'lucide-react';
 
 function Create() {
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, post, processing, errors } = useForm<{
+        name: string;
+        description: string;
+        features: string[];
+        credits: number;
+        price_cents: number;
+        currency: string;
+        is_active: boolean;
+    }>({
         name: '',
+        description: '',
+        features: [],
         credits: 100,
         price_cents: 1000,
         currency: 'usd',
@@ -22,6 +32,23 @@ function Create() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(packagesStore.url());
+    };
+
+    const addFeature = () => {
+        setData('features', [...data.features, '']);
+    };
+
+    const updateFeature = (index: number, value: string) => {
+        const updated = [...data.features];
+        updated[index] = value;
+        setData('features', updated);
+    };
+
+    const removeFeature = (index: number) => {
+        setData(
+            'features',
+            data.features.filter((_, i) => i !== index),
+        );
     };
 
     return (
@@ -45,19 +72,42 @@ function Create() {
                     className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
                 >
                     <div className="space-y-6">
+                        {/* Name */}
                         <div className="space-y-2">
                             <Label htmlFor="name">Package Name</Label>
                             <Input
                                 id="name"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
-                                placeholder="e.g. 100 Exams Basic"
+                                placeholder="e.g. Starter"
                             />
                             {errors.name && (
                                 <p className="text-sm text-red-500">{errors.name}</p>
                             )}
                         </div>
 
+                        {/* Description */}
+                        <div className="space-y-2">
+                            <Label htmlFor="description">
+                                Description{' '}
+                                <span className="text-zinc-400">(optional)</span>
+                            </Label>
+                            <Input
+                                id="description"
+                                value={data.description}
+                                onChange={(e) =>
+                                    setData('description', e.target.value)
+                                }
+                                placeholder="e.g. Perfect for small institutes getting started"
+                            />
+                            {errors.description && (
+                                <p className="text-sm text-red-500">
+                                    {errors.description}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Credits & Price */}
                         <div className="grid gap-6 sm:grid-cols-2">
                             <div className="space-y-2">
                                 <Label htmlFor="credits">Number of Credits</Label>
@@ -85,7 +135,10 @@ function Create() {
                                     min="0"
                                     value={data.price_cents}
                                     onChange={(e) =>
-                                        setData('price_cents', parseInt(e.target.value))
+                                        setData(
+                                            'price_cents',
+                                            parseInt(e.target.value),
+                                        )
                                     }
                                     placeholder="e.g. 1000 for $10.00"
                                 />
@@ -100,6 +153,7 @@ function Create() {
                             </div>
                         </div>
 
+                        {/* Currency */}
                         <div className="space-y-2">
                             <Label htmlFor="currency">Currency</Label>
                             <Input
@@ -117,6 +171,54 @@ function Create() {
                             )}
                         </div>
 
+                        {/* Features */}
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between">
+                                <Label>
+                                    Features{' '}
+                                    <span className="text-zinc-400">(optional)</span>
+                                </Label>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={addFeature}
+                                >
+                                    <Plus className="mr-1 size-3" />
+                                    Add Feature
+                                </Button>
+                            </div>
+                            {data.features.length === 0 && (
+                                <p className="text-sm text-zinc-400">
+                                    No features added yet. These appear as bullet points
+                                    on the billing page.
+                                </p>
+                            )}
+                            <div className="space-y-2">
+                                {data.features.map((feature, index) => (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <Input
+                                            value={feature}
+                                            onChange={(e) =>
+                                                updateFeature(index, e.target.value)
+                                            }
+                                            placeholder="e.g. AI-assisted grading included"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => removeFeature(index)}
+                                            className="shrink-0 text-zinc-400 hover:text-red-500"
+                                        >
+                                            <X className="size-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Active toggle */}
                         <div className="flex items-center gap-3 space-y-0 rounded-md border p-4">
                             <Switch
                                 id="is_active"
@@ -128,7 +230,8 @@ function Create() {
                             <div className="space-y-1 leading-none">
                                 <Label htmlFor="is_active">Active Package</Label>
                                 <p className="text-sm text-zinc-500">
-                                    Make this package available for institutes to purchase.
+                                    Make this package available for institutes to
+                                    purchase.
                                 </p>
                             </div>
                         </div>
@@ -145,6 +248,8 @@ function Create() {
     );
 }
 
-Create.layout = (page: React.ReactNode) => <SuperAdminLayout>{page}</SuperAdminLayout>;
+Create.layout = (page: React.ReactNode) => (
+    <SuperAdminLayout>{page}</SuperAdminLayout>
+);
 
 export default Create;
