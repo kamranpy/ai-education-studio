@@ -4,10 +4,13 @@ use App\Http\Controllers\Admin\ExamAttemptAdminController;
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
+use App\Http\Controllers\Institute\BillingController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Controllers\Student\ResultsController;
 use App\Http\Controllers\SuperAdmin\LlmSettingController;
+use App\Http\Controllers\SuperAdmin\CreditPackageController;
 use App\Http\Middleware\EnsureInstituteAdmin;
 use App\Http\Middleware\EnsureSuperAdmin;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +31,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('llm/test', [LlmSettingController::class, 'testConnection'])
             ->middleware('throttle:5,1')
             ->name('super_admin.llm.test');
+
+        Route::get('credit-packages', [CreditPackageController::class, 'index'])->name('super_admin.credit_packages.index');
+        Route::get('credit-packages/create', [CreditPackageController::class, 'create'])->name('super_admin.credit_packages.create');
+        Route::post('credit-packages', [CreditPackageController::class, 'store'])->name('super_admin.credit_packages.store');
+        Route::get('credit-packages/{package}/edit', [CreditPackageController::class, 'edit'])->name('super_admin.credit_packages.edit');
+        Route::put('credit-packages/{package}', [CreditPackageController::class, 'update'])->name('super_admin.credit_packages.update');
+        Route::delete('credit-packages/{package}', [CreditPackageController::class, 'destroy'])->name('super_admin.credit_packages.destroy');
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {
@@ -52,6 +62,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('exams/{exam}/attempts/{attempt}', [ExamAttemptAdminController::class, 'show'])->name('admin.exams.attempts.show');
         Route::post('exams/{exam}/attempts/{attempt}/override', [ExamAttemptAdminController::class, 'override'])->name('admin.exams.attempts.override');
         Route::post('exams/{exam}/attempts/{attempt}/mark-reviewed', [ExamAttemptAdminController::class, 'markReviewed'])->name('admin.exams.attempts.mark-reviewed');
+
+        Route::get('billing', [BillingController::class, 'index'])->name('admin.billing.index');
+        Route::post('billing/checkout', [BillingController::class, 'checkout'])->name('admin.billing.checkout');
+        Route::get('billing/success', [BillingController::class, 'success'])->name('admin.billing.success');
+        Route::get('billing/cancel', [BillingController::class, 'cancel'])->name('admin.billing.cancel');
     });
 
     Route::prefix('student')->group(function () {
@@ -67,5 +82,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('results', [ResultsController::class, 'index'])->name('student.results.index');
     });
 });
+
+// Stripe webhook — outside auth middleware, CSRF excluded in bootstrap/app.php
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
 
 require __DIR__.'/settings.php';

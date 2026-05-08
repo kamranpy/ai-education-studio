@@ -1,7 +1,8 @@
 import { index as examsIndex } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
+import { index as billingIndex } from '@/actions/App/Http/Controllers/Institute/BillingController';
 import { Link, usePage } from '@inertiajs/react';
-import { FileText, LayoutGrid, Settings, Users } from 'lucide-react';
+import { CreditCard, FileText, LayoutGrid, Settings, Users } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { edit as profileEdit } from '@/routes/profile';
@@ -10,6 +11,7 @@ const navItems = [
     { title: 'Dashboard', href: adminDashboard.url(), icon: LayoutGrid },
     { title: 'Users', href: usersIndex.url(), icon: Users },
     { title: 'Exams', href: examsIndex.url(), icon: FileText },
+    { title: 'Billing', href: billingIndex.url(), icon: CreditCard },
     { title: 'Settings', href: profileEdit.url(), icon: Settings },
 ];
 

@@ -6,6 +6,7 @@ import {
     publish as examsPublish,
     unpublish as examsUnpublish,
 } from '@/actions/App/Http/Controllers/Admin/ExamController';
+import { index as billingIndex } from '@/actions/App/Http/Controllers/Institute/BillingController';
 import { ExamStatusBadge } from '@/components/exam/exam-status-badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -41,8 +42,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import {
+    AlertTriangle,
     ChevronLeft,
     ChevronRight,
     FileText,
@@ -85,6 +87,8 @@ function ExamsIndex({
     exams: PaginatedExams;
     filters: Filters;
 }) {
+    const { auth } = usePage<{ auth: { user: { institute?: { credits: number } } } }>().props;
+    const credits = auth?.user?.institute?.credits ?? 0;
     const [search, setSearch] = useState(filters.search ?? '');
 
     function handleSearch(value: string) {
@@ -135,6 +139,26 @@ function ExamsIndex({
                         <Link href={examsCreate.url()}>+ New Exam</Link>
                     </Button>
                 </div>
+
+                {credits <= 0 && (
+                    <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950">
+                        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+                        <div>
+                            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                                Your institute has 0 exam credits remaining.
+                            </p>
+                            <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">
+                                Students will not be able to start new exams until you purchase a credit package.{' '}
+                                <Link
+                                    href={billingIndex.url()}
+                                    className="font-medium underline hover:no-underline"
+                                >
+                                    Go to Billing →
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <div className="relative flex-1">

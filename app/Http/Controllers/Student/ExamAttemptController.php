@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\GradeAttemptJob;
 use App\Models\Exam;
 use App\Models\ExamAttempt;
+use App\Models\Institute;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,13 +62,33 @@ class ExamAttemptController extends Controller
             abort(422, __('This exam has no questions.'));
         }
 
-        $attempt = ExamAttempt::create([
-            'user_id' => $user->id,
-            'exam_id' => $exam->id,
-            'status' => 'in_progress',
-            'question_order' => $questionIds,
-            'started_at' => now(),
-        ]);
+        // Atomic credit deduction — block if institute has no credits (BILL-02, BILL-03)
+        $attempt = DB::transaction(function () use ($user, $exam, $questionIds) {
+            $institute = Institute::where('id', $user->institute_id)->lockForUpdate()->first();
+
+            if (! $institute || $institute->credits <= 0) {
+                return null;
+            }
+
+            $institute->decrement('credits', 1);
+
+            return ExamAttempt::create([
+                'user_id' => $user->id,
+                'exam_id' => $exam->id,
+                'status' => 'in_progress',
+                'question_order' => $questionIds,
+                'started_at' => now(),
+            ]);
+        });
+
+        if (! $attempt) {
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => __('You cannot start this exam. Please contact your administrator.'),
+            ]);
+
+            return to_route('student.dashboard');
+        }
 
         return to_route('student.attempts.show', [
             'exam' => $exam->id,
