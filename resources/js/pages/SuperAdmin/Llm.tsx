@@ -122,7 +122,7 @@ function Llm({ setting, providers }: Props) {
     }
 
     return (
-        <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="w-full">
             <div className="mb-8">
                 <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                     LLM Provider Settings

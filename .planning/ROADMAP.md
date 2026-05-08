@@ -12,7 +12,7 @@
 - [x] **Phase 4: AI Evaluation & Grading** - Exams are automatically evaluated and graded using configured AI models
 - [x] **Phase 04.1: Exam Creation Enhancements & Evaluation Settings** - Enhance Exam Builder UI and student experience
 - [x] **Phase 5: Monetization & Billing** - Institutes are billed per exam attempt using a credit system
-- [ ] **Phase 6: Super Admin & Global Management** - Super Admin oversees institutes, manages global billing, and views global analytics
+- [x] **Phase 6: Super Admin & Global Management** - Super Admin oversees institutes, manages global billing, and views global analytics
 
 ## Phase Details
 
@@ -127,4 +127,4 @@ Plans:
 | 4. AI Evaluation & Grading | 4/4 | Completed | 2026-04-26 |
 | 04.1. Enhancements & Settings | 1/1 | Completed | 2026-04-30 |
 | 5. Monetization & Billing | 4/4 | Completed | 2026-05-09 |
-| 6. Super Admin & Global Management | 0/0 | Not started | - |
+| 6. Super Admin & Global Management | 4/4 | Completed | 2026-05-09 |

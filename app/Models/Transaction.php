@@ -14,6 +14,8 @@ class Transaction extends Model
         'amount_cents',
         'currency',
         'status',
+        'type',
+        'notes',
     ];
 
     protected function casts(): array

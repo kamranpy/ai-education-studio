@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Institute;
 
 use App\Http\Controllers\Controller;
 use App\Models\CreditPackage;
+use App\Models\StripeSetting;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -55,7 +56,9 @@ class BillingController extends Controller
         $package = CreditPackage::findOrFail($validated['package_id']);
         $institute = $request->user()->institute;
 
-        Stripe::setApiKey(config('services.stripe.secret'));
+        $stripeSetting = StripeSetting::where('is_active', true)->first();
+        $stripeSecretKey = $stripeSetting?->secret_key ?? config('services.stripe.secret');
+        Stripe::setApiKey($stripeSecretKey);
 
         $session = StripeSession::create([
             'payment_method_types' => ['card'],
