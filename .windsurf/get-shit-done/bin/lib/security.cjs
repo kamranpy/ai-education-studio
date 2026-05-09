@@ -47,6 +47,7 @@ function validatePath(filePath, baseDir, opts = {}) {
   // Resolve symlinks in base directory to handle macOS /var -> /private/var
   // and similar platform-specific symlink chains
   let resolvedBase;
+
   try {
     resolvedBase = fs.realpathSync(path.resolve(baseDir));
   } catch {
@@ -59,6 +60,7 @@ function validatePath(filePath, baseDir, opts = {}) {
     if (!opts.allowAbsolute) {
       return { safe: false, resolved: '', error: 'Absolute paths not allowed' };
     }
+
     resolvedPath = path.resolve(filePath);
   } else {
     resolvedPath = path.resolve(baseDir, filePath);
@@ -71,6 +73,7 @@ function validatePath(filePath, baseDir, opts = {}) {
     // File may not exist yet (e.g., about to be created) — use logical resolution
     // but still resolve the parent directory if it exists
     const parentDir = path.dirname(resolvedPath);
+
     try {
       const realParent = fs.realpathSync(parentDir);
       resolvedPath = path.join(realParent, path.basename(resolvedPath));
@@ -102,9 +105,11 @@ function validatePath(filePath, baseDir, opts = {}) {
  */
 function requireSafePath(filePath, baseDir, label, opts = {}) {
   const result = validatePath(filePath, baseDir, opts);
+
   if (!result.safe) {
     throw new Error(`${label || 'Path'} validation failed: ${result.error}`);
   }
+
   return result.resolved;
 }
 
@@ -216,6 +221,7 @@ function scanForInjection(text, opts = {}) {
     // Check for extremely long strings that could be prompt stuffing.
     // Normalize CRLF → LF before measuring so Windows checkouts don't inflate the count.
     const normalizedLength = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').length;
+
     if (normalizedLength > 50000) {
       findings.push(`Suspicious text length: ${normalizedLength} chars (potential prompt stuffing)`);
     }
@@ -235,7 +241,9 @@ function scanForInjection(text, opts = {}) {
  * @returns {string} Sanitized text
  */
 function sanitizeForPrompt(text) {
-  if (!text || typeof text !== 'string') return text;
+  if (!text || typeof text !== 'string') {
+return text;
+}
 
   let sanitized = text;
 
@@ -265,7 +273,9 @@ function sanitizeForPrompt(text) {
  * @returns {string} Sanitized text
  */
 function sanitizeForDisplay(text) {
-  if (!text || typeof text !== 'string') return text;
+  if (!text || typeof text !== 'string') {
+return text;
+}
 
   let sanitized = sanitizeForPrompt(text);
 
@@ -337,6 +347,7 @@ function safeJsonParse(text, opts = {}) {
 
   try {
     const value = JSON.parse(text);
+
     return { ok: true, value };
   } catch (err) {
     return { ok: false, error: `${label}: parse error — ${err.message}` };
@@ -420,8 +431,10 @@ function validatePromptStructure(text, fileType) {
   const violations = [];
   const tagRegex = /<([A-Za-z][A-Za-z0-9_-]*)/g;
   let match;
+
   while ((match = tagRegex.exec(text)) !== null) {
     const tag = match[1].toLowerCase();
+
     if (!KNOWN_VALID_TAGS.has(tag)) {
       violations.push(`Unknown XML tag in ${fileType} file: <${tag}>`);
     }
@@ -433,17 +446,24 @@ function validatePromptStructure(text, fileType) {
 // ─── Layer 4: Paragraph-Level Entropy Anomaly Detection ─────────────────────
 
 function shannonEntropy(text) {
-  if (!text || text.length === 0) return 0;
+  if (!text || text.length === 0) {
+return 0;
+}
+
   const freq = {};
+
   for (const ch of text) {
     freq[ch] = (freq[ch] || 0) + 1;
   }
+
   const len = text.length;
   let entropy = 0;
+
   for (const count of Object.values(freq)) {
     const p = count / len;
     entropy -= p * Math.log2(p);
   }
+
   return entropy;
 }
 
@@ -462,8 +482,12 @@ function scanEntropyAnomalies(text) {
   const paragraphs = text.split(/\n\n+/);
 
   for (const para of paragraphs) {
-    if (para.length <= 50) continue;
+    if (para.length <= 50) {
+continue;
+}
+
     const entropy = shannonEntropy(para);
+
     if (entropy > 5.5) {
       findings.push(
         `High-entropy paragraph detected (${entropy.toFixed(2)} bits/char) — possible encoded payload`

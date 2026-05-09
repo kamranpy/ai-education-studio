@@ -42,9 +42,11 @@ function formatAgentToModelMapAsTable(agentToModelMap) {
   const sep = '─'.repeat(agentWidth + 2) + '┼' + '─'.repeat(modelWidth + 2);
   const header = ' ' + 'Agent'.padEnd(agentWidth) + ' │ ' + 'Model'.padEnd(modelWidth);
   let agentToModelTable = header + '\n' + sep + '\n';
+
   for (const [agent, model] of Object.entries(agentToModelMap)) {
     agentToModelTable += ' ' + agent.padEnd(agentWidth) + ' │ ' + model.padEnd(modelWidth) + '\n';
   }
+
   return agentToModelTable;
 }
 
@@ -56,9 +58,11 @@ function formatAgentToModelMapAsTable(agentToModelMap) {
  */
 function getAgentToModelMapForProfile(normalizedProfile) {
   const agentToModelMap = {};
+
   for (const [agent, profileToModelMap] of Object.entries(MODEL_PROFILES)) {
     agentToModelMap[agent] = profileToModelMap[normalizedProfile];
   }
+
   return agentToModelMap;
 }
 

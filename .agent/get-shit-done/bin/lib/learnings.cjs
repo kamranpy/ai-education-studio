@@ -13,10 +13,10 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
+const fs = require('fs');
 const os = require('os');
+const path = require('path');
 const { output, error: coreError } = require('./core.cjs');
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -65,6 +65,7 @@ function contentHash(learning, sourceProject) {
 function generateId() {
   const ts = Date.now().toString(36);
   const rand = crypto.randomBytes(4).toString('hex');
+
   return `${ts}-${rand}`;
 }
 
@@ -77,9 +78,11 @@ function generateId() {
 function readLearningFile(filePath) {
   try {
     const content = fs.readFileSync(filePath, 'utf-8');
+
     return JSON.parse(content);
   } catch (err) {
     process.stderr.write(`Warning: skipping malformed file ${filePath}: ${err.message}\n`);
+
     return null;
   }
 }
@@ -107,8 +110,10 @@ function learningsWrite(entry, opts) {
 
   // Check for duplicate by scanning existing files
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+
   for (const file of files) {
     const existing = readLearningFile(path.join(dir, file));
+
     if (existing && existing.content_hash === hash) {
       return { id: existing.id, created: false, content_hash: hash };
     }
@@ -126,6 +131,7 @@ function learningsWrite(entry, opts) {
   };
 
   fs.writeFileSync(path.join(dir, `${id}.json`), JSON.stringify(record, null, 2), 'utf-8');
+
   return { id, created: true, content_hash: hash };
 }
 
@@ -138,10 +144,17 @@ function learningsWrite(entry, opts) {
  * @returns {object|null}
  */
 function learningsRead(id, opts) {
-  if (!/^[a-z0-9]+-[a-f0-9]+$/.test(id)) return null;
+  if (!/^[a-z0-9]+-[a-f0-9]+$/.test(id)) {
+return null;
+}
+
   const dir = getStoreDir(opts);
   const filePath = path.join(dir, `${id}.json`);
-  if (!fs.existsSync(filePath)) return null;
+
+  if (!fs.existsSync(filePath)) {
+return null;
+}
+
   return readLearningFile(filePath);
 }
 
@@ -154,17 +167,25 @@ function learningsRead(id, opts) {
  */
 function learningsList(opts) {
   const dir = getStoreDir(opts);
-  if (!fs.existsSync(dir)) return [];
+
+  if (!fs.existsSync(dir)) {
+return [];
+}
 
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
   const results = [];
+
   for (const file of files) {
     const record = readLearningFile(path.join(dir, file));
-    if (record) results.push(record);
+
+    if (record) {
+results.push(record);
+}
   }
 
   // Sort by date descending (newest first)
   results.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   return results;
 }
 
@@ -179,9 +200,11 @@ function learningsList(opts) {
  */
 function learningsQuery(query, opts) {
   const all = learningsList(opts);
+
   if (query && query.tag) {
     return all.filter(r => r.tags && r.tags.includes(query.tag));
   }
+
   return all;
 }
 
@@ -194,11 +217,19 @@ function learningsQuery(query, opts) {
  * @returns {boolean} true if deleted, false if not found
  */
 function learningsDelete(id, opts) {
-  if (!/^[a-z0-9]+-[a-f0-9]+$/.test(id)) return false;
+  if (!/^[a-z0-9]+-[a-f0-9]+$/.test(id)) {
+return false;
+}
+
   const dir = getStoreDir(opts);
   const filePath = path.join(dir, `${id}.json`);
-  if (!fs.existsSync(filePath)) return false;
+
+  if (!fs.existsSync(filePath)) {
+return false;
+}
+
   fs.unlinkSync(filePath);
+
   return true;
 }
 
@@ -221,6 +252,7 @@ function learningsDelete(id, opts) {
  */
 function learningsCopyFromProject(planningDir, opts) {
   const learningsPath = path.join(planningDir, 'LEARNINGS.md');
+
   if (!fs.existsSync(learningsPath)) {
     return { total: 0, created: 0, skipped: 0 };
   }
@@ -237,7 +269,10 @@ function learningsCopyFromProject(planningDir, opts) {
     const lines = section.trim().split('\n');
     const title = lines[0].trim();
     const body = lines.slice(1).join('\n').trim();
-    if (!body) continue;
+
+    if (!body) {
+continue;
+}
 
     // Extract tags from title (simple: use words as tags)
     const tags = title.toLowerCase().split(/\s+/).filter(w => w.length > 2);
@@ -269,6 +304,7 @@ function learningsCopyFromProject(planningDir, opts) {
  */
 function learningsPrune(olderThan, opts) {
   const match = /^(\d+)d$/.exec(olderThan);
+
   if (!match) {
     throw new Error(`Invalid duration format: "${olderThan}" — expected format like "90d"`);
   }
@@ -277,7 +313,9 @@ function learningsPrune(olderThan, opts) {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   const dir = getStoreDir(opts);
 
-  if (!fs.existsSync(dir)) return { removed: 0, kept: 0 };
+  if (!fs.existsSync(dir)) {
+return { removed: 0, kept: 0 };
+}
 
   const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
   let removed = 0;
@@ -286,9 +324,13 @@ function learningsPrune(olderThan, opts) {
   for (const file of files) {
     const filePath = path.join(dir, file);
     const record = readLearningFile(filePath);
-    if (!record) continue;
+
+    if (!record) {
+continue;
+}
 
     const recordDate = new Date(record.date);
+
     if (recordDate < cutoff) {
       fs.unlinkSync(filePath);
       removed++;
@@ -355,6 +397,7 @@ function cmdLearningsDelete(id, raw) {
   if (!/^[a-z0-9]+-[a-f0-9]+$/.test(id)) {
     coreError(`Invalid learning ID: "${id}"`);
   }
+
   const deleted = learningsDelete(id);
   output({ id, deleted }, raw);
 }

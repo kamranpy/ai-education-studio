@@ -1,14 +1,23 @@
+import { Head, Link, useForm } from '@inertiajs/react';
+import {
+    CircleCheck,
+    ListChecks,
+    Lock,
+    PenLine,
+    Plus,
+} from 'lucide-react';
 import {
     index as examsIndex,
     store as examsStore,
     update as examsUpdate,
 } from '@/actions/App/Http/Controllers/Admin/ExamController';
-import InputError from '@/components/input-error';
 import {
-    type ChoiceData,
-    type QuestionData,
-    QuestionCard,
+    
+    
+    QuestionCard
 } from '@/components/exam/question-card';
+import type {ChoiceData, QuestionData} from '@/components/exam/question-card';
+import InputError from '@/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,14 +39,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import {
-    CircleCheck,
-    ListChecks,
-    Lock,
-    PenLine,
-    Plus,
-} from 'lucide-react';
 
 type QuestionChoice = {
     id: number;
@@ -90,12 +91,14 @@ function defaultChoicesForType(type: QuestionType): ChoiceData[] {
             { text: '', is_correct: false },
         ];
     }
+
     if (type === 'true_false') {
         return [
             { text: 'True', is_correct: true },
             { text: 'False', is_correct: false },
         ];
     }
+
     return [];
 }
 
@@ -159,7 +162,11 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
 
     function moveQuestion(index: number, direction: 'up' | 'down') {
         const to = direction === 'up' ? index - 1 : index + 1;
-        if (to < 0 || to >= data.questions.length) return;
+
+        if (to < 0 || to >= data.questions.length) {
+return;
+}
+
         const updated = [...data.questions];
         const [item] = updated.splice(index, 1);
         updated.splice(to, 0, item);
@@ -170,7 +177,10 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
         setData(
             'questions',
             data.questions.map((q, i) => {
-                if (i !== questionIndex) return q;
+                if (i !== questionIndex) {
+return q;
+}
+
                 return {
                     ...q,
                     choices: [
@@ -186,14 +196,19 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
         setData(
             'questions',
             data.questions.map((q, i) => {
-                if (i !== questionIndex) return q;
+                if (i !== questionIndex) {
+return q;
+}
+
                 const newChoices = q.choices.filter(
                     (_, ci) => ci !== choiceIndex,
                 );
                 const hasCorrect = newChoices.some((c) => c.is_correct);
+
                 if (!hasCorrect && newChoices.length > 0) {
                     newChoices[0] = { ...newChoices[0], is_correct: true };
                 }
+
                 return { ...q, choices: newChoices };
             }),
         );
@@ -208,7 +223,10 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
         setData(
             'questions',
             data.questions.map((q, i) => {
-                if (i !== questionIndex) return q;
+                if (i !== questionIndex) {
+return q;
+}
+
                 return {
                     ...q,
                     choices: q.choices.map((c, ci) =>
@@ -223,7 +241,10 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
         setData(
             'questions',
             data.questions.map((q, i) => {
-                if (i !== questionIndex) return q;
+                if (i !== questionIndex) {
+return q;
+}
+
                 return {
                     ...q,
                     choices: q.choices.map((c, ci) => ({

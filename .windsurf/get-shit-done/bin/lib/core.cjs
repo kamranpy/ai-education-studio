@@ -2,11 +2,11 @@
  * Core — Shared utilities, constants, and internal helpers
  */
 
+const { execSync, execFileSync, spawnSync } = require('child_process');
+const crypto = require('crypto');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const crypto = require('crypto');
-const { execSync, execFileSync, spawnSync } = require('child_process');
 const { MODEL_PROFILES } = require('./model-profiles.cjs');
 
 const WORKSTREAM_SESSION_ENV_KEYS = [
@@ -41,12 +41,21 @@ function toPosixPath(p) {
  */
 function detectSubRepos(cwd) {
   const results = [];
+
   try {
     const entries = fs.readdirSync(cwd, { withFileTypes: true });
+
     for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
+      if (!entry.isDirectory()) {
+continue;
+}
+
+      if (entry.name.startsWith('.') || entry.name === 'node_modules') {
+continue;
+}
+
       const gitPath = path.join(cwd, entry.name, '.git');
+
       try {
         if (fs.existsSync(gitPath)) {
           results.push(entry.name);
@@ -54,6 +63,7 @@ function detectSubRepos(cwd) {
       } catch {}
     }
   } catch {}
+
   return results.sort();
 }
 
@@ -81,6 +91,7 @@ function findProjectRoot(startDir) {
   // If startDir already contains .planning/, it IS the project root.
   // Do not walk up to a parent workspace that also has .planning/ (#1362).
   const ownPlanning = path.join(resolved, '.planning');
+
   if (fs.existsSync(ownPlanning) && fs.statSync(ownPlanning).isDirectory()) {
     return startDir;
   }
@@ -91,23 +102,40 @@ function findProjectRoot(startDir) {
   // as well as the common case where .git lives at the same level as .planning/.
   function isInsideGitRepo(candidateParent) {
     let d = resolved;
+
     while (d !== root) {
-      if (fs.existsSync(path.join(d, '.git'))) return true;
-      if (d === candidateParent) break;
+      if (fs.existsSync(path.join(d, '.git'))) {
+return true;
+}
+
+      if (d === candidateParent) {
+break;
+}
+
       d = path.dirname(d);
     }
+
     return false;
   }
 
   let dir = resolved;
+
   while (dir !== root) {
     const parent = path.dirname(dir);
-    if (parent === dir) break; // filesystem root
-    if (parent === homedir) break; // never go above home
+
+    if (parent === dir) {
+break;
+} // filesystem root
+
+    if (parent === homedir) {
+break;
+} // never go above home
 
     const parentPlanning = path.join(parent, '.planning');
+
     if (fs.existsSync(parentPlanning) && fs.statSync(parentPlanning).isDirectory()) {
       const configPath = path.join(parentPlanning, 'config.json');
+
       try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
         const subRepos = config.sub_repos || config.planning?.sub_repos || [];
@@ -116,6 +144,7 @@ function findProjectRoot(startDir) {
         if (Array.isArray(subRepos) && subRepos.length > 0) {
           const relPath = path.relative(parent, resolved);
           const topSegment = relPath.split(path.sep)[0];
+
           if (subRepos.includes(topSegment)) {
             return parent;
           }
@@ -134,8 +163,10 @@ function findProjectRoot(startDir) {
         return parent;
       }
     }
+
     dir = parent;
   }
+
   return startDir;
 }
 
@@ -154,11 +185,17 @@ function reapStaleTempFiles(prefix = 'gsd-', { maxAgeMs = 5 * 60 * 1000, dirsOnl
     const tmpDir = require('os').tmpdir();
     const now = Date.now();
     const entries = fs.readdirSync(tmpDir);
+
     for (const entry of entries) {
-      if (!entry.startsWith(prefix)) continue;
+      if (!entry.startsWith(prefix)) {
+continue;
+}
+
       const fullPath = path.join(tmpDir, entry);
+
       try {
         const stat = fs.statSync(fullPath);
+
         if (now - stat.mtimeMs > maxAgeMs) {
           if (stat.isDirectory()) {
             fs.rmSync(fullPath, { recursive: true, force: true });
@@ -177,10 +214,12 @@ function reapStaleTempFiles(prefix = 'gsd-', { maxAgeMs = 5 * 60 * 1000, dirsOnl
 
 function output(result, raw, rawValue) {
   let data;
+
   if (raw && rawValue !== undefined) {
     data = String(rawValue);
   } else {
     const json = JSON.stringify(result, null, 2);
+
     // Large payloads exceed Windsurf's Bash tool buffer (~50KB).
     // Write to tmpfile and output the path prefixed with @file: so callers can detect it.
     if (json.length > 50000) {
@@ -192,6 +231,7 @@ function output(result, raw, rawValue) {
       data = json;
     }
   }
+
   // process.stdout.write() is async when stdout is a pipe — process.exit()
   // can tear down the process before the reader consumes the buffer.
   // fs.writeSync(1, ...) blocks until the kernel accepts the bytes, and
@@ -255,7 +295,10 @@ function loadConfig(cwd) {
       const depthToGranularity = { quick: 'coarse', standard: 'standard', comprehensive: 'fine' };
       parsed.granularity = depthToGranularity[parsed.depth] || parsed.depth;
       delete parsed.depth;
-      try { fs.writeFileSync(configPath, JSON.stringify(parsed, null, 2), 'utf-8'); } catch { /* intentionally empty */ }
+
+      try {
+ fs.writeFileSync(configPath, JSON.stringify(parsed, null, 2), 'utf-8'); 
+} catch { /* intentionally empty */ }
     }
 
     // Auto-detect and sync sub_repos: scan for child directories with .git
@@ -264,9 +307,14 @@ function loadConfig(cwd) {
     // Migrate legacy "multiRepo: true" boolean → sub_repos array
     if (parsed.multiRepo === true && !parsed.sub_repos && !parsed.planning?.sub_repos) {
       const detected = detectSubRepos(cwd);
+
       if (detected.length > 0) {
         parsed.sub_repos = detected;
-        if (!parsed.planning) parsed.planning = {};
+
+        if (!parsed.planning) {
+parsed.planning = {};
+}
+
         parsed.planning.commit_docs = false;
         delete parsed.multiRepo;
         configDirty = true;
@@ -275,10 +323,13 @@ function loadConfig(cwd) {
 
     // Keep sub_repos in sync with actual filesystem
     const currentSubRepos = parsed.sub_repos || parsed.planning?.sub_repos || [];
+
     if (Array.isArray(currentSubRepos) && currentSubRepos.length > 0) {
       const detected = detectSubRepos(cwd);
+
       if (detected.length > 0) {
         const sorted = [...currentSubRepos].sort();
+
         if (JSON.stringify(sorted) !== JSON.stringify(detected)) {
           parsed.sub_repos = detected;
           configDirty = true;
@@ -288,7 +339,9 @@ function loadConfig(cwd) {
 
     // Persist sub_repos changes (migration or sync)
     if (configDirty) {
-      try { fs.writeFileSync(configPath, JSON.stringify(parsed, null, 2), 'utf-8'); } catch {}
+      try {
+ fs.writeFileSync(configPath, JSON.stringify(parsed, null, 2), 'utf-8'); 
+} catch {}
     }
 
     // Warn about unrecognized top-level keys so users don't silently lose config.
@@ -307,6 +360,7 @@ function loadConfig(cwd) {
       'depth', 'multiRepo',
     ]);
     const unknownKeys = Object.keys(parsed).filter(k => !KNOWN_TOP_LEVEL.has(k));
+
     if (unknownKeys.length > 0) {
       process.stderr.write(
         `gsd-tools: warning: unknown config key(s) in .planning/config.json: ${unknownKeys.join(', ')} — these will be ignored\n`
@@ -314,17 +368,28 @@ function loadConfig(cwd) {
     }
 
     const get = (key, nested) => {
-      if (parsed[key] !== undefined) return parsed[key];
+      if (parsed[key] !== undefined) {
+return parsed[key];
+}
+
       if (nested && parsed[nested.section] && parsed[nested.section][nested.field] !== undefined) {
         return parsed[nested.section][nested.field];
       }
+
       return undefined;
     };
 
     const parallelization = (() => {
       const val = get('parallelization');
-      if (typeof val === 'boolean') return val;
-      if (typeof val === 'object' && val !== null && 'enabled' in val) return val.enabled;
+
+      if (typeof val === 'boolean') {
+return val;
+}
+
+      if (typeof val === 'object' && val !== null && 'enabled' in val) {
+return val.enabled;
+}
+
       return defaults.parallelization;
     })();
 
@@ -332,11 +397,18 @@ function loadConfig(cwd) {
       model_profile: get('model_profile') ?? defaults.model_profile,
       commit_docs: (() => {
         const explicit = get('commit_docs', { section: 'planning', field: 'commit_docs' });
+
         // If explicitly set in config, respect the user's choice
-        if (explicit !== undefined) return explicit;
+        if (explicit !== undefined) {
+return explicit;
+}
+
         // Auto-detection: when no explicit value and .planning/ is gitignored,
         // default to false instead of true
-        if (isGitIgnored(cwd, '.planning/')) return false;
+        if (isGitIgnored(cwd, '.planning/')) {
+return false;
+}
+
         return defaults.commit_docs;
       })(),
       search_gitignored: get('search_gitignored', { section: 'planning', field: 'search_gitignored' }) ?? defaults.search_gitignored,
@@ -370,11 +442,13 @@ function loadConfig(cwd) {
     if (fs.existsSync(planningDir(cwd))) {
       return defaults;
     }
+
     try {
       const home = process.env.GSD_HOME || os.homedir();
       const globalDefaultsPath = path.join(home, '.gsd', 'defaults.json');
       const raw = fs.readFileSync(globalDefaultsPath, 'utf-8');
       const globalDefaults = JSON.parse(raw);
+
       return {
         ...defaults,
         model_profile: globalDefaults.model_profile ?? defaults.model_profile,
@@ -412,6 +486,7 @@ function isGitIgnored(cwd, targetPath) {
       cwd,
       stdio: 'pipe',
     });
+
     return true;
   } catch {
     return false;
@@ -432,7 +507,9 @@ function isGitIgnored(cwd, targetPath) {
  *   MD047 — Files end with a single newline
  */
 function normalizeMd(content) {
-  if (!content || typeof content !== 'string') return content;
+  if (!content || typeof content !== 'string') {
+return content;
+}
 
   // Normalize line endings to LF for consistent processing
   let text = content.replace(/\r\n/g, '\n');
@@ -444,6 +521,7 @@ function normalizeMd(content) {
   const fenceRegex = /^```/;
   const insideFence = new Array(lines.length);
   let fenceOpen = false;
+
   for (let i = 0; i < lines.length; i++) {
     if (fenceRegex.test(lines[i].trimEnd())) {
       if (fenceOpen) {
@@ -492,6 +570,7 @@ function normalizeMd(content) {
     // MD022: Blank line after headings
     if (/^#{1,6}\s/.test(trimmed) && i < lines.length - 1) {
       const next = lines[i + 1];
+
       if (next !== undefined && next.trimEnd() !== '') {
         result.push('');
       }
@@ -500,6 +579,7 @@ function normalizeMd(content) {
     // MD031: Blank line after closing fenced code blocks
     if (/^```\s*$/.test(trimmed) && i > 0 && insideFence[i - 1] && i < lines.length - 1) {
       const next = lines[i + 1];
+
       if (next !== undefined && next.trimEnd() !== '') {
         result.push('');
       }
@@ -508,6 +588,7 @@ function normalizeMd(content) {
     // MD032: Blank line after last list item in a block
     if (/^(\s*[-*+]\s|\s*\d+\.\s)/.test(line) && i < lines.length - 1) {
       const next = lines[i + 1];
+
       if (next !== undefined && next.trimEnd() !== '' &&
           !/^(\s*[-*+]\s|\s*\d+\.\s)/.test(next) &&
           !/^\s/.test(next)) {
@@ -534,6 +615,7 @@ function execGit(cwd, args) {
     stdio: 'pipe',
     encoding: 'utf-8',
   });
+
   return {
     exitCode: result.status ?? 1,
     stdout: (result.stdout ?? '').toString().trim(),
@@ -559,7 +641,9 @@ function resolveWorktreeRoot(cwd) {
   const gitDir = execGit(cwd, ['rev-parse', '--git-dir']);
   const commonDir = execGit(cwd, ['rev-parse', '--git-common-dir']);
 
-  if (gitDir.exitCode !== 0 || commonDir.exitCode !== 0) return cwd;
+  if (gitDir.exitCode !== 0 || commonDir.exitCode !== 0) {
+return cwd;
+}
 
   // In a linked worktree, .git is a file pointing to .git/worktrees/<name>
   // and git-common-dir points to the main repo's .git directory
@@ -587,7 +671,9 @@ function withPlanningLock(cwd, fn) {
   const start = Date.now();
 
   // Ensure .planning/ exists
-  try { fs.mkdirSync(planningDir(cwd), { recursive: true }); } catch { /* ok */ }
+  try {
+ fs.mkdirSync(planningDir(cwd), { recursive: true }); 
+} catch { /* ok */ }
 
   while (Date.now() - start < lockTimeout) {
     try {
@@ -602,28 +688,38 @@ function withPlanningLock(cwd, fn) {
       try {
         return fn();
       } finally {
-        try { fs.unlinkSync(lockPath); } catch { /* already released */ }
+        try {
+ fs.unlinkSync(lockPath); 
+} catch { /* already released */ }
       }
     } catch (err) {
       if (err.code === 'EEXIST') {
         // Lock exists — check if stale (>30s old)
         try {
           const stat = fs.statSync(lockPath);
+
           if (Date.now() - stat.mtimeMs > 30000) {
             fs.unlinkSync(lockPath);
             continue; // retry
           }
-        } catch { continue; }
+        } catch {
+ continue; 
+}
 
         // Wait and retry (cross-platform, no shell dependency)
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 100);
         continue;
       }
+
       throw err;
     }
   }
+
   // Timeout — force acquire (stale lock recovery)
-  try { fs.unlinkSync(lockPath); } catch { /* ok */ }
+  try {
+ fs.unlinkSync(lockPath); 
+} catch { /* ok */ }
+
   return fn();
 }
 
@@ -646,21 +742,35 @@ function withPlanningLock(cwd, fn) {
  * @param {string} [project] - explicit project name; if omitted, checks GSD_PROJECT env var
  */
 function planningDir(cwd, ws, project) {
-  if (project === undefined) project = process.env.GSD_PROJECT || null;
-  if (ws === undefined) ws = process.env.GSD_WORKSTREAM || null;
+  if (project === undefined) {
+project = process.env.GSD_PROJECT || null;
+}
+
+  if (ws === undefined) {
+ws = process.env.GSD_WORKSTREAM || null;
+}
 
   // Reject path separators and traversal components in project/workstream names
   const BAD_SEGMENT = /[/\\]|\.\./;
+
   if (project && BAD_SEGMENT.test(project)) {
     throw new Error(`GSD_PROJECT contains invalid path characters: ${project}`);
   }
+
   if (ws && BAD_SEGMENT.test(ws)) {
     throw new Error(`GSD_WORKSTREAM contains invalid path characters: ${ws}`);
   }
 
   let base = path.join(cwd, '.planning');
-  if (project) base = path.join(base, project);
-  if (ws) base = path.join(base, 'workstreams', ws);
+
+  if (project) {
+base = path.join(base, project);
+}
+
+  if (ws) {
+base = path.join(base, 'workstreams', ws);
+}
+
   return base;
 }
 
@@ -677,6 +787,7 @@ function planningRoot(cwd) {
 function planningPaths(cwd, ws) {
   const base = planningDir(cwd, ws);
   const root = path.join(cwd, '.planning');
+
   return {
     planning: base,
     state: path.join(base, 'STATE.md'),
@@ -691,13 +802,20 @@ function planningPaths(cwd, ws) {
 // ─── Active Workstream Detection ─────────────────────────────────────────────
 
 function sanitizeWorkstreamSessionToken(value) {
-  if (value === null || value === undefined) return null;
+  if (value === null || value === undefined) {
+return null;
+}
+
   const token = String(value).trim().replace(/[^a-zA-Z0-9._-]+/g, '_').replace(/^_+|_+$/g, '');
+
   return token ? token.slice(0, 160) : null;
 }
 
 function probeControllingTtyToken() {
-  if (didProbeControllingTtyToken) return cachedControllingTtyToken;
+  if (didProbeControllingTtyToken) {
+return cachedControllingTtyToken;
+}
+
   didProbeControllingTtyToken = true;
 
   // `tty` reads stdin. When stdin is already non-interactive, spawning it only
@@ -711,9 +829,13 @@ function probeControllingTtyToken() {
       encoding: 'utf-8',
       stdio: ['inherit', 'pipe', 'ignore'],
     }).trim();
+
     if (ttyPath && ttyPath !== 'not a tty') {
       const token = sanitizeWorkstreamSessionToken(ttyPath.replace(/^\/dev\//, ''));
-      if (token) cachedControllingTtyToken = `tty-${token}`;
+
+      if (token) {
+cachedControllingTtyToken = `tty-${token}`;
+}
     }
   } catch {}
 
@@ -723,7 +845,10 @@ function probeControllingTtyToken() {
 function getControllingTtyToken() {
   for (const envKey of ['TTY', 'SSH_TTY']) {
     const token = sanitizeWorkstreamSessionToken(process.env[envKey]);
-    if (token) return `tty-${token.replace(/^dev_/, '')}`;
+
+    if (token) {
+return `tty-${token.replace(/^dev_/, '')}`;
+}
   }
 
   return probeControllingTtyToken();
@@ -742,7 +867,10 @@ function getWorkstreamSessionKey() {
   for (const envKey of WORKSTREAM_SESSION_ENV_KEYS) {
     const raw = process.env[envKey];
     const token = sanitizeWorkstreamSessionToken(raw);
-    if (token) return `${envKey.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${token}`;
+
+    if (token) {
+return `${envKey.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${token}`;
+}
   }
 
   return getControllingTtyToken();
@@ -750,7 +878,10 @@ function getWorkstreamSessionKey() {
 
 function getSessionScopedWorkstreamFile(cwd) {
   const sessionKey = getWorkstreamSessionKey();
-  if (!sessionKey) return null;
+
+  if (!sessionKey) {
+return null;
+}
 
   // Use realpathSync.native so the hash is derived from the canonical filesystem
   // path. On Windows, path.resolve returns whatever case the caller supplied,
@@ -758,11 +889,13 @@ function getSessionScopedWorkstreamFile(cwd) {
   // case-insensitive NTFS, producing different hashes and different tmpdir slots.
   // Fall back to path.resolve when the directory does not yet exist.
   let planningAbs;
+
   try {
     planningAbs = fs.realpathSync.native(planningRoot(cwd));
   } catch {
     planningAbs = path.resolve(planningRoot(cwd));
   }
+
   const projectId = crypto
     .createHash('sha1')
     .update(planningAbs)
@@ -770,6 +903,7 @@ function getSessionScopedWorkstreamFile(cwd) {
     .slice(0, 16);
 
   const dirPath = path.join(os.tmpdir(), 'gsd-workstream-sessions', projectId);
+
   return {
     sessionKey,
     dirPath,
@@ -778,7 +912,9 @@ function getSessionScopedWorkstreamFile(cwd) {
 }
 
 function clearActiveWorkstreamPointer(filePath, cleanupDirPath) {
-  try { fs.unlinkSync(filePath); } catch {}
+  try {
+ fs.unlinkSync(filePath); 
+} catch {}
 
   // Session-scoped pointers for a repo share one tmp directory. Only remove it
   // when it is empty so clearing or self-healing one session never deletes siblings.
@@ -787,6 +923,7 @@ function clearActiveWorkstreamPointer(filePath, cleanupDirPath) {
   if (cleanupDirPath) {
     try {
       const remaining = fs.readdirSync(cleanupDirPath);
+
       if (remaining.length === 0) {
         fs.rmdirSync(cleanupDirPath);
       }
@@ -803,15 +940,21 @@ function clearActiveWorkstreamPointer(filePath, cleanupDirPath) {
 function readActiveWorkstreamPointer(filePath, cwd, cleanupDirPath = null) {
   try {
     const name = fs.readFileSync(filePath, 'utf-8').trim();
+
     if (!name || !/^[a-zA-Z0-9_-]+$/.test(name)) {
       clearActiveWorkstreamPointer(filePath, cleanupDirPath);
+
       return null;
     }
+
     const wsDir = path.join(planningRoot(cwd), 'workstreams', name);
+
     if (!fs.existsSync(wsDir)) {
       clearActiveWorkstreamPointer(filePath, cleanupDirPath);
+
       return null;
     }
+
     return name;
   } catch {
     return null;
@@ -830,11 +973,13 @@ function readActiveWorkstreamPointer(filePath, cwd, cleanupDirPath = null) {
  */
 function getActiveWorkstream(cwd) {
   const sessionScoped = getSessionScopedWorkstreamFile(cwd);
+
   if (sessionScoped) {
     return readActiveWorkstreamPointer(sessionScoped.filePath, cwd, sessionScoped.dirPath);
   }
 
   const sharedFilePath = path.join(planningRoot(cwd), 'active-workstream');
+
   return readActiveWorkstreamPointer(sharedFilePath, cwd);
 }
 
@@ -853,8 +998,10 @@ function setActiveWorkstream(cwd, name) {
 
   if (!name) {
     clearActiveWorkstreamPointer(filePath, sessionScoped ? sessionScoped.dirPath : null);
+
     return;
   }
+
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
     throw new Error('Invalid workstream name: must be alphanumeric, hyphens, and underscores only');
   }
@@ -862,6 +1009,7 @@ function setActiveWorkstream(cwd, name) {
   if (sessionScoped) {
     fs.mkdirSync(sessionScoped.dirPath, { recursive: true });
   }
+
   fs.writeFileSync(filePath, name + '\n', 'utf-8');
 }
 
@@ -877,12 +1025,15 @@ function normalizePhaseName(phase) {
   const stripped = str.replace(/^[A-Z]{1,6}-(?=\d)/, '');
   // Standard numeric phases: 1, 01, 12A, 12.1
   const match = stripped.match(/^(\d+)([A-Z])?((?:\.\d+)*)/i);
+
   if (match) {
     const padded = match[1].padStart(2, '0');
     const letter = match[2] ? match[2].toUpperCase() : '';
     const decimal = match[3] || '';
+
     return padded + letter + decimal;
   }
+
   // Custom phase IDs (e.g. PROJ-42, AUTH-101): return as-is
   return str;
 }
@@ -893,29 +1044,56 @@ function comparePhaseNum(a, b) {
   const sb = String(b).replace(/^[A-Z]{1,6}-/, '');
   const pa = sa.match(/^(\d+)([A-Z])?((?:\.\d+)*)/i);
   const pb = sb.match(/^(\d+)([A-Z])?((?:\.\d+)*)/i);
+
   // If either is non-numeric (custom ID), fall back to string comparison
-  if (!pa || !pb) return String(a).localeCompare(String(b));
+  if (!pa || !pb) {
+return String(a).localeCompare(String(b));
+}
+
   const intDiff = parseInt(pa[1], 10) - parseInt(pb[1], 10);
-  if (intDiff !== 0) return intDiff;
+
+  if (intDiff !== 0) {
+return intDiff;
+}
+
   // No letter sorts before letter: 12 < 12A < 12B
   const la = (pa[2] || '').toUpperCase();
   const lb = (pb[2] || '').toUpperCase();
+
   if (la !== lb) {
-    if (!la) return -1;
-    if (!lb) return 1;
+    if (!la) {
+return -1;
+}
+
+    if (!lb) {
+return 1;
+}
+
     return la < lb ? -1 : 1;
   }
+
   // Segment-by-segment decimal comparison: 12A < 12A.1 < 12A.1.2 < 12A.2
   const aDecParts = pa[3] ? pa[3].slice(1).split('.').map(p => parseInt(p, 10)) : [];
   const bDecParts = pb[3] ? pb[3].slice(1).split('.').map(p => parseInt(p, 10)) : [];
   const maxLen = Math.max(aDecParts.length, bDecParts.length);
-  if (aDecParts.length === 0 && bDecParts.length > 0) return -1;
-  if (bDecParts.length === 0 && aDecParts.length > 0) return 1;
+
+  if (aDecParts.length === 0 && bDecParts.length > 0) {
+return -1;
+}
+
+  if (bDecParts.length === 0 && aDecParts.length > 0) {
+return 1;
+}
+
   for (let i = 0; i < maxLen; i++) {
     const av = Number.isFinite(aDecParts[i]) ? aDecParts[i] : 0;
     const bv = Number.isFinite(bDecParts[i]) ? bDecParts[i] : 0;
-    if (av !== bv) return av - bv;
+
+    if (av !== bv) {
+return av - bv;
+}
   }
+
   return 0;
 }
 
@@ -927,13 +1105,25 @@ function comparePhaseNum(a, b) {
 function extractPhaseToken(dirName) {
   // Try project-code-prefixed numeric: CK-01-name → CK-01, CK-01A.2-name → CK-01A.2
   const codePrefixed = dirName.match(/^([A-Z]{1,6}-\d+[A-Z]?(?:\.\d+)*)(?:-|$)/i);
-  if (codePrefixed) return codePrefixed[1];
+
+  if (codePrefixed) {
+return codePrefixed[1];
+}
+
   // Try plain numeric: 01-name, 1009A-name, 999.6-name
   const numeric = dirName.match(/^(\d+[A-Z]?(?:\.\d+)*)(?:-|$)/i);
-  if (numeric) return numeric[1];
+
+  if (numeric) {
+return numeric[1];
+}
+
   // Custom IDs: PROJ-42-name → everything before the last segment that looks like a name
   const custom = dirName.match(/^([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*)(?:-[a-z]|$)/i);
-  if (custom) return custom[1];
+
+  if (custom) {
+return custom[1];
+}
+
   return dirName;
 }
 
@@ -943,13 +1133,22 @@ function extractPhaseToken(dirName) {
  */
 function phaseTokenMatches(dirName, normalized) {
   const token = extractPhaseToken(dirName);
-  if (token.toUpperCase() === normalized.toUpperCase()) return true;
+
+  if (token.toUpperCase() === normalized.toUpperCase()) {
+return true;
+}
+
   // Strip optional project_code prefix from dir and retry
   const stripped = dirName.replace(/^[A-Z]{1,6}-(?=\d)/i, '');
+
   if (stripped !== dirName) {
     const strippedToken = extractPhaseToken(stripped);
-    if (strippedToken.toUpperCase() === normalized.toUpperCase()) return true;
+
+    if (strippedToken.toUpperCase() === normalized.toUpperCase()) {
+return true;
+}
   }
+
   return false;
 }
 
@@ -958,7 +1157,10 @@ function searchPhaseInDir(baseDir, relBase, normalized) {
     const dirs = readSubdirectories(baseDir, true);
     // Match: exact phase token comparison (not prefix matching)
     const match = dirs.find(d => phaseTokenMatches(d, normalized));
-    if (!match) return null;
+
+    if (!match) {
+return null;
+}
 
     // Extract phase number and name — supports numeric (01-name), project-code-prefixed (CK-01-name), and custom (PROJ-42-name)
     const dirMatch = match.match(/^(?:[A-Z]{1,6}-)(\d+[A-Z]?(?:\.\d+)*)-?(.*)/i)
@@ -977,6 +1179,7 @@ function searchPhaseInDir(baseDir, relBase, normalized) {
     );
     const incompletePlans = plans.filter(p => {
       const planId = p.replace('-PLAN.md', '').replace('PLAN.md', '');
+
       return !completedPlanIds.has(planId);
     });
 
@@ -1000,7 +1203,9 @@ function searchPhaseInDir(baseDir, relBase, normalized) {
 }
 
 function findPhaseInternal(cwd, phase) {
-  if (!phase) return null;
+  if (!phase) {
+return null;
+}
 
   const phasesDir = path.join(planningDir(cwd), 'phases');
   const normalized = normalizePhaseName(phase);
@@ -1008,11 +1213,17 @@ function findPhaseInternal(cwd, phase) {
   // Search current phases first
   const relPhasesDir = toPosixPath(path.relative(cwd, phasesDir));
   const current = searchPhaseInDir(phasesDir, relPhasesDir, normalized);
-  if (current) return current;
+
+  if (current) {
+return current;
+}
 
   // Search archived milestone phases (newest first)
   const milestonesDir = path.join(cwd, '.planning', 'milestones');
-  if (!fs.existsSync(milestonesDir)) return null;
+
+  if (!fs.existsSync(milestonesDir)) {
+return null;
+}
 
   try {
     const milestoneEntries = fs.readdirSync(milestonesDir, { withFileTypes: true });
@@ -1027,8 +1238,10 @@ function findPhaseInternal(cwd, phase) {
       const archivePath = path.join(milestonesDir, archiveName);
       const relBase = '.planning/milestones/' + archiveName;
       const result = searchPhaseInDir(archivePath, relBase, normalized);
+
       if (result) {
         result.archived = version;
+
         return result;
       }
     }
@@ -1041,7 +1254,9 @@ function getArchivedPhaseDirs(cwd) {
   const milestonesDir = path.join(cwd, '.planning', 'milestones');
   const results = [];
 
-  if (!fs.existsSync(milestonesDir)) return results;
+  if (!fs.existsSync(milestonesDir)) {
+return results;
+}
 
   try {
     const milestoneEntries = fs.readdirSync(milestonesDir, { withFileTypes: true });
@@ -1100,15 +1315,20 @@ function stripShippedMilestones(content) {
  * @returns {string} Content scoped to current milestone
  */
 function extractCurrentMilestone(content, cwd) {
-  if (!cwd) return stripShippedMilestones(content);
+  if (!cwd) {
+return stripShippedMilestones(content);
+}
 
   // 1. Get current milestone version from STATE.md frontmatter
   let version = null;
+
   try {
     const statePath = path.join(planningDir(cwd), 'STATE.md');
+
     if (fs.existsSync(statePath)) {
       const stateRaw = fs.readFileSync(statePath, 'utf-8');
       const milestoneMatch = stateRaw.match(/^milestone:\s*(.+)/m);
+
       if (milestoneMatch) {
         version = milestoneMatch[1].trim();
       }
@@ -1119,12 +1339,15 @@ function extractCurrentMilestone(content, cwd) {
   if (!version) {
     // Check for 🚧 in-progress marker
     const inProgressMatch = content.match(/🚧\s*\*\*v(\d+\.\d+)\s/);
+
     if (inProgressMatch) {
       version = 'v' + inProgressMatch[1];
     }
   }
 
-  if (!version) return stripShippedMilestones(content);
+  if (!version) {
+return stripShippedMilestones(content);
+}
 
   // 3. Find the section matching this version
   // Match headings like: ## Roadmap v3.0: Name, ## v3.0 Name, etc.
@@ -1135,7 +1358,9 @@ function extractCurrentMilestone(content, cwd) {
   );
   const sectionMatch = content.match(sectionPattern);
 
-  if (!sectionMatch) return stripShippedMilestones(content);
+  if (!sectionMatch) {
+return stripShippedMilestones(content);
+}
 
   const sectionStart = sectionMatch.index;
 
@@ -1150,6 +1375,7 @@ function extractCurrentMilestone(content, cwd) {
   const nextMatch = restContent.match(nextMilestonePattern);
 
   let sectionEnd;
+
   if (nextMatch) {
     sectionEnd = sectionStart + sectionMatch[0].length + nextMatch.index;
   } else {
@@ -1175,21 +1401,30 @@ function extractCurrentMilestone(content, cwd) {
  */
 function replaceInCurrentMilestone(content, pattern, replacement) {
   const lastDetailsClose = content.lastIndexOf('</details>');
+
   if (lastDetailsClose === -1) {
     return content.replace(pattern, replacement);
   }
+
   const offset = lastDetailsClose + '</details>'.length;
   const before = content.slice(0, offset);
   const after = content.slice(offset);
+
   return before + after.replace(pattern, replacement);
 }
 
 // ─── Roadmap & model utilities ────────────────────────────────────────────────
 
 function getRoadmapPhaseInternal(cwd, phaseNum) {
-  if (!phaseNum) return null;
+  if (!phaseNum) {
+return null;
+}
+
   const roadmapPath = path.join(planningDir(cwd), 'ROADMAP.md');
-  if (!fs.existsSync(roadmapPath)) return null;
+
+  if (!fs.existsSync(roadmapPath)) {
+return null;
+}
 
   try {
     const content = extractCurrentMilestone(fs.readFileSync(roadmapPath, 'utf-8'), cwd);
@@ -1197,7 +1432,10 @@ function getRoadmapPhaseInternal(cwd, phaseNum) {
     // Match both numeric (Phase 1:) and custom (Phase PROJ-42:) headers
     const phasePattern = new RegExp(`#{2,4}\\s*Phase\\s+${escapedPhase}:\\s*([^\\n]+)`, 'i');
     const headerMatch = content.match(phasePattern);
-    if (!headerMatch) return null;
+
+    if (!headerMatch) {
+return null;
+}
 
     const phaseName = headerMatch[1].trim();
     const headerIndex = headerMatch.index;
@@ -1237,6 +1475,7 @@ function getAgentsDir() {
   if (process.env.GSD_AGENTS_DIR) {
     return process.env.GSD_AGENTS_DIR;
   }
+
   // __dirname is get-shit-done/bin/lib/ → go up 3 levels to configDir
   return path.join(__dirname, '..', '..', '..', 'agents');
 }
@@ -1269,6 +1508,7 @@ function checkAgentsInstalled() {
     // Check both .md (standard) and .agent.md (Copilot) file formats.
     const agentFile = path.join(agentsDir, `${agent}.md`);
     const agentFileCopilot = path.join(agentsDir, `${agent}.agent.md`);
+
     if (fs.existsSync(agentFile) || fs.existsSync(agentFileCopilot)) {
       installed.push(agent);
     } else {
@@ -1303,6 +1543,7 @@ function resolveModelInternal(cwd, agentType) {
   // Check per-agent override first — always respected regardless of resolve_model_ids.
   // Users who set fully-qualified model IDs (e.g., "openai/gpt-5.4") get exactly that.
   const override = config.model_overrides?.[agentType];
+
   if (override) {
     return override;
   }
@@ -1317,8 +1558,15 @@ function resolveModelInternal(cwd, agentType) {
   // Fall back to profile lookup
   const profile = String(config.model_profile || 'balanced').toLowerCase();
   const agentModels = MODEL_PROFILES[agentType];
-  if (!agentModels) return 'sonnet';
-  if (profile === 'inherit') return 'inherit';
+
+  if (!agentModels) {
+return 'sonnet';
+}
+
+  if (profile === 'inherit') {
+return 'inherit';
+}
+
   const alias = agentModels[profile] || agentModels['balanced'] || 'sonnet';
 
   // resolve_model_ids: true — map alias to full Claude model ID
@@ -1339,11 +1587,15 @@ function resolveModelInternal(cwd, agentType) {
  *   **[substantive one-liner text]**
  */
 function extractOneLinerFromBody(content) {
-  if (!content) return null;
+  if (!content) {
+return null;
+}
+
   // Strip frontmatter first
   const body = content.replace(/^---\n[\s\S]*?\n---\n*/, '');
   // Find the first **...** line after a # heading
   const match = body.match(/^#[^\n]*\n+\*\*([^*]+)\*\*/m);
+
   return match ? match[1].trim() : null;
 }
 
@@ -1351,8 +1603,10 @@ function extractOneLinerFromBody(content) {
 
 function pathExistsInternal(cwd, targetPath) {
   const fullPath = path.isAbsolute(targetPath) ? targetPath : path.join(cwd, targetPath);
+
   try {
     fs.statSync(fullPath);
+
     return true;
   } catch {
     return false;
@@ -1360,7 +1614,10 @@ function pathExistsInternal(cwd, targetPath) {
 }
 
 function generateSlugInternal(text) {
-  if (!text) return null;
+  if (!text) {
+return null;
+}
+
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').substring(0, 60);
 }
 
@@ -1372,6 +1629,7 @@ function getMilestoneInfo(cwd) {
     // e.g. "- 🚧 **v2.1 Belgium** — Phases 24-28 (in progress)"
     // e.g. "- 🚧 **v1.2.1 Tech Debt** — Phases 1-8 (in progress)"
     const inProgressMatch = roadmap.match(/🚧\s*\*\*v(\d+(?:\.\d+)+)\s+([^*]+)\*\*/);
+
     if (inProgressMatch) {
       return {
         version: 'v' + inProgressMatch[1],
@@ -1384,14 +1642,17 @@ function getMilestoneInfo(cwd) {
     // Extract version and name from the same ## heading for consistency
     // Supports 2+ segment versions: v1.2, v1.2.1, v2.0.1, etc.
     const headingMatch = cleaned.match(/## .*v(\d+(?:\.\d+)+)[:\s]+([^\n(]+)/);
+
     if (headingMatch) {
       return {
         version: 'v' + headingMatch[1],
         name: headingMatch[2].trim(),
       };
     }
+
     // Fallback: try bare version match (greedy — capture longest version string)
     const versionMatch = cleaned.match(/v(\d+(?:\.\d+)+)/);
+
     return {
       version: versionMatch ? versionMatch[0] : 'v1.0',
       name: 'milestone',
@@ -1408,11 +1669,13 @@ function getMilestoneInfo(cwd) {
  */
 function getMilestonePhaseFilter(cwd) {
   const milestonePhaseNums = new Set();
+
   try {
     const roadmap = extractCurrentMilestone(fs.readFileSync(path.join(planningDir(cwd), 'ROADMAP.md'), 'utf-8'), cwd);
     // Match both numeric phases (Phase 1:) and custom IDs (Phase PROJ-42:)
     const phasePattern = /#{2,4}\s*Phase\s+([\w][\w.-]*)\s*:/gi;
     let m;
+
     while ((m = phasePattern.exec(roadmap)) !== null) {
       milestonePhaseNums.add(m[1]);
     }
@@ -1421,6 +1684,7 @@ function getMilestonePhaseFilter(cwd) {
   if (milestonePhaseNums.size === 0) {
     const passAll = () => true;
     passAll.phaseCount = 0;
+
     return passAll;
   }
 
@@ -1431,13 +1695,22 @@ function getMilestonePhaseFilter(cwd) {
   function isDirInMilestone(dirName) {
     // Try numeric match first
     const m = dirName.match(/^0*(\d+[A-Za-z]?(?:\.\d+)*)/);
-    if (m && normalized.has(m[1].toLowerCase())) return true;
+
+    if (m && normalized.has(m[1].toLowerCase())) {
+return true;
+}
+
     // Try custom ID match (e.g. PROJ-42-description → PROJ-42)
     const customMatch = dirName.match(/^([A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*)/);
-    if (customMatch && normalized.has(customMatch[1].toLowerCase())) return true;
+
+    if (customMatch && normalized.has(customMatch[1].toLowerCase())) {
+return true;
+}
+
     return false;
   }
   isDirInMilestone.phaseCount = milestonePhaseNums.size;
+
   return isDirInMilestone;
 }
 
@@ -1460,6 +1733,7 @@ function filterSummaryFiles(files) {
  */
 function getPhaseFileStats(phaseDir) {
   const files = fs.readdirSync(phaseDir);
+
   return {
     plans: filterPlanFiles(files),
     summaries: filterSummaryFiles(files),
@@ -1479,6 +1753,7 @@ function readSubdirectories(dirPath, sort = false) {
   try {
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name);
+
     return sort ? dirs.sort((a, b) => comparePhaseNum(a, b)) : dirs;
   } catch {
     return [];

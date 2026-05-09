@@ -1,13 +1,12 @@
-import SuperAdminLayout from '@/layouts/super-admin-layout';
+import { router, useForm } from '@inertiajs/react';
+import { Building2, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import {
     index,
     toggleStatus,
     adjustCredits,
     destroy,
 } from '@/actions/App/Http/Controllers/SuperAdmin/InstituteController';
-import { router, useForm } from '@inertiajs/react';
-import { Building2, Loader2 } from 'lucide-react';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -26,6 +25,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface Institute {
     id: number;
@@ -58,7 +58,10 @@ function Institutes({ institutes }: Props) {
 
     function handleAdjustSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!adjustTarget) return;
+
+        if (!adjustTarget) {
+return;
+}
 
         adjustForm.post(adjustCredits.url({ institute: adjustTarget.id }), {
             preserveScroll: true,

@@ -77,6 +77,7 @@ function cmdRoadmapGetPhase(cwd, phaseNum, raw) {
 
   if (!fs.existsSync(roadmapPath)) {
     output({ found: false, error: 'ROADMAP.md not found' }, raw, '');
+
     return;
   }
 
@@ -98,11 +99,13 @@ function cmdRoadmapGetPhase(cwd, phaseNum, raw) {
 
     if (!result) {
       output({ found: false, phase_number: phaseNum }, raw, '');
+
       return;
     }
 
     if (result.error) {
       output(result, raw, '');
+
       return;
     }
 
@@ -117,6 +120,7 @@ function cmdRoadmapAnalyze(cwd, raw) {
 
   if (!fs.existsSync(roadmapPath)) {
     output({ error: 'ROADMAP.md not found', milestones: [], phases: [], current_phase: null }, raw);
+
     return;
   }
 
@@ -166,12 +170,19 @@ function cmdRoadmapAnalyze(cwd, raw) {
         hasContext = phaseFiles.some(f => f.endsWith('-CONTEXT.md') || f === 'CONTEXT.md');
         hasResearch = phaseFiles.some(f => f.endsWith('-RESEARCH.md') || f === 'RESEARCH.md');
 
-        if (summaryCount >= planCount && planCount > 0) diskStatus = 'complete';
-        else if (summaryCount > 0) diskStatus = 'partial';
-        else if (planCount > 0) diskStatus = 'planned';
-        else if (hasResearch) diskStatus = 'researched';
-        else if (hasContext) diskStatus = 'discussed';
-        else diskStatus = 'empty';
+        if (summaryCount >= planCount && planCount > 0) {
+diskStatus = 'complete';
+} else if (summaryCount > 0) {
+diskStatus = 'partial';
+} else if (planCount > 0) {
+diskStatus = 'planned';
+} else if (hasResearch) {
+diskStatus = 'researched';
+} else if (hasContext) {
+diskStatus = 'discussed';
+} else {
+diskStatus = 'empty';
+}
       }
     } catch { /* intentionally empty */ }
 
@@ -205,6 +216,7 @@ function cmdRoadmapAnalyze(cwd, raw) {
   const milestones = [];
   const milestonePattern = /##\s*(.*v(\d+(?:\.\d+)+)[^(\n]*)/gi;
   let mMatch;
+
   while ((mMatch = milestonePattern.exec(content)) !== null) {
     milestones.push({
       heading: mMatch[1].trim(),
@@ -225,9 +237,11 @@ function cmdRoadmapAnalyze(cwd, raw) {
   const checklistPattern = /-\s*\[[ x]\]\s*\*\*Phase\s+(\d+[A-Z]?(?:\.\d+)*)/gi;
   const checklistPhases = new Set();
   let checklistMatch;
+
   while ((checklistMatch = checklistPattern.exec(content)) !== null) {
     checklistPhases.add(checklistMatch[1]);
   }
+
   const detailPhases = new Set(phases.map(p => p.number));
   const missingDetails = [...checklistPhases].filter(p => !detailPhases.has(p));
 
@@ -255,6 +269,7 @@ function cmdRoadmapUpdatePlanProgress(cwd, phaseNum, raw) {
   const roadmapPath = planningPaths(cwd).roadmap;
 
   const phaseInfo = findPhaseInternal(cwd, phaseNum);
+
   if (!phaseInfo) {
     error(`Phase ${phaseNum} not found`);
   }
@@ -264,6 +279,7 @@ function cmdRoadmapUpdatePlanProgress(cwd, phaseNum, raw) {
 
   if (planCount === 0) {
     output({ updated: false, reason: 'No plans found', plan_count: 0, summary_count: 0 }, raw, 'no plans');
+
     return;
   }
 
@@ -273,6 +289,7 @@ function cmdRoadmapUpdatePlanProgress(cwd, phaseNum, raw) {
 
   if (!fs.existsSync(roadmapPath)) {
     output({ updated: false, reason: 'ROADMAP.md not found', plan_count: planCount, summary_count: summaryCount }, raw, 'no roadmap');
+
     return;
   }
 
@@ -289,6 +306,7 @@ function cmdRoadmapUpdatePlanProgress(cwd, phaseNum, raw) {
     const dateField = isComplete ? ` ${today} ` : '  ';
     roadmapContent = roadmapContent.replace(tableRowPattern, (fullRow) => {
       const cells = fullRow.split('|').slice(1, -1); // drop leading/trailing empty from split
+
       if (cells.length === 5) {
         // 5-col: Phase | Milestone | Plans | Status | Completed
         cells[2] = ` ${summaryCount}/${planCount} `;
@@ -300,6 +318,7 @@ function cmdRoadmapUpdatePlanProgress(cwd, phaseNum, raw) {
         cells[2] = ` ${status.padEnd(11)}`;
         cells[3] = dateField;
       }
+
       return '|' + cells.join('|') + '|';
     });
 
@@ -325,7 +344,11 @@ function cmdRoadmapUpdatePlanProgress(cwd, phaseNum, raw) {
     // Mark completed plan checkboxes (e.g. "- [ ] 50-01-PLAN.md", "- [ ] 50-01:", or "- [ ] **50-01**")
     for (const summaryFile of phaseInfo.summaries) {
       const planId = summaryFile.replace('-SUMMARY.md', '').replace('SUMMARY.md', '');
-      if (!planId) continue;
+
+      if (!planId) {
+continue;
+}
+
       const planEscaped = escapeRegex(planId);
       const planCheckboxPattern = new RegExp(
         `(-\\s*\\[) (\\]\\s*(?:\\*\\*)?${planEscaped}(?:\\*\\*)?)`,

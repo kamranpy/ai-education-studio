@@ -27,11 +27,13 @@ function cmdTemplateSelect(cwd, planPath, raw) {
     const fileMentions = new Set();
     const filePattern = /`([^`]+\.[a-zA-Z]+)`/g;
     let m;
+
     while ((m = filePattern.exec(content)) !== null) {
       if (m[1].includes('/') && !m[1].startsWith('http')) {
         fileMentions.add(m[1]);
       }
     }
+
     const fileCount = fileMentions.size;
 
     let template = 'templates/summary-standard.md';
@@ -54,11 +56,21 @@ function cmdTemplateSelect(cwd, planPath, raw) {
 }
 
 function cmdTemplateFill(cwd, templateType, options, raw) {
-  if (!templateType) { error('template type required: summary, plan, or verification'); }
-  if (!options.phase) { error('--phase required'); }
+  if (!templateType) {
+ error('template type required: summary, plan, or verification'); 
+}
+
+  if (!options.phase) {
+ error('--phase required'); 
+}
 
   const phaseInfo = findPhaseInternal(cwd, options.phase);
-  if (!phaseInfo || !phaseInfo.found) { output({ error: 'Phase not found', phase: options.phase }, raw); return; }
+
+  if (!phaseInfo || !phaseInfo.found) {
+ output({ error: 'Phase not found', phase: options.phase }, raw);
+
+ return; 
+}
 
   const padded = normalizePhaseName(options.phase);
   const today = new Date().toISOString().split('T')[0];
@@ -203,6 +215,7 @@ function cmdTemplateFill(cwd, templateType, options, raw) {
     }
     default:
       error(`Unknown template type: ${templateType}. Available: summary, plan, verification`);
+
       return;
   }
 
@@ -211,6 +224,7 @@ function cmdTemplateFill(cwd, templateType, options, raw) {
 
   if (fs.existsSync(outPath)) {
     output({ error: 'File already exists', path: toPosixPath(path.relative(cwd, outPath)) }, raw);
+
     return;
   }
 

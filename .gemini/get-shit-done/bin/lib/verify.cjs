@@ -3,8 +3,8 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const os = require('os');
+const path = require('path');
 const { safeReadFile, loadConfig, normalizePhaseName, escapeRegex, execGit, findPhaseInternal, getMilestoneInfo, stripShippedMilestones, extractCurrentMilestone, planningDir, planningRoot, output, error, checkAgentsInstalled, CONFIG_DEFAULTS } = require('./core.cjs');
 const { extractFrontmatter, parseMustHavesBlock } = require('./frontmatter.cjs');
 const { writeStateMd } = require('./state.cjs');
@@ -30,6 +30,7 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
       errors: ['SUMMARY.md not found'],
     };
     output(result, raw, 'failed');
+
     return;
   }
 
@@ -45,8 +46,10 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
 
   for (const pattern of patterns) {
     let m;
+
     while ((m = pattern.exec(content)) !== null) {
       const filePath = m[1];
+
       if (filePath && !filePath.startsWith('http') && filePath.includes('/')) {
         mentionedFiles.add(filePath);
       }
@@ -55,6 +58,7 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
 
   const filesToCheck = Array.from(mentionedFiles).slice(0, checkCount);
   const missing = [];
+
   for (const file of filesToCheck) {
     if (!fs.existsSync(path.join(cwd, file))) {
       missing.push(file);
@@ -65,9 +69,11 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
   const commitHashPattern = /\b[0-9a-f]{7,40}\b/g;
   const hashes = content.match(commitHashPattern) || [];
   let commitsExist = false;
+
   if (hashes.length > 0) {
     for (const hash of hashes.slice(0, 3)) {
       const result = execGit(cwd, ['cat-file', '-t', hash]);
+
       if (result.exitCode === 0 && result.stdout === 'commit') {
         commitsExist = true;
         break;
@@ -78,10 +84,12 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
   // Check 4: Self-check section
   let selfCheck = 'not_found';
   const selfCheckPattern = /##\s*(?:Self[- ]?Check|Verification|Quality Check)/i;
+
   if (selfCheckPattern.test(content)) {
     const passPattern = /(?:all\s+)?(?:pass|✓|✅|complete|succeeded)/i;
     const failPattern = /(?:fail|✗|❌|incomplete|blocked)/i;
     const checkSection = content.slice(content.search(selfCheckPattern));
+
     if (failPattern.test(checkSection)) {
       selfCheck = 'failed';
     } else if (passPattern.test(checkSection)) {
@@ -89,9 +97,17 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
     }
   }
 
-  if (missing.length > 0) errors.push('Missing files: ' + missing.join(', '));
-  if (!commitsExist && hashes.length > 0) errors.push('Referenced commit hashes not found in git history');
-  if (selfCheck === 'failed') errors.push('Self-check section indicates failure');
+  if (missing.length > 0) {
+errors.push('Missing files: ' + missing.join(', '));
+}
+
+  if (!commitsExist && hashes.length > 0) {
+errors.push('Referenced commit hashes not found in git history');
+}
+
+  if (selfCheck === 'failed') {
+errors.push('Self-check section indicates failure');
+}
 
   const checks = {
     summary_exists: true,
@@ -106,10 +122,18 @@ function cmdVerifySummary(cwd, summaryPath, checkFileCount, raw) {
 }
 
 function cmdVerifyPlanStructure(cwd, filePath, raw) {
-  if (!filePath) { error('file path required'); }
+  if (!filePath) {
+ error('file path required'); 
+}
+
   const fullPath = path.isAbsolute(filePath) ? filePath : path.join(cwd, filePath);
   const content = safeReadFile(fullPath);
-  if (!content) { output({ error: 'File not found', path: filePath }, raw); return; }
+
+  if (!content) {
+ output({ error: 'File not found', path: filePath }, raw);
+
+ return; 
+}
 
   const fm = extractFrontmatter(content);
   const errors = [];
@@ -117,14 +141,18 @@ function cmdVerifyPlanStructure(cwd, filePath, raw) {
 
   // Check required frontmatter fields
   const required = ['phase', 'plan', 'type', 'wave', 'depends_on', 'files_modified', 'autonomous', 'must_haves'];
+
   for (const field of required) {
-    if (fm[field] === undefined) errors.push(`Missing required frontmatter field: ${field}`);
+    if (fm[field] === undefined) {
+errors.push(`Missing required frontmatter field: ${field}`);
+}
   }
 
   // Parse and check task elements
   const taskPattern = /<task[^>]*>([\s\S]*?)<\/task>/g;
   const tasks = [];
   let taskMatch;
+
   while ((taskMatch = taskPattern.exec(content)) !== null) {
     const taskContent = taskMatch[1];
     const nameMatch = taskContent.match(/<name>([\s\S]*?)<\/name>/);
@@ -134,16 +162,32 @@ function cmdVerifyPlanStructure(cwd, filePath, raw) {
     const hasVerify = /<verify>/.test(taskContent);
     const hasDone = /<done>/.test(taskContent);
 
-    if (!nameMatch) errors.push('Task missing <name> element');
-    if (!hasAction) errors.push(`Task '${taskName}' missing <action>`);
-    if (!hasVerify) warnings.push(`Task '${taskName}' missing <verify>`);
-    if (!hasDone) warnings.push(`Task '${taskName}' missing <done>`);
-    if (!hasFiles) warnings.push(`Task '${taskName}' missing <files>`);
+    if (!nameMatch) {
+errors.push('Task missing <name> element');
+}
+
+    if (!hasAction) {
+errors.push(`Task '${taskName}' missing <action>`);
+}
+
+    if (!hasVerify) {
+warnings.push(`Task '${taskName}' missing <verify>`);
+}
+
+    if (!hasDone) {
+warnings.push(`Task '${taskName}' missing <done>`);
+}
+
+    if (!hasFiles) {
+warnings.push(`Task '${taskName}' missing <files>`);
+}
 
     tasks.push({ name: taskName, hasFiles, hasAction, hasVerify, hasDone });
   }
 
-  if (tasks.length === 0) warnings.push('No <task> elements found');
+  if (tasks.length === 0) {
+warnings.push('No <task> elements found');
+}
 
   // Wave/depends_on consistency
   if (fm.wave && parseInt(fm.wave) > 1 && (!fm.depends_on || (Array.isArray(fm.depends_on) && fm.depends_on.length === 0))) {
@@ -152,6 +196,7 @@ function cmdVerifyPlanStructure(cwd, filePath, raw) {
 
   // Autonomous/checkpoint consistency
   const hasCheckpoints = /<task\s+type=["']?checkpoint/.test(content);
+
   if (hasCheckpoints && fm.autonomous !== 'false' && fm.autonomous !== false) {
     errors.push('Has checkpoint tasks but autonomous is not false');
   }
@@ -167,10 +212,15 @@ function cmdVerifyPlanStructure(cwd, filePath, raw) {
 }
 
 function cmdVerifyPhaseCompleteness(cwd, phase, raw) {
-  if (!phase) { error('phase required'); }
+  if (!phase) {
+ error('phase required'); 
+}
+
   const phaseInfo = findPhaseInternal(cwd, phase);
+
   if (!phaseInfo || !phaseInfo.found) {
     output({ error: 'Phase not found', phase }, raw);
+
     return;
   }
 
@@ -180,7 +230,14 @@ function cmdVerifyPhaseCompleteness(cwd, phase, raw) {
 
   // List plans and summaries
   let files;
-  try { files = fs.readdirSync(phaseDir); } catch { output({ error: 'Cannot read phase directory' }, raw); return; }
+
+  try {
+ files = fs.readdirSync(phaseDir); 
+} catch {
+ output({ error: 'Cannot read phase directory' }, raw);
+
+ return; 
+}
 
   const plans = files.filter(f => f.match(/-PLAN\.md$/i));
   const summaries = files.filter(f => f.match(/-SUMMARY\.md$/i));
@@ -191,12 +248,14 @@ function cmdVerifyPhaseCompleteness(cwd, phase, raw) {
 
   // Plans without summaries
   const incompletePlans = [...planIds].filter(id => !summaryIds.has(id));
+
   if (incompletePlans.length > 0) {
     errors.push(`Plans without summaries: ${incompletePlans.join(', ')}`);
   }
 
   // Summaries without plans (orphans)
   const orphanSummaries = [...summaryIds].filter(id => !planIds.has(id));
+
   if (orphanSummaries.length > 0) {
     warnings.push(`Summaries without plans: ${orphanSummaries.join(', ')}`);
   }
@@ -214,21 +273,31 @@ function cmdVerifyPhaseCompleteness(cwd, phase, raw) {
 }
 
 function cmdVerifyReferences(cwd, filePath, raw) {
-  if (!filePath) { error('file path required'); }
+  if (!filePath) {
+ error('file path required'); 
+}
+
   const fullPath = path.isAbsolute(filePath) ? filePath : path.join(cwd, filePath);
   const content = safeReadFile(fullPath);
-  if (!content) { output({ error: 'File not found', path: filePath }, raw); return; }
+
+  if (!content) {
+ output({ error: 'File not found', path: filePath }, raw);
+
+ return; 
+}
 
   const found = [];
   const missing = [];
 
   // Find @-references: @path/to/file (must contain / to be a file path)
   const atRefs = content.match(/@([^\s\n,)]+\/[^\s\n,)]+)/g) || [];
+
   for (const ref of atRefs) {
     const cleanRef = ref.slice(1); // remove @
     const resolved = cleanRef.startsWith('~/')
       ? path.join(process.env.HOME || '', cleanRef.slice(2))
       : path.join(cwd, cleanRef);
+
     if (fs.existsSync(resolved)) {
       found.push(cleanRef);
     } else {
@@ -238,11 +307,20 @@ function cmdVerifyReferences(cwd, filePath, raw) {
 
   // Find backtick file paths that look like real paths (contain / and have extension)
   const backtickRefs = content.match(/`([^`]+\/[^`]+\.[a-zA-Z]{1,10})`/g) || [];
+
   for (const ref of backtickRefs) {
     const cleanRef = ref.slice(1, -1); // remove backticks
-    if (cleanRef.startsWith('http') || cleanRef.includes('${') || cleanRef.includes('{{')) continue;
-    if (found.includes(cleanRef) || missing.includes(cleanRef)) continue; // dedup
+
+    if (cleanRef.startsWith('http') || cleanRef.includes('${') || cleanRef.includes('{{')) {
+continue;
+}
+
+    if (found.includes(cleanRef) || missing.includes(cleanRef)) {
+continue;
+} // dedup
+
     const resolved = path.join(cwd, cleanRef);
+
     if (fs.existsSync(resolved)) {
       found.push(cleanRef);
     } else {
@@ -259,12 +337,16 @@ function cmdVerifyReferences(cwd, filePath, raw) {
 }
 
 function cmdVerifyCommits(cwd, hashes, raw) {
-  if (!hashes || hashes.length === 0) { error('At least one commit hash required'); }
+  if (!hashes || hashes.length === 0) {
+ error('At least one commit hash required'); 
+}
 
   const valid = [];
   const invalid = [];
+
   for (const hash of hashes) {
     const result = execGit(cwd, ['cat-file', '-t', hash]);
+
     if (result.exitCode === 0 && result.stdout.trim() === 'commit') {
       valid.push(hash);
     } else {
@@ -281,22 +363,39 @@ function cmdVerifyCommits(cwd, hashes, raw) {
 }
 
 function cmdVerifyArtifacts(cwd, planFilePath, raw) {
-  if (!planFilePath) { error('plan file path required'); }
+  if (!planFilePath) {
+ error('plan file path required'); 
+}
+
   const fullPath = path.isAbsolute(planFilePath) ? planFilePath : path.join(cwd, planFilePath);
   const content = safeReadFile(fullPath);
-  if (!content) { output({ error: 'File not found', path: planFilePath }, raw); return; }
+
+  if (!content) {
+ output({ error: 'File not found', path: planFilePath }, raw);
+
+ return; 
+}
 
   const artifacts = parseMustHavesBlock(content, 'artifacts');
+
   if (artifacts.length === 0) {
     output({ error: 'No must_haves.artifacts found in frontmatter', path: planFilePath }, raw);
+
     return;
   }
 
   const results = [];
+
   for (const artifact of artifacts) {
-    if (typeof artifact === 'string') continue; // skip simple string items
+    if (typeof artifact === 'string') {
+continue;
+} // skip simple string items
+
     const artPath = artifact.path;
-    if (!artPath) continue;
+
+    if (!artPath) {
+continue;
+}
 
     const artFullPath = path.join(cwd, artPath);
     const exists = fs.existsSync(artFullPath);
@@ -309,15 +408,21 @@ function cmdVerifyArtifacts(cwd, planFilePath, raw) {
       if (artifact.min_lines && lineCount < artifact.min_lines) {
         check.issues.push(`Only ${lineCount} lines, need ${artifact.min_lines}`);
       }
+
       if (artifact.contains && !fileContent.includes(artifact.contains)) {
         check.issues.push(`Missing pattern: ${artifact.contains}`);
       }
+
       if (artifact.exports) {
         const exports = Array.isArray(artifact.exports) ? artifact.exports : [artifact.exports];
+
         for (const exp of exports) {
-          if (!fileContent.includes(exp)) check.issues.push(`Missing export: ${exp}`);
+          if (!fileContent.includes(exp)) {
+check.issues.push(`Missing export: ${exp}`);
+}
         }
       }
+
       check.passed = check.issues.length === 0;
     } else {
       check.issues.push('File not found');
@@ -336,33 +441,50 @@ function cmdVerifyArtifacts(cwd, planFilePath, raw) {
 }
 
 function cmdVerifyKeyLinks(cwd, planFilePath, raw) {
-  if (!planFilePath) { error('plan file path required'); }
+  if (!planFilePath) {
+ error('plan file path required'); 
+}
+
   const fullPath = path.isAbsolute(planFilePath) ? planFilePath : path.join(cwd, planFilePath);
   const content = safeReadFile(fullPath);
-  if (!content) { output({ error: 'File not found', path: planFilePath }, raw); return; }
+
+  if (!content) {
+ output({ error: 'File not found', path: planFilePath }, raw);
+
+ return; 
+}
 
   const keyLinks = parseMustHavesBlock(content, 'key_links');
+
   if (keyLinks.length === 0) {
     output({ error: 'No must_haves.key_links found in frontmatter', path: planFilePath }, raw);
+
     return;
   }
 
   const results = [];
+
   for (const link of keyLinks) {
-    if (typeof link === 'string') continue;
+    if (typeof link === 'string') {
+continue;
+}
+
     const check = { from: link.from, to: link.to, via: link.via || '', verified: false, detail: '' };
 
     const sourceContent = safeReadFile(path.join(cwd, link.from || ''));
+
     if (!sourceContent) {
       check.detail = 'Source file not found';
     } else if (link.pattern) {
       try {
         const regex = new RegExp(link.pattern);
+
         if (regex.test(sourceContent)) {
           check.verified = true;
           check.detail = 'Pattern found in source';
         } else {
           const targetContent = safeReadFile(path.join(cwd, link.to || ''));
+
           if (targetContent && regex.test(targetContent)) {
             check.verified = true;
             check.detail = 'Pattern found in target';
@@ -405,6 +527,7 @@ function cmdValidateConsistency(cwd, raw) {
   if (!fs.existsSync(roadmapPath)) {
     errors.push('ROADMAP.md not found');
     output({ passed: false, errors, warnings }, raw, 'failed');
+
     return;
   }
 
@@ -415,18 +538,24 @@ function cmdValidateConsistency(cwd, raw) {
   const roadmapPhases = new Set();
   const phasePattern = /#{2,4}\s*Phase\s+(\d+[A-Z]?(?:\.\d+)*)\s*:/gi;
   let m;
+
   while ((m = phasePattern.exec(roadmapContent)) !== null) {
     roadmapPhases.add(m[1]);
   }
 
   // Get phases on disk
   const diskPhases = new Set();
+
   try {
     const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name);
+
     for (const dir of dirs) {
       const dm = dir.match(/^(\d+[A-Z]?(?:\.\d+)*)/i);
-      if (dm) diskPhases.add(dm[1]);
+
+      if (dm) {
+diskPhases.add(dm[1]);
+}
     }
   } catch { /* intentionally empty */ }
 
@@ -440,6 +569,7 @@ function cmdValidateConsistency(cwd, raw) {
   // Check: phases on disk but not in ROADMAP
   for (const p of diskPhases) {
     const unpadded = String(parseInt(p, 10));
+
     if (!roadmapPhases.has(p) && !roadmapPhases.has(unpadded)) {
       warnings.push(`Phase ${p} exists on disk but not in ROADMAP.md`);
     }
@@ -447,6 +577,7 @@ function cmdValidateConsistency(cwd, raw) {
 
   // Check: sequential phase numbers (integers only, skip in custom naming mode)
   const config = loadConfig(cwd);
+
   if (config.phase_naming !== 'custom') {
     const integerPhases = [...diskPhases]
       .filter(p => !p.includes('.'))
@@ -472,6 +603,7 @@ function cmdValidateConsistency(cwd, raw) {
       // Extract plan numbers
       const planNums = plans.map(p => {
         const pm = p.match(/-(\d{2})-PLAN\.md$/);
+
         return pm ? parseInt(pm[1], 10) : null;
       }).filter(n => n !== null);
 
@@ -522,6 +654,7 @@ function cmdValidateConsistency(cwd, raw) {
 function cmdValidateHealth(cwd, options, raw) {
   // Guard: detect if CWD is the home directory (likely accidental)
   const resolved = path.resolve(cwd);
+
   if (resolved === os.homedir()) {
     output({
       status: 'error',
@@ -530,6 +663,7 @@ function cmdValidateHealth(cwd, options, raw) {
       info: [{ code: 'I010', message: `Resolved CWD: ${resolved}` }],
       repairable_count: 0,
     }, raw);
+
     return;
   }
 
@@ -549,9 +683,14 @@ function cmdValidateHealth(cwd, options, raw) {
   // Helper to add issue
   const addIssue = (severity, code, message, fix, repairable = false) => {
     const issue = { code, message, fix, repairable };
-    if (severity === 'error') errors.push(issue);
-    else if (severity === 'warning') warnings.push(issue);
-    else info.push(issue);
+
+    if (severity === 'error') {
+errors.push(issue);
+} else if (severity === 'warning') {
+warnings.push(issue);
+} else {
+info.push(issue);
+}
   };
 
   // ─── Check 1: .planning/ exists ───────────────────────────────────────────
@@ -564,6 +703,7 @@ function cmdValidateHealth(cwd, options, raw) {
       info,
       repairable_count: 0,
     }, raw);
+
     return;
   }
 
@@ -573,6 +713,7 @@ function cmdValidateHealth(cwd, options, raw) {
   } else {
     const content = fs.readFileSync(projectPath, 'utf-8');
     const requiredSections = ['## What This Is', '## Core Value', '## Requirements'];
+
     for (const section of requiredSections) {
       if (!content.includes(section)) {
         addIssue('warning', 'W001', `PROJECT.md missing section: ${section}`, 'Add section manually');
@@ -595,18 +736,25 @@ function cmdValidateHealth(cwd, options, raw) {
     const phaseRefs = [...stateContent.matchAll(/[Pp]hase\s+(\d+(?:\.\d+)*)/g)].map(m => m[1]);
     // Get disk phases
     const diskPhases = new Set();
+
     try {
       const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
+
       for (const e of entries) {
         if (e.isDirectory()) {
           const m = e.name.match(/^(\d+(?:\.\d+)*)/);
-          if (m) diskPhases.add(m[1]);
+
+          if (m) {
+diskPhases.add(m[1]);
+}
         }
       }
     } catch { /* intentionally empty */ }
+
     // Check for invalid references
     for (const ref of phaseRefs) {
       const normalizedRef = String(parseInt(ref, 10)).padStart(2, '0');
+
       if (!diskPhases.has(ref) && !diskPhases.has(normalizedRef) && !diskPhases.has(String(parseInt(ref, 10)))) {
         // Only warn if phases dir has any content (not just an empty project)
         if (diskPhases.size > 0) {
@@ -631,6 +779,7 @@ function cmdValidateHealth(cwd, options, raw) {
       const parsed = JSON.parse(raw);
       // Validate known fields
       const validProfiles = ['quality', 'balanced', 'budget', 'inherit'];
+
       if (parsed.model_profile && !validProfiles.includes(parsed.model_profile)) {
         addIssue('warning', 'W004', `config.json: invalid model_profile "${parsed.model_profile}"`, `Valid values: ${validProfiles.join(', ')}`);
       }
@@ -645,9 +794,13 @@ function cmdValidateHealth(cwd, options, raw) {
     try {
       const configRaw = fs.readFileSync(configPath, 'utf-8');
       const configParsed = JSON.parse(configRaw);
+
       if (configParsed.workflow && configParsed.workflow.nyquist_validation === undefined) {
         addIssue('warning', 'W008', 'config.json: workflow.nyquist_validation absent (defaults to enabled but agents may skip)', 'Run /gsd-health --repair to add key', true);
-        if (!repairs.includes('addNyquistKey')) repairs.push('addNyquistKey');
+
+        if (!repairs.includes('addNyquistKey')) {
+repairs.push('addNyquistKey');
+}
       }
     } catch { /* intentionally empty */ }
   }
@@ -655,6 +808,7 @@ function cmdValidateHealth(cwd, options, raw) {
   // ─── Check 6: Phase directory naming (NN-name format) ─────────────────────
   try {
     const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
+
     for (const e of entries) {
       if (e.isDirectory() && !e.name.match(/^\d{2}(?:\.\d+)*-[\w-]+$/)) {
         addIssue('warning', 'W005', `Phase directory "${e.name}" doesn't follow NN-name format`, 'Rename to match pattern (e.g., 01-setup)');
@@ -665,8 +819,12 @@ function cmdValidateHealth(cwd, options, raw) {
   // ─── Check 7: Orphaned plans (PLAN without SUMMARY) ───────────────────────
   try {
     const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
+
     for (const e of entries) {
-      if (!e.isDirectory()) continue;
+      if (!e.isDirectory()) {
+continue;
+}
+
       const phaseFiles = fs.readdirSync(path.join(phasesDir, e.name));
       const plans = phaseFiles.filter(f => f.endsWith('-PLAN.md') || f === 'PLAN.md');
       const summaries = phaseFiles.filter(f => f.endsWith('-SUMMARY.md') || f === 'SUMMARY.md');
@@ -674,6 +832,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
       for (const plan of plans) {
         const planBase = plan.replace('-PLAN.md', '').replace('PLAN.md', '');
+
         if (!summaryBases.has(planBase)) {
           addIssue('info', 'I001', `${e.name}/${plan} has no SUMMARY.md`, 'May be in progress');
         }
@@ -684,14 +843,20 @@ function cmdValidateHealth(cwd, options, raw) {
   // ─── Check 7b: Nyquist VALIDATION.md consistency ────────────────────────
   try {
     const phaseEntries = fs.readdirSync(phasesDir, { withFileTypes: true });
+
     for (const e of phaseEntries) {
-      if (!e.isDirectory()) continue;
+      if (!e.isDirectory()) {
+continue;
+}
+
       const phaseFiles = fs.readdirSync(path.join(phasesDir, e.name));
       const hasResearch = phaseFiles.some(f => f.endsWith('-RESEARCH.md'));
       const hasValidation = phaseFiles.some(f => f.endsWith('-VALIDATION.md'));
+
       if (hasResearch && !hasValidation) {
         const researchFile = phaseFiles.find(f => f.endsWith('-RESEARCH.md'));
         const researchContent = fs.readFileSync(path.join(phasesDir, e.name, researchFile), 'utf-8');
+
         if (researchContent.includes('## Validation Architecture')) {
           addIssue('warning', 'W009', `Phase ${e.name}: has Validation Architecture in RESEARCH.md but no VALIDATION.md`, 'Re-run /gsd-plan-phase with --research to regenerate');
         }
@@ -704,6 +869,7 @@ function cmdValidateHealth(cwd, options, raw) {
   // to silently fall back to general-purpose, losing specialized instructions.
   try {
     const agentStatus = checkAgentsInstalled();
+
     if (!agentStatus.agents_installed) {
       if (agentStatus.installed_agents.length === 0) {
         addIssue('warning', 'W010',
@@ -725,17 +891,23 @@ function cmdValidateHealth(cwd, options, raw) {
     const roadmapPhases = new Set();
     const phasePattern = /#{2,4}\s*Phase\s+(\d+[A-Z]?(?:\.\d+)*)\s*:/gi;
     let m;
+
     while ((m = phasePattern.exec(roadmapContent)) !== null) {
       roadmapPhases.add(m[1]);
     }
 
     const diskPhases = new Set();
+
     try {
       const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
+
       for (const e of entries) {
         if (e.isDirectory()) {
           const dm = e.name.match(/^(\d+[A-Z]?(?:\.\d+)*)/i);
-          if (dm) diskPhases.add(dm[1]);
+
+          if (dm) {
+diskPhases.add(dm[1]);
+}
         }
       }
     } catch { /* intentionally empty */ }
@@ -743,6 +915,7 @@ function cmdValidateHealth(cwd, options, raw) {
     // Phases in ROADMAP but not on disk
     for (const p of roadmapPhases) {
       const padded = String(parseInt(p, 10)).padStart(2, '0');
+
       if (!diskPhases.has(p) && !diskPhases.has(padded)) {
         addIssue('warning', 'W006', `Phase ${p} in ROADMAP.md but no directory on disk`, 'Create phase directory or remove from roadmap');
       }
@@ -751,6 +924,7 @@ function cmdValidateHealth(cwd, options, raw) {
     // Phases on disk but not in ROADMAP
     for (const p of diskPhases) {
       const unpadded = String(parseInt(p, 10));
+
       if (!roadmapPhases.has(p) && !roadmapPhases.has(unpadded)) {
         addIssue('warning', 'W007', `Phase ${p} exists on disk but not in ROADMAP.md`, 'Add to roadmap or remove directory');
       }
@@ -766,14 +940,17 @@ function cmdValidateHealth(cwd, options, raw) {
       // Extract current phase from STATE.md
       const currentPhaseMatch = stateContent.match(/\*\*Current Phase:\*\*\s*(\S+)/i) ||
                                  stateContent.match(/Current Phase:\s*(\S+)/i);
+
       if (currentPhaseMatch) {
         const statePhase = currentPhaseMatch[1].replace(/^0+/, '');
         // Check if ROADMAP shows this phase as already complete
         const phaseCheckboxRe = new RegExp(`-\\s*\\[x\\].*Phase\\s+0*${escapeRegex(statePhase)}[:\\s]`, 'i');
+
         if (phaseCheckboxRe.test(roadmapContentFull)) {
           // STATE says "current" but ROADMAP says "complete" — divergence
           const stateStatus = stateContent.match(/\*\*Status:\*\*\s*(.+)/i);
           const statusVal = stateStatus ? stateStatus[1].trim().toLowerCase() : '';
+
           if (statusVal !== 'complete' && statusVal !== 'done') {
             addIssue('warning', 'W011',
               `STATE.md says current phase is ${statePhase} (status: ${statusVal || 'unknown'}) but ROADMAP.md shows it as [x] complete — state files may be out of sync`,
@@ -792,6 +969,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
       // Validate branching_strategy
       const validStrategies = ['none', 'phase', 'milestone'];
+
       if (configParsed.branching_strategy && !validStrategies.includes(configParsed.branching_strategy)) {
         addIssue('warning', 'W012',
           `config.json: invalid branching_strategy "${configParsed.branching_strategy}"`,
@@ -801,6 +979,7 @@ function cmdValidateHealth(cwd, options, raw) {
       // Validate context_window is a positive integer
       if (configParsed.context_window !== undefined) {
         const cw = configParsed.context_window;
+
         if (typeof cw !== 'number' || cw <= 0 || !Number.isInteger(cw)) {
           addIssue('warning', 'W013',
             `config.json: context_window should be a positive integer, got "${cw}"`,
@@ -814,6 +993,7 @@ function cmdValidateHealth(cwd, options, raw) {
           'config.json: phase_branch_template missing {phase} placeholder',
           'Template must include {phase} for phase number substitution');
       }
+
       if (configParsed.milestone_branch_template && !configParsed.milestone_branch_template.includes('{milestone}')) {
         addIssue('warning', 'W015',
           'config.json: milestone_branch_template missing {milestone} placeholder',
@@ -824,6 +1004,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
   // ─── Perform repairs if requested ─────────────────────────────────────────
   const repairActions = [];
+
   if (options.repair && repairs.length > 0) {
     for (const repair of repairs) {
       try {
@@ -859,6 +1040,7 @@ function cmdValidateHealth(cwd, options, raw) {
               fs.copyFileSync(statePath, backupPath);
               repairActions.push({ action: 'backupState', success: true, path: backupPath });
             }
+
             // Generate minimal STATE.md from ROADMAP.md structure
             const milestone = getMilestoneInfo(cwd);
             let stateContent = `# Session State\n\n`;
@@ -879,16 +1061,22 @@ function cmdValidateHealth(cwd, options, raw) {
               try {
                 const configRaw = fs.readFileSync(configPath, 'utf-8');
                 const configParsed = JSON.parse(configRaw);
-                if (!configParsed.workflow) configParsed.workflow = {};
+
+                if (!configParsed.workflow) {
+configParsed.workflow = {};
+}
+
                 if (configParsed.workflow.nyquist_validation === undefined) {
                   configParsed.workflow.nyquist_validation = true;
                   fs.writeFileSync(configPath, JSON.stringify(configParsed, null, 2), 'utf-8');
                 }
+
                 repairActions.push({ action: repair, success: true, path: 'config.json' });
               } catch (err) {
                 repairActions.push({ action: repair, success: false, error: err.message });
               }
             }
+
             break;
           }
         }
@@ -900,6 +1088,7 @@ function cmdValidateHealth(cwd, options, raw) {
 
   // ─── Determine overall status ─────────────────────────────────────────────
   let status;
+
   if (errors.length > 0) {
     status = 'broken';
   } else if (warnings.length > 0) {
@@ -946,20 +1135,24 @@ function cmdVerifySchemaDrift(cwd, phaseArg, skipFlag, raw) {
 
   if (!phaseArg) {
     error('Usage: verify schema-drift <phase> [--skip]');
+
     return;
   }
 
   // Find phase directory
   const pDir = planningDir(cwd);
   const phasesDir = path.join(pDir, 'phases');
+
   if (!fs.existsSync(phasesDir)) {
     output({ drift_detected: false, blocking: false, message: 'No phases directory' }, raw);
+
     return;
   }
 
   // Find matching phase directory
   let phaseDir = null;
   const entries = fs.readdirSync(phasesDir, { withFileTypes: true });
+
   for (const entry of entries) {
     if (entry.isDirectory() && entry.name.includes(phaseArg)) {
       phaseDir = path.join(phasesDir, entry.name);
@@ -970,21 +1163,27 @@ function cmdVerifySchemaDrift(cwd, phaseArg, skipFlag, raw) {
   // Also try exact match
   if (!phaseDir) {
     const exact = path.join(phasesDir, phaseArg);
-    if (fs.existsSync(exact)) phaseDir = exact;
+
+    if (fs.existsSync(exact)) {
+phaseDir = exact;
+}
   }
 
   if (!phaseDir) {
     output({ drift_detected: false, blocking: false, message: `Phase directory not found: ${phaseArg}` }, raw);
+
     return;
   }
 
   // Collect files_modified from all PLAN.md files in the phase
   const allFiles = [];
   const planFiles = fs.readdirSync(phaseDir).filter(f => f.endsWith('-PLAN.md'));
+
   for (const pf of planFiles) {
     const content = fs.readFileSync(path.join(phaseDir, pf), 'utf-8');
     // Extract files_modified from frontmatter
     const fmMatch = content.match(/files_modified:\s*\[([^\]]*)\]/);
+
     if (fmMatch) {
       const files = fmMatch[1].split(',').map(f => f.trim()).filter(Boolean);
       allFiles.push(...files);
@@ -994,12 +1193,14 @@ function cmdVerifySchemaDrift(cwd, phaseArg, skipFlag, raw) {
   // Collect execution log from SUMMARY.md files
   let executionLog = '';
   const summaryFiles = fs.readdirSync(phaseDir).filter(f => f.endsWith('-SUMMARY.md'));
+
   for (const sf of summaryFiles) {
     executionLog += fs.readFileSync(path.join(phaseDir, sf), 'utf-8') + '\n';
   }
 
   // Also check git commit messages for push evidence
   const gitLog = execGit(cwd, ['log', '--oneline', '--all', '-50']);
+
   if (gitLog.exitCode === 0) {
     executionLog += '\n' + gitLog.stdout;
   }

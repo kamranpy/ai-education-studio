@@ -1,7 +1,7 @@
-import { checkout } from '@/actions/App/Http/Controllers/Institute/BillingController';
-import AdminLayout from '@/layouts/admin-layout';
 import { router } from '@inertiajs/react';
 import { CheckCircle, CreditCard, Sparkles } from 'lucide-react';
+import { checkout } from '@/actions/App/Http/Controllers/Institute/BillingController';
+import AdminLayout from '@/layouts/admin-layout';
 
 interface CreditPackage {
     id: number;
@@ -36,7 +36,10 @@ const FREE_PLAN: CreditPackage = {
 };
 
 function formatPrice(cents: number, currency: string): string {
-    if (cents === 0) return 'Free';
+    if (cents === 0) {
+return 'Free';
+}
+
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: currency.toUpperCase(),

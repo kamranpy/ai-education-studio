@@ -1,3 +1,13 @@
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    ChevronLeft,
+    ChevronRight,
+    FileText,
+    MoreHorizontal,
+    Search,
+} from 'lucide-react';
+import { useState } from 'react';
 import {
     index as examsIndex,
     create as examsCreate,
@@ -42,16 +52,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    ChevronLeft,
-    ChevronRight,
-    FileText,
-    MoreHorizontal,
-    Search,
-} from 'lucide-react';
-import { useState } from 'react';
 
 type ExamRecord = {
     id: number;
@@ -338,8 +338,14 @@ function ExamRowActions({
     }
 
     function executeConfirm() {
-        if (confirmAction === 'publish') onPublish(exam);
-        if (confirmAction === 'unpublish') onUnpublish(exam);
+        if (confirmAction === 'publish') {
+onPublish(exam);
+}
+
+        if (confirmAction === 'unpublish') {
+onUnpublish(exam);
+}
+
         setConfirmOpen(false);
     }
 

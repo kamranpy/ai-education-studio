@@ -20,6 +20,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
+
   try {
     const data = JSON.parse(input);
     const toolName = data.tool_name;
@@ -53,6 +54,7 @@ process.stdin.on('end', () => {
       /GEMINI\.md$/,
       /settings\.json$/,
     ];
+
     if (allowedPatterns.some(p => p.test(filePath))) {
       process.exit(0);
     }
@@ -60,9 +62,11 @@ process.stdin.on('end', () => {
     // Check if workflow guard is enabled
     const cwd = data.cwd || process.cwd();
     const configPath = path.join(cwd, '.planning', 'config.json');
+
     if (fs.existsSync(configPath)) {
       try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
         if (!config.hooks?.workflow_guard) {
           process.exit(0); // Guard disabled (default)
         }

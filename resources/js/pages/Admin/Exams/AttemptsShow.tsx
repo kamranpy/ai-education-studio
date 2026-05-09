@@ -1,4 +1,3 @@
-import AdminLayout from '@/layouts/admin-layout';
 import { router, useForm } from '@inertiajs/react';
 import {
     AlertTriangle,
@@ -26,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import AdminLayout from '@/layouts/admin-layout';
 
 interface Question {
     id: number;
@@ -85,11 +85,15 @@ function ConfidenceIndicator({
 }: {
     confidence: number | string | null;
 }) {
-    if (confidence === null || confidence === undefined) return null;
+    if (confidence === null || confidence === undefined) {
+return null;
+}
 
     const value = typeof confidence === 'string' ? parseFloat(confidence) : confidence;
 
-    if (isNaN(value)) return null;
+    if (isNaN(value)) {
+return null;
+}
 
     if (value >= 0.85) {
         return (

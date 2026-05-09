@@ -26,8 +26,10 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
   }
 
   const reqPath = planningPaths(cwd).requirements;
+
   if (!fs.existsSync(reqPath)) {
     output({ updated: false, reason: 'REQUIREMENTS.md not found', ids: reqIds }, raw, 'no requirements file');
+
     return;
   }
 
@@ -42,6 +44,7 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
 
     // Update checkbox: - [ ] **REQ-ID** → - [x] **REQ-ID**
     const checkboxPattern = new RegExp(`(-\\s*\\[)[ ](\\]\\s*\\*\\*${reqEscaped}\\*\\*)`, 'gi');
+
     if (checkboxPattern.test(reqContent)) {
       reqContent = reqContent.replace(checkboxPattern, '$1x$2');
       found = true;
@@ -49,6 +52,7 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
 
     // Update traceability table: | REQ-ID | Phase N | Pending | → | REQ-ID | Phase N | Complete |
     const tablePattern = new RegExp(`(\\|\\s*${reqEscaped}\\s*\\|[^|]+\\|)\\s*Pending\\s*(\\|)`, 'gi');
+
     if (tablePattern.test(reqContent)) {
       // Re-read since test() advances lastIndex for global regex
       reqContent = reqContent.replace(
@@ -64,6 +68,7 @@ function cmdRequirementsMarkComplete(cwd, reqIdsRaw, raw) {
       // Check if already complete before declaring not_found
       const doneCheckbox = new RegExp(`-\\s*\\[x\\]\\s*\\*\\*${reqEscaped}\\*\\*`, 'gi');
       const doneTable = new RegExp(`\\|\\s*${reqEscaped}\\s*\\|[^|]+\\|\\s*Complete\\s*\\|`, 'gi');
+
       if (doneCheckbox.test(reqContent) || doneTable.test(reqContent)) {
         alreadyComplete.push(reqId);
       } else {
@@ -118,7 +123,9 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
     const dirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 
     for (const dir of dirs) {
-      if (!isDirInMilestone(dir)) continue;
+      if (!isDirInMilestone(dir)) {
+continue;
+}
 
       phaseCount++;
       const phaseFiles = fs.readdirSync(path.join(phasesDir, dir));
@@ -132,12 +139,15 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
           const content = fs.readFileSync(path.join(phasesDir, dir, s), 'utf-8');
           const fm = extractFrontmatter(content);
           const oneLiner = fm['one-liner'] || extractOneLinerFromBody(content);
+
           if (oneLiner) {
             accomplishments.push(oneLiner);
           }
+
           // Count tasks: prefer **Tasks:** N from Performance section,
           // then <task XML tags, then ## Task N markdown headers
           const tasksFieldMatch = content.match(/\*\*Tasks:\*\*\s*(\d+)/);
+
           if (tasksFieldMatch) {
             totalTasks += parseInt(tasksFieldMatch[1], 10);
           } else {
@@ -165,6 +175,7 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
 
   // Archive audit file if exists
   const auditFile = path.join(cwd, '.planning', `${version}-MILESTONE-AUDIT.md`);
+
   if (fs.existsSync(auditFile)) {
     fs.renameSync(auditFile, path.join(archiveDir, `${version}-MILESTONE-AUDIT.md`));
   }
@@ -175,12 +186,14 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
 
   if (fs.existsSync(milestonesPath)) {
     const existing = fs.readFileSync(milestonesPath, 'utf-8');
+
     if (!existing.trim()) {
       // Empty file — treat like new
       fs.writeFileSync(milestonesPath, normalizeMd(`# Milestones\n\n${milestoneEntry}`), 'utf-8');
     } else {
       // Insert after the header line(s) for reverse chronological order (newest first)
       const headerMatch = existing.match(/^(#{1,3}\s+[^\n]*\n\n?)/);
+
       if (headerMatch) {
         const header = headerMatch[1];
         const rest = existing.slice(header.length);
@@ -208,6 +221,7 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
 
   // Archive phase directories if requested
   let phasesArchived = false;
+
   if (options.archivePhases) {
     try {
       const phaseArchiveDir = path.join(archiveDir, `${version}-phases`);
@@ -216,11 +230,16 @@ function cmdMilestoneComplete(cwd, version, options, raw) {
       const phaseEntries = fs.readdirSync(phasesDir, { withFileTypes: true });
       const phaseDirNames = phaseEntries.filter(e => e.isDirectory()).map(e => e.name);
       let archivedCount = 0;
+
       for (const dir of phaseDirNames) {
-        if (!isDirInMilestone(dir)) continue;
+        if (!isDirInMilestone(dir)) {
+continue;
+}
+
         fs.renameSync(path.join(phasesDir, dir), path.join(phaseArchiveDir, dir));
         archivedCount++;
       }
+
       phasesArchived = archivedCount > 0;
     } catch { /* intentionally empty */ }
   }

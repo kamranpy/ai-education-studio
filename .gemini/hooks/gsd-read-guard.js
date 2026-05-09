@@ -27,6 +27,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
+
   try {
     const data = JSON.parse(input);
     const toolName = data.tool_name;
@@ -37,6 +38,7 @@ process.stdin.on('end', () => {
     }
 
     const filePath = data.tool_input?.file_path || '';
+
     if (!filePath) {
       process.exit(0);
     }
@@ -44,6 +46,7 @@ process.stdin.on('end', () => {
     // Only inject guidance when the file already exists.
     // New files don't need a prior Read — the runtime allows creating them directly.
     let fileExists = false;
+
     try {
       fs.accessSync(filePath, fs.constants.F_OK);
       fileExists = true;

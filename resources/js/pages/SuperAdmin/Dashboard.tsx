@@ -1,5 +1,10 @@
-import SuperAdminLayout from '@/layouts/super-admin-layout';
 import { router } from '@inertiajs/react';
+import {
+    Building2,
+    ClipboardList,
+    CreditCard,
+    TrendingUp,
+} from 'lucide-react';
 import {
     BarChart,
     Bar,
@@ -11,12 +16,6 @@ import {
     Tooltip,
     ResponsiveContainer,
 } from 'recharts';
-import {
-    Building2,
-    ClipboardList,
-    CreditCard,
-    TrendingUp,
-} from 'lucide-react';
 import {
     Card,
     CardContent,
@@ -31,6 +30,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface ChartPoint {
     date: string;
@@ -67,7 +67,10 @@ function formatCurrency(cents: number): string {
 }
 
 function formatRevenueTick(cents: number): string {
-    if (cents >= 100000) return `${(cents / 100000).toFixed(1)}k`;
+    if (cents >= 100000) {
+return `${(cents / 100000).toFixed(1)}k`;
+}
+
     return `${(cents / 100).toFixed(0)}`;
 }
 

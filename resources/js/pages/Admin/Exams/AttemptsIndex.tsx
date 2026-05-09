@@ -1,4 +1,3 @@
-import AdminLayout from '@/layouts/admin-layout';
 import { Link, router } from '@inertiajs/react';
 import {
     AlertTriangle,
@@ -16,6 +15,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import AdminLayout from '@/layouts/admin-layout';
 
 interface Attempt {
     id: number;

@@ -1,9 +1,9 @@
-import StudentLayout from '@/layouts/student-layout';
 import { Link } from '@inertiajs/react';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import StudentLayout from '@/layouts/student-layout';
 
 interface Question {
     id: number;

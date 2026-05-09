@@ -1,10 +1,9 @@
-import SuperAdminLayout from '@/layouts/super-admin-layout';
-import {
-    store as billingStore,
-} from '@/actions/App/Http/Controllers/SuperAdmin/StripeSettingController';
 import { useForm } from '@inertiajs/react';
 import { Eye, EyeOff, KeyRound, Loader2, Receipt } from 'lucide-react';
 import { useState } from 'react';
+import {
+    store as billingStore,
+} from '@/actions/App/Http/Controllers/SuperAdmin/StripeSettingController';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface StripeConfig {
     has_secret_key: boolean;
@@ -67,6 +67,7 @@ function formatDate(dateString: string): string {
 
 function TypeBadge({ type }: { type: string }) {
     const isManual = type === 'manual_adjustment';
+
     return (
         <span
             className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${

@@ -24,8 +24,15 @@ Route::inertia('/', 'welcome', [
 ])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-
+    // Role-based dashboard redirect — used by the welcome page "Dashboard" link
+    Route::get('dashboard', function () {
+        $route = match (auth()->user()->role?->slug) {
+            \App\Models\Role::SUPER_ADMIN => route('super_admin.dashboard'),
+            \App\Models\Role::STUDENT => route('student.dashboard'),
+            default => route('admin.dashboard'),
+        };
+        return redirect($route);
+    })->name('dashboard');
     Route::prefix('super-admin')->middleware(EnsureSuperAdmin::class)->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('super_admin.dashboard');
 
