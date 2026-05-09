@@ -68,13 +68,15 @@ class StripeSettingController extends Controller
             }
 
             if ($existing) {
-                // Carry forward existing encrypted values for fields not being replaced
+                // Carry forward existing decrypted values for fields not being replaced.
+                // Reading via the accessor decrypts the value; the encrypted cast will
+                // re-encrypt it on save — avoiding double-encryption from getRawOriginal().
                 if (empty($validated['secret_key']) && $existing->hasSecretKey()) {
-                    $data['secret_key'] = $existing->getRawOriginal('secret_key');
+                    $data['secret_key'] = $existing->secret_key;
                 }
 
                 if (empty($validated['webhook_secret']) && $existing->hasWebhookSecret()) {
-                    $data['webhook_secret'] = $existing->getRawOriginal('webhook_secret');
+                    $data['webhook_secret'] = $existing->webhook_secret;
                 }
 
                 $existing->update($data);
