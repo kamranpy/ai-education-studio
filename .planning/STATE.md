@@ -1,67 +1,44 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.1
 milestone_name: milestone
-current_phase: 6
-current_plan: completed
-status: complete
+current_phase: null
+current_plan: null
+status: planning
 last_updated: "2026-05-09T00:00:00.000Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 29
-  completed_plans: 29
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
-Phase: 01 (foundation-multi-tenancy) — COMPLETED
-Phase: 02 (user-management-exam-creation) — COMPLETED (verification passed)
-Phase: 03 (student-exam-experience) — COMPLETED (verification passed)
-Phase: 04 (ai-evaluation-and-grading) — COMPLETED (verification passed)
-Phase: 04.1 (exam-creation-enhancements-evaluation-settings) — COMPLETED (verification passed)
-Phase: 05 (monetization-billing) — COMPLETED (verification passed 2026-05-09)
-Phase: 06 (super-admin-global-management) — COMPLETED (2026-05-09)
-**Current Phase:** 6
-**Current Plan:** All complete
-**Status:** Milestone complete — ready for verification
+## Previous Milestone
 
-## Performance Metrics
+**v1.0 MVP** — shipped 2026-05-09
+- 7 phases, 25 plans, 38 tasks
+- Archived: `.planning/milestones/v1.0-phases/`
+- See: `.planning/MILESTONES.md`
 
-| Phase | Plan | Duration | Tasks | Files |
-|-------|------|----------|-------|-------|
-| 02 | 01 | 13min | 2 | 12 |
-| 02 | 02 | 9min | 3 | 15 |
-| 02 | 03 | 14min | 2 | 9 |
-| 02 | 04 | — | — | — |
-| 04 | 01 | ~15min | 7 | 12 |
-| 04 | 02 | ~10min | 3 | 7 |
-| 04 | 03 | ~10min | 4 | 4 |
-| 04 | 04 | ~8min | 3 | 4 |
-| 03 | 01–04 | — | — | — |
+## Project Reference
+
+See: `.planning/PROJECT.md` (updated 2026-05-09)
+
+**Core value:** A reliable digital assessment platform with AI-assisted evaluation that focuses on conceptual understanding rather than exact wording.
+**Current focus:** Planning v1.1 milestone
 
 ## Accumulated Context
 
-### Key Decisions
+### Key Decisions (carry-forward from v1.0)
 
-- Multi-tenant architecture from day one
-- Async AI evaluation to prevent timeouts
-- Basic anti-cheat tracking for v1
-- EnsureInstituteAdmin middleware protects all /admin routes (Phase 02)
-- User status column (active/invited/disabled) added to users table (Phase 02)
-- Admin cannot assign super_admin role via invite form — validated server-side (Phase 02)
-- Used after() validator closures for nested conditional validation instead of required_if wildcards (Phase 02)
-- Delete-and-recreate strategy for draft exam updates to avoid orphaned records (Phase 02)
-- Used Collapsible (not Accordion) for question cards to allow multiple open simultaneously (Phase 02)
-- ExamController show eager-loads questions.choices and loadCount for questions_count (Phase 02)
-- LLM provider configuration is Super-Admin global, NOT per-institute (Phase 04 D-01)
-- LLM API keys stored encrypted in DB via Crypt::encryptString() keyed off APP_KEY; not in .env (Phase 04 D-02)
-- Provider abstraction via driver layer: openai, anthropic, google, openai-compatible (catch-all for DeepSeek/Qwen/Together/Ollama/etc.) (Phase 04 D-04)
-- ai_* columns immutable; override_* columns separate; final_score = override_score ?? ai_score (Phase 04 D-21)
-- Confidence < 0.7 auto-flags answer as needs_review (Phase 04 D-19)
-
-### Roadmap Evolution
-
-- Phase 4.1 inserted after Phase 4: Exam Creation Enhancements & Evaluation Settings (URGENT)
+- Single-DB multi-tenancy via InstituteScope global scope
+- LLM config is Super-Admin global; keys encrypted in DB
+- Provider abstraction: openai / anthropic / google / openai-compatible
+- ai_* columns immutable; final_score = override_score ?? ai_score
+- Confidence < 0.7 auto-flags for review
+- Pessimistic locking for credit deduction
+- Stripe keys encrypted in DB with .env fallback
 
 ### Active Blockers
 
@@ -69,11 +46,10 @@ Phase: 06 (super-admin-global-management) — COMPLETED (2026-05-09)
 
 ### Pending Todos
 
-- [ ] Gather Phase 6 context (CONTEXT.md + RESEARCH.md + UI-SPEC.md)
-- [ ] Plan Phase 6 (Super Admin & Global Management)
-- [ ] Execute Phase 6 plans
+- [ ] Plan v1.1 milestone scope
+- [ ] Run `/gsd-new-milestone` to kick off v1.1
 
 ## Session Continuity
 
-**Last Action:** Phase 5 (Monetization & Billing) human verification passed
-**Next Action:** Plan Phase 6 (Super Admin & Global Management)
+**Last Action:** v1.0 milestone archived (2026-05-09)
+**Next Action:** Plan v1.1 milestone — analytics, question banks, exports, OAuth
