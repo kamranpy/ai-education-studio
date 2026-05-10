@@ -203,19 +203,19 @@ return;
                                                     </span>
                                                 </div>
                                             </div>
-                                            {/* Bar chart */}
-                                            <div className="flex items-end gap-2 h-28">
+                                            {/* Bar chart — heights in px (112px = h-28 container) */}
+                                            <div className="flex items-end gap-2" style={{ height: '112px' }}>
                                                 {[
                                                     { a: 55, b: 70 }, { a: 80, b: 90 }, { a: 40, b: 50 },
                                                     { a: 85, b: 95 }, { a: 65, b: 75 }, { a: 50, b: 60 },
                                                     { a: 75, b: 85 }, { a: 60, b: 70 }, { a: 90, b: 100 },
                                                     { a: 45, b: 55 }, { a: 70, b: 80 }, { a: 82, b: 92 },
                                                 ].map((bar, i) => (
-                                                    <div key={i} className="flex-1 flex items-end gap-0.5">
+                                                    <div key={i} className="flex-1 flex items-end gap-0.5 h-full">
                                                         <div
                                                             className="flex-1 rounded-t-sm"
                                                             style={{
-                                                                height: `${bar.a}%`,
+                                                                height: `${(bar.a / 100) * 112}px`,
                                                                 background: 'linear-gradient(to top, #4f46e5, #c3c0ff)',
                                                                 opacity: 0.85,
                                                             }}
@@ -223,7 +223,7 @@ return;
                                                         <div
                                                             className="flex-1 rounded-t-sm"
                                                             style={{
-                                                                height: `${bar.b}%`,
+                                                                height: `${(bar.b / 100) * 112}px`,
                                                                 background: 'linear-gradient(to top, #0d9488, #4fdbc8)',
                                                                 opacity: 0.85,
                                                             }}
