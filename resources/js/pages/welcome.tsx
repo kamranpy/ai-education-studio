@@ -152,8 +152,12 @@ return;
                             <Link href={register()} className="bg-[#4f46e5] text-white px-10 py-4 rounded-xl font-bold shadow-lg active:scale-95 transition-all text-lg">
                                 Start Free Trial
                             </Link>
-                            <a href="#" className="bg-[#131313] border border-[#464555] hover:border-[#c3c0ff]/50 text-[#e5e2e1] px-10 py-4 rounded-xl font-bold active:scale-95 transition-all text-lg">
-                                See a Demo
+                            <a href="#" className="bg-[#131313] border border-[#464555] hover:border-[#c3c0ff]/50 text-[#e5e2e1] px-10 py-4 rounded-xl font-bold active:scale-95 transition-all text-lg"
+                                onClick={(e) => {
+ e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); 
+}}
+                            >
+                                See How It Works
                             </a>
                         </div>
 
@@ -331,7 +335,7 @@ return;
                 </section>
 
                 {/* How It Works */}
-                <section className="py-16 bg-[#1c1b1b]">
+                <section id="how-it-works" className="py-16 bg-[#1c1b1b]">
                     <div className="max-w-[1280px] mx-auto px-6">
                         <div className="mb-16 text-center">
                             <h2 className="font-semibold text-3xl text-[#e5e2e1] mb-4">Three Steps to Modern Exams</h2>
@@ -558,8 +562,14 @@ return;
                             <Link href={register()} className="bg-white text-[#4f46e5] px-10 py-4 rounded-xl font-bold shadow-xl hover:scale-105 transition-all">
                                 Get Started Free
                             </Link>
-                            <a href="#" className="bg-[#4f46e5]/20 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-xl font-bold hover:bg-[#4f46e5]/30 transition-all">
-                                Book a Demo
+                            <a
+                                href="#how-it-works"
+                                onClick={(e) => {
+ e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); 
+}}
+                                className="bg-[#4f46e5]/20 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-xl font-bold hover:bg-[#4f46e5]/30 transition-all"
+                            >
+                                See How It Works
                             </a>
                         </div>
                     </div>
