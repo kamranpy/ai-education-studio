@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | AI Education Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#4d44e3",
+                        "primary": "#c3c0ff",
+                        "secondary-fixed-dim": "#4fdbc8",
+                        "on-surface": "#e5e2e1",
+                        "on-error": "#690005",
+                        "outline-variant": "#464555",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "tertiary-container": "#6f3dd9",
+                        "surface": "#131313",
+                        "on-secondary": "#003731",
+                        "tertiary-fixed-dim": "#d0bcff",
+                        "on-tertiary-fixed-variant": "#5516be",
+                        "on-primary-fixed": "#0f0069",
+                        "on-secondary-fixed-variant": "#005048",
+                        "background": "#131313",
+                        "surface-dim": "#131313",
+                        "tertiary": "#d0bcff",
+                        "on-surface-variant": "#c7c4d8",
+                        "secondary-container": "#04b4a2",
+                        "error-container": "#93000a",
+                        "inverse-surface": "#e5e2e1",
+                        "on-primary": "#1d00a5",
+                        "on-background": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container": "#201f1f",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary": "#3c0091",
+                        "on-tertiary-container": "#e3d5ff",
+                        "on-secondary-container": "#003f38",
+                        "primary-container": "#4f46e5",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary-fixed": "#23005c",
+                        "surface-variant": "#353534",
+                        "secondary": "#4fdbc8",
+                        "on-primary-container": "#dad7ff",
+                        "on-secondary-fixed": "#00201c",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#c3c0ff",
+                        "outline": "#918fa1",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "surface-bright": "#3a3939",
+                        "secondary-fixed": "#71f8e4",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-lowest": "#0e0e0e",
+                        "primary-fixed": "#e2dfff",
+                        "tertiary-fixed": "#e9ddff",
+                        "surface-container-highest": "#353534"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "lg": "40px",
+                        "gutter": "24px",
+                        "container-max": "1280px",
+                        "md": "24px",
+                        "sm": "16px",
+                        "base": "4px",
+                        "xs": "8px",
+                        "xl": "64px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .login-gradient {
+            background: linear-gradient(135deg, #0f0069 0%, #1d00a5 50%, #4f46e5 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md overflow-hidden">
+<main class="flex h-screen w-full">
+<!-- Left Panel: Brand & Value Prop -->
+<section class="hidden lg:flex lg:w-1/2 login-gradient relative flex-col justify-between p-xl overflow-hidden">
+<!-- Background Decorative Element -->
+<div class="absolute inset-0 opacity-20 pointer-events-none">
+<img class="w-full h-full object-cover mix-blend-overlay" data-alt="A sophisticated abstract background featuring complex nodes and connecting lines representing an artificial intelligence neural network. The visual style is highly technical and professional, using deep indigo and vibrant violet tones. Soft glowing light pulses along the pathways, creating a sense of dynamic data flow and academic precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqMbNeJbiMQTRcaqddihXl2yddGGkR41mV19MD7W0oUx_sm-t4FUJJ4R0g5sRnziscgbfTOR_Q1_iUaD1ErqpQa1tnD0l1b4tW-deJ90ISME263pN-lDkM5aHNqnAUxZehW22dVyZY4qMIjQqSS36c6ruPgoCVjfdVGr4wSRR2QvcxkIGdrvxMSpmYkiLvdAOuaROExv5FWhgEpzRKjawJ3MgvzkezlQku_c4f4JxLicm_MVOcVYOui0SyOSHIbxjdSeXT7gfDI-1w"/>
+</div>
+<div class="relative z-10">
+<div class="flex items-center gap-xs mb-xl">
+<span class="material-symbols-outlined text-primary text-[40px]" data-weight="fill" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h1 class="text-primary font-headline-lg text-headline-lg tracking-tight">AI Education Studio</h1>
+</div>
+<div class="space-y-lg max-w-md">
+<h2 class="text-on-primary-container font-display-lg text-display-lg">Empowering educators with AI</h2>
+<ul class="space-y-md">
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary bg-secondary/10 p-base rounded-full" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<p class="font-title-md text-title-md text-on-primary-container">Smart Question Generation</p>
+<p class="text-on-primary-container/70 text-body-md">Instantly create rigorous exam questions from your curriculum materials.</p>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary bg-secondary/10 p-base rounded-full" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<p class="font-title-md text-title-md text-on-primary-container">Automated Grading</p>
+<p class="text-on-primary-container/70 text-body-md">Save hundreds of hours with high-precision AI-driven assessment tools.</p>
+</div>
+</li>
+<li class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-secondary bg-secondary/10 p-base rounded-full" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<div>
+<p class="font-title-md text-title-md text-on-primary-container">Insightful Analytics</p>
+<p class="text-on-primary-container/70 text-body-md">Identify student knowledge gaps with deep-dive performance data.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="relative z-10">
+<p class="text-on-primary-container/50 font-label-md text-label-md uppercase tracking-widest">Advanced Academic Assessment System v2.4</p>
+</div>
+</section>
+<!-- Right Panel: Login Form -->
+<section class="w-full lg:w-1/2 bg-surface-container-lowest flex items-center justify-center p-gutter relative overflow-y-auto">
+<div class="max-w-[440px] w-full space-y-lg">
+<!-- Mobile Logo -->
+<div class="lg:hidden flex justify-center mb-xl">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary-container text-[32px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h1 class="text-on-surface font-headline-lg text-headline-lg tracking-tight">AI Education Studio</h1>
+</div>
+</div>
+<header class="space-y-xs">
+<h2 class="text-on-surface font-headline-lg text-headline-lg">Welcome back</h2>
+<p class="text-on-surface-variant font-body-md text-body-md">Enter your credentials to access the admin console.</p>
+</header>
+<form class="space-y-md">
+<!-- Email Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface-variant block" for="email">Email Address</label>
+<div class="relative">
+<input class="w-full bg-surface-container border border-outline-variant px-md py-sm rounded-lg focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-all text-on-surface placeholder:text-outline outline-none" id="email" name="email" placeholder="name@institution.edu" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface-variant block" for="password">Password</label>
+<div class="relative group">
+<input class="w-full bg-surface-container border border-outline-variant px-md py-sm rounded-lg focus:ring-2 focus:ring-primary-container focus:border-primary-container transition-all text-on-surface placeholder:text-outline outline-none" id="password" name="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-sm top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Options -->
+<div class="flex items-center justify-between">
+<label class="flex items-center gap-xs cursor-pointer group">
+<input class="w-4 h-4 rounded border-outline-variant bg-surface-container text-primary-container focus:ring-primary-container focus:ring-offset-surface" type="checkbox"/>
+<span class="font-label-md text-label-md text-on-surface-variant group-hover:text-on-surface transition-colors">Remember me</span>
+</label>
+<a class="font-label-md text-label-md text-primary-container hover:text-primary transition-colors" href="#">Forgot password?</a>
+</div>
+<!-- Submit Button -->
+<button class="w-full bg-primary-container text-on-primary-container py-sm px-md rounded-lg font-title-md text-title-md hover:bg-inverse-primary active:scale-[0.98] transition-all shadow-lg shadow-primary-container/20 mt-sm" type="submit">
+                        Log In
+                    </button>
+</form>
+<div class="relative py-sm">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant/30"></div>
+</div>
+<div class="relative flex justify-center">
+<span class="bg-surface-container-lowest px-sm text-on-surface-variant font-label-md text-label-md">OR CONTINUE WITH</span>
+</div>
+</div>
+<!-- SSO Options -->
+<div class="grid grid-cols-2 gap-sm">
+<button class="flex items-center justify-center gap-xs py-sm px-md border border-outline-variant rounded-lg hover:bg-surface-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-on-surface-variant">google</span>
+<span class="font-label-md text-label-md text-on-surface">Google</span>
+</button>
+<button class="flex items-center justify-center gap-xs py-sm px-md border border-outline-variant rounded-lg hover:bg-surface-container transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-on-surface-variant">school</span>
+<span class="font-label-md text-label-md text-on-surface">Canvas</span>
+</button>
+</div>
+<!-- Footer Link -->
+<footer class="text-center">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                        Don't have an account? 
+                        <a class="text-primary-container font-title-md hover:text-primary transition-colors ml-xs" href="#">Register</a>
+</p>
+</footer>
+</div>
+<!-- Footer Small Print -->
+<div class="absolute bottom-md left-0 right-0 text-center px-gutter">
+<p class="text-on-surface-variant/40 font-mono-sm text-mono-sm uppercase tracking-tighter">
+                    © 2024 AI Education Studio • Secure Encryption Active
+                </p>
+</div>
+</section>
+</main>
+</body></html>
