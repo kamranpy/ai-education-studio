@@ -156,28 +156,19 @@ function StatCard({ label, value, icon, valueColor, iconBg, iconColor }: StatCar
         <div
             className="rounded-xl p-6 flex items-center justify-between"
             style={{
-                background: 'linear-gradient(180deg, #1C1B1B 0%, #161515 100%)',
-                border: '1px solid rgba(70, 69, 85, 0.3)',
+                background: 'var(--portal-card-bg)',
+                border: '1px solid var(--portal-card-border)',
             }}
         >
             <div>
-                <p
-                    className="text-xs font-medium uppercase tracking-wider mb-1"
-                    style={{ color: '#c7c4d8' }}
-                >
+                <p className="text-xs font-medium uppercase tracking-wider mb-1" style={{ color: 'var(--portal-text-muted)' }}>
                     {label}
                 </p>
-                <p
-                    className="text-5xl font-bold"
-                    style={{ color: valueColor, letterSpacing: '-0.02em' }}
-                >
+                <p className="text-5xl font-bold" style={{ color: valueColor, letterSpacing: '-0.02em' }}>
                     {String(value).padStart(2, '0')}
                 </p>
             </div>
-            <div
-                className="w-12 h-12 rounded-full flex items-center justify-center"
-                style={{ background: iconBg, color: iconColor }}
-            >
+            <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: iconBg, color: iconColor }}>
                 {icon}
             </div>
         </div>
@@ -198,10 +189,10 @@ function ExamCard({ exam, isInProgress, isSubmitted, onStart }: ExamCardProps) {
 
     return (
         <div
-            className="rounded-xl p-6 flex flex-col group transition-colors duration-200"
+            className="rounded-xl p-6 flex flex-col transition-all duration-200"
             style={{
-                background: 'linear-gradient(180deg, #1C1B1B 0%, #161515 100%)',
-                border: '1px solid rgba(70, 69, 85, 0.3)',
+                background: 'var(--portal-card-bg)',
+                border: '1px solid var(--portal-card-border)',
                 opacity: isSubmitted ? 0.75 : 1,
             }}
             onMouseEnter={(e) => {
@@ -211,168 +202,96 @@ function ExamCard({ exam, isInProgress, isSubmitted, onStart }: ExamCardProps) {
                 }
             }}
             onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor =
-                    'rgba(70, 69, 85, 0.3)';
+                (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-card-border)';
             }}
         >
             {/* Header row: badges + status */}
             <div className="flex justify-between items-start mb-4">
                 <div className="flex flex-wrap gap-2">
                     {exam.subject_name && (
-                        <span
-                            className="px-2 py-0.5 rounded text-xs font-medium"
-                            style={{
-                                background: subjectColor.bg,
-                                color: subjectColor.text,
-                            }}
-                        >
+                        <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: subjectColor.bg, color: subjectColor.text }}>
                             {exam.subject_name}
                         </span>
                     )}
                     {exam.class_name && (
-                        <span
-                            className="px-2 py-0.5 rounded text-xs font-medium"
-                            style={{
-                                background: '#35343e',
-                                color: '#c7c4d8',
-                            }}
-                        >
+                        <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: 'var(--portal-badge-bg)', color: 'var(--portal-badge-text)' }}>
                             {exam.class_name}
                         </span>
                     )}
                 </div>
-
                 {isSubmitted && (
-                    <span
-                        className="flex items-center gap-1 text-xs font-medium"
-                        style={{ color: '#71f8e4' }}
-                    >
-                        <CheckCircleIcon />
-                        Done
+                    <span className="flex items-center gap-1 text-xs font-medium" style={{ color: '#4fdbc8' }}>
+                        <CheckCircleIcon /> Done
                     </span>
                 )}
                 {isInProgress && !isSubmitted && (
-                    <span
-                        className="flex items-center gap-1 text-xs font-medium"
-                        style={{ color: '#ffb695' }}
-                    >
-                        <HistoryIcon />
-                        In Progress
+                    <span className="flex items-center gap-1 text-xs font-medium" style={{ color: '#ffb695' }}>
+                        <HistoryIcon /> In Progress
                     </span>
                 )}
                 {!isInProgress && !isSubmitted && (
-                    <span
-                        className="text-xs font-medium"
-                        style={{ color: '#4fdbc8' }}
-                    >
-                        New
-                    </span>
+                    <span className="text-xs font-medium" style={{ color: '#4fdbc8' }}>New</span>
                 )}
             </div>
 
             {/* Title */}
-            <h3
-                className="text-base font-semibold mb-2 transition-colors duration-200"
-                style={{ color: isSubmitted ? '#c7c4d8' : '#e4e1ee' }}
-            >
+            <h3 className="text-base font-semibold mb-2" style={{ color: isSubmitted ? 'var(--portal-text-muted)' : 'var(--portal-text-primary)' }}>
                 {exam.title}
             </h3>
 
             {/* Description */}
             {exam.description && (
-                <p
-                    className="text-sm mb-4 line-clamp-2"
-                    style={{ color: '#c7c4d8' }}
-                >
+                <p className="text-sm mb-4 line-clamp-2" style={{ color: 'var(--portal-text-secondary)' }}>
                     {exam.description}
                 </p>
             )}
 
             {/* Meta */}
-            <div
-                className="flex items-center gap-4 text-sm mb-6"
-                style={{ color: isSubmitted ? 'rgba(199, 196, 216, 0.6)' : '#c7c4d8' }}
-            >
-                <span className="flex items-center gap-1">
-                    <QuizIcon />
-                    {exam.questions_count} Questions
-                </span>
+            <div className="flex items-center gap-4 text-sm mb-6" style={{ color: isSubmitted ? 'var(--portal-text-disabled)' : 'var(--portal-text-secondary)' }}>
+                <span className="flex items-center gap-1"><QuizIcon /> {exam.questions_count} Questions</span>
                 {exam.time_limit_minutes && (
-                    <span className="flex items-center gap-1">
-                        <ScheduleIcon />
-                        {exam.time_limit_minutes} Min
-                    </span>
+                    <span className="flex items-center gap-1"><ScheduleIcon /> {exam.time_limit_minutes} Min</span>
                 )}
             </div>
 
             {/* CTA */}
             <div className="mt-auto">
                 {isSubmitted ? (
-                    <button
-                        disabled
-                        className="w-full py-3 px-4 rounded-lg text-sm font-bold cursor-not-allowed"
-                        style={{
-                            background: '#2a2933',
-                            color: 'rgba(199, 196, 216, 0.5)',
-                        }}
-                    >
+                    <button disabled className="w-full py-3 px-4 rounded-lg text-sm font-bold cursor-not-allowed"
+                        style={{ background: 'var(--portal-disabled-bg)', color: 'var(--portal-disabled-text)' }}>
                         Completed
                     </button>
                 ) : isInProgress ? (
                     <>
                         <div className="flex justify-between items-center text-xs font-medium mb-2">
-                            <span style={{ color: '#c7c4d8' }}>Progress</span>
+                            <span style={{ color: 'var(--portal-text-secondary)' }}>Progress</span>
                             <span style={{ color: '#ffb695' }}>In Progress</span>
                         </div>
-                        <div
-                            className="w-full rounded-full h-1.5 mb-4"
-                            style={{ background: '#35343e' }}
-                        >
-                            <div
-                                className="h-1.5 rounded-full"
-                                style={{ width: '30%', background: '#ffb695' }}
-                            />
+                        <div className="w-full rounded-full h-1.5 mb-4" style={{ background: 'var(--portal-progress-track)' }}>
+                            <div className="h-1.5 rounded-full" style={{ width: '30%', background: '#ffb695' }} />
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => onStart(exam.id)}
+                        <button type="button" onClick={() => onStart(exam.id)}
                             className="w-full py-3 px-4 rounded-lg text-sm font-bold transition-all active:scale-[0.98]"
-                            style={{
-                                border: '1px solid #ffb695',
-                                color: '#ffb695',
-                                background: 'transparent',
-                            }}
+                            style={{ border: '1px solid #ffb695', color: '#ffb695', background: 'transparent' }}
                             onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background =
-                                    'rgba(255, 182, 149, 0.1)';
-                            }}
+ (e.currentTarget as HTMLElement).style.background = 'rgba(255, 182, 149, 0.1)'; 
+}}
                             onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.background =
-                                    'transparent';
-                            }}
-                        >
+ (e.currentTarget as HTMLElement).style.background = 'transparent'; 
+}}>
                             Resume Exam
                         </button>
                     </>
                 ) : (
-                    <button
-                        type="button"
-                        onClick={() => onStart(exam.id)}
+                    <button type="button" onClick={() => onStart(exam.id)}
                         className="w-full py-3 px-4 rounded-lg text-sm font-bold transition-all active:scale-[0.98]"
-                        style={{
-                            background: '#4f46e5',
-                            color: '#dad7ff',
-                            boxShadow: '0px 4px 20px rgba(79, 70, 229, 0.25)',
-                        }}
+                        style={{ background: 'var(--brand-primary)', color: '#dad7ff', boxShadow: '0px 4px 20px rgba(79, 70, 229, 0.25)' }}
                         onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.background =
-                                '#4338ca';
-                        }}
+ (e.currentTarget as HTMLElement).style.background = 'var(--brand-primary-hover)'; 
+}}
                         onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.background =
-                                '#4f46e5';
-                        }}
-                    >
+ (e.currentTarget as HTMLElement).style.background = 'var(--brand-primary)'; 
+}}>
                         Start Exam
                     </button>
                 )}
@@ -413,23 +332,15 @@ return true;
             {/* Page header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1
-                        className="text-3xl font-semibold"
-                        style={{ color: '#e4e1ee', letterSpacing: '-0.01em' }}
-                    >
+                    <h1 className="text-3xl font-semibold" style={{ color: 'var(--portal-text-primary)', letterSpacing: '-0.01em' }}>
                         Available Exams
                     </h1>
-                    <p className="mt-1 text-base" style={{ color: '#c7c4d8' }}>
+                    <p className="mt-1 text-base" style={{ color: 'var(--portal-text-secondary)' }}>
                         Select an exam to begin your assessment.
                     </p>
                 </div>
-
-                {/* Search */}
                 <div className="relative w-full md:w-80">
-                    <span
-                        className="absolute left-3 top-1/2 -translate-y-1/2"
-                        style={{ color: '#c7c4d8' }}
-                    >
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--portal-text-muted)' }}>
                         <SearchIcon />
                     </span>
                     <input
@@ -439,157 +350,82 @@ return true;
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none transition-all"
                         style={{
-                            background: '#0e0d16',
-                            border: '1px solid rgba(70, 69, 85, 0.3)',
-                            color: '#e4e1ee',
+                            background: 'var(--portal-input-bg)',
+                            border: '1px solid var(--portal-input-border)',
+                            color: 'var(--portal-text-primary)',
                         }}
                         onFocus={(e) => {
-                            (e.currentTarget as HTMLElement).style.borderColor =
-                                '#4f46e5';
-                        }}
+ (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-primary)'; 
+}}
                         onBlur={(e) => {
-                            (e.currentTarget as HTMLElement).style.borderColor =
-                                'rgba(70, 69, 85, 0.3)';
-                        }}
+ (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-input-border)'; 
+}}
                     />
                 </div>
             </div>
 
             {/* Stats row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard
-                    label="Exams Available"
-                    value={availableCount}
-                    icon={<AssignmentIcon />}
-                    valueColor="#4fdbc8"
-                    iconBg="rgba(79, 219, 200, 0.1)"
-                    iconColor="#4fdbc8"
-                />
-                <StatCard
-                    label="In Progress"
-                    value={inProgressCount}
-                    icon={<PendingIcon />}
-                    valueColor="#ffb695"
-                    iconBg="rgba(255, 182, 149, 0.1)"
-                    iconColor="#ffb695"
-                />
-                <StatCard
-                    label="Completed"
-                    value={completedCount}
-                    icon={<TaskAltIcon />}
-                    valueColor="#71f8e4"
-                    iconBg="rgba(113, 248, 228, 0.1)"
-                    iconColor="#71f8e4"
-                />
+                <StatCard label="Exams Available" value={availableCount} icon={<AssignmentIcon />} valueColor="#4fdbc8" iconBg="rgba(79, 219, 200, 0.1)" iconColor="#4fdbc8" />
+                <StatCard label="In Progress" value={inProgressCount} icon={<PendingIcon />} valueColor="#ffb695" iconBg="rgba(255, 182, 149, 0.1)" iconColor="#ffb695" />
+                <StatCard label="Completed" value={completedCount} icon={<TaskAltIcon />} valueColor="#4fdbc8" iconBg="rgba(79, 219, 200, 0.1)" iconColor="#4fdbc8" />
             </div>
 
             {/* Exam grid */}
             {filteredExams.length === 0 ? (
-                <div
-                    className="rounded-xl p-12 flex flex-col items-center justify-center text-center"
-                    style={{
-                        border: '2px dashed rgba(70, 69, 85, 0.3)',
-                    }}
-                >
-                    <div
-                        className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
-                        style={{ background: '#35343e', color: '#c7c4d8' }}
-                    >
+                <div className="rounded-xl p-12 flex flex-col items-center justify-center text-center"
+                    style={{ border: '2px dashed var(--portal-card-border)' }}>
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4"
+                        style={{ background: 'var(--portal-badge-bg)', color: 'var(--portal-text-muted)' }}>
                         <SentimentDissatisfiedIcon />
                     </div>
-                    <p
-                        className="text-base font-medium"
-                        style={{ color: '#c7c4d8' }}
-                    >
+                    <p className="text-base font-medium" style={{ color: 'var(--portal-text-secondary)' }}>
                         {search ? 'No exams match your search' : 'No exams available'}
                     </p>
-                    <p className="text-sm mt-1" style={{ color: 'rgba(199, 196, 216, 0.6)' }}>
+                    <p className="text-sm mt-1" style={{ color: 'var(--portal-text-muted)' }}>
                         {search ? 'Try a different search term.' : 'Check back later for new assignments.'}
                     </p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredExams.map((exam) => (
-                        <ExamCard
-                            key={exam.id}
-                            exam={exam}
+                        <ExamCard key={exam.id} exam={exam}
                             isInProgress={inProgressExamIds.includes(exam.id)}
                             isSubmitted={submittedExamIds.includes(exam.id)}
-                            onStart={handleStartExam}
-                        />
+                            onStart={handleStartExam} />
                     ))}
                 </div>
             )}
 
             {/* Pagination */}
             {exams.last_page > 1 && (
-                <div
-                    className="flex items-center justify-between pt-8 mt-4"
-                    style={{ borderTop: '1px solid rgba(70, 69, 85, 0.2)' }}
-                >
-                    <p className="text-sm" style={{ color: '#c7c4d8' }}>
+                <div className="flex items-center justify-between pt-8 mt-4"
+                    style={{ borderTop: '1px solid var(--portal-divider)' }}>
+                    <p className="text-sm" style={{ color: 'var(--portal-text-secondary)' }}>
                         Showing {(exams.current_page - 1) * exams.per_page + 1} to{' '}
-                        {Math.min(exams.current_page * exams.per_page, exams.total)} of{' '}
-                        {exams.total} exams
+                        {Math.min(exams.current_page * exams.per_page, exams.total)} of {exams.total} exams
                     </p>
                     <div className="flex gap-2">
-                        <button
-                            type="button"
-                            disabled={!exams.prev_page_url}
-                            onClick={() =>
-                                exams.prev_page_url &&
-                                router.get(exams.prev_page_url)
-                            }
+                        <button type="button" disabled={!exams.prev_page_url}
+                            onClick={() => exams.prev_page_url && router.get(exams.prev_page_url)}
                             className="p-2 rounded-lg transition-colors disabled:opacity-30"
-                            style={{
-                                border: '1px solid rgba(70, 69, 85, 0.3)',
-                                color: '#c7c4d8',
-                            }}
-                        >
+                            style={{ border: '1px solid var(--portal-card-border)', color: 'var(--portal-text-secondary)' }}>
                             <ChevronLeftIcon />
                         </button>
-
-                        {Array.from({ length: exams.last_page }, (_, i) => i + 1).map(
-                            (page) => (
-                                <button
-                                    key={page}
-                                    type="button"
-                                    onClick={() =>
-                                        router.get(
-                                            `/student/dashboard?page=${page}`,
-                                        )
-                                    }
-                                    className="w-10 h-10 rounded-lg text-sm font-bold transition-colors"
-                                    style={
-                                        page === exams.current_page
-                                            ? {
-                                                  background: '#c3c0ff',
-                                                  color: '#1d00a5',
-                                              }
-                                            : {
-                                                  border: '1px solid rgba(70, 69, 85, 0.3)',
-                                                  color: '#c7c4d8',
-                                              }
-                                    }
-                                >
-                                    {page}
-                                </button>
-                            ),
-                        )}
-
-                        <button
-                            type="button"
-                            disabled={!exams.next_page_url}
-                            onClick={() =>
-                                exams.next_page_url &&
-                                router.get(exams.next_page_url)
-                            }
+                        {Array.from({ length: exams.last_page }, (_, i) => i + 1).map((page) => (
+                            <button key={page} type="button"
+                                onClick={() => router.get(`/student/dashboard?page=${page}`)}
+                                className="w-10 h-10 rounded-lg text-sm font-bold transition-colors"
+                                style={page === exams.current_page
+                                    ? { background: 'var(--brand-primary)', color: '#fff' }
+                                    : { border: '1px solid var(--portal-card-border)', color: 'var(--portal-text-secondary)' }}>
+                                {page}
+                            </button>
+                        ))}
+                        <button type="button" disabled={!exams.next_page_url}
+                            onClick={() => exams.next_page_url && router.get(exams.next_page_url)}
                             className="p-2 rounded-lg transition-colors disabled:opacity-30"
-                            style={{
-                                border: '1px solid rgba(70, 69, 85, 0.3)',
-                                color: '#c7c4d8',
-                            }}
-                        >
+                            style={{ border: '1px solid var(--portal-card-border)', color: 'var(--portal-text-secondary)' }}>
                             <ChevronRightIcon />
                         </button>
                     </div>

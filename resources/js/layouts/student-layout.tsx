@@ -151,7 +151,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
         <>
             {/* Brand */}
             <div className="px-6 mb-10">
-                <h1 className="text-xl font-bold tracking-tight text-[#c3c0ff] dark:text-[#c3c0ff]">
+                <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--brand-primary)' }}>
                     AI Education Studio
                 </h1>
             </div>
@@ -161,49 +161,53 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                 <Link
                     href={dashboardHref}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-r-full transition-all duration-200 ${
-                        isDashboardActive
-                            ? 'border-l-4 border-[#4f46e5]'
-                            : 'text-[#c7c4d8] hover:text-[#e4e1ee] hover:bg-[#35343e]/50'
-                    }`}
-                    style={
-                        isDashboardActive
-                            ? {
-                                  background:
-                                      'rgba(79, 70, 229, 0.2)',
-                                  color: '#c3c0ff',
-                              }
-                            : {}
-                    }
+                    className="flex items-center gap-3 px-4 py-3 rounded-r-full transition-all duration-200"
+                    style={isDashboardActive ? {
+                        background: 'var(--portal-nav-active-bg)',
+                        color: 'var(--portal-nav-active-text)',
+                        borderLeft: '4px solid var(--portal-nav-active-border)',
+                    } : {
+                        color: 'var(--portal-nav-text)',
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!isDashboardActive) {
+                            (e.currentTarget as HTMLElement).style.background = 'var(--portal-nav-hover-bg)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (!isDashboardActive) {
+                            (e.currentTarget as HTMLElement).style.background = 'transparent';
+                        }
+                    }}
                 >
                     <DashboardIcon />
-                    <span className="text-xs font-medium tracking-wider uppercase">
-                        Dashboard
-                    </span>
+                    <span className="text-xs font-medium tracking-wider uppercase">Dashboard</span>
                 </Link>
 
                 <Link
                     href={resultsHref}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-r-full transition-all duration-200 ${
-                        isResultsActive
-                            ? 'border-l-4 border-[#4f46e5]'
-                            : 'text-[#c7c4d8] hover:text-[#e4e1ee] hover:bg-[#35343e]/50'
-                    }`}
-                    style={
-                        isResultsActive
-                            ? {
-                                  background:
-                                      'rgba(79, 70, 229, 0.2)',
-                                  color: '#c3c0ff',
-                              }
-                            : {}
-                    }
+                    className="flex items-center gap-3 px-4 py-3 rounded-r-full transition-all duration-200"
+                    style={isResultsActive ? {
+                        background: 'var(--portal-nav-active-bg)',
+                        color: 'var(--portal-nav-active-text)',
+                        borderLeft: '4px solid var(--portal-nav-active-border)',
+                    } : {
+                        color: 'var(--portal-nav-text)',
+                    }}
+                    onMouseEnter={(e) => {
+                        if (!isResultsActive) {
+                            (e.currentTarget as HTMLElement).style.background = 'var(--portal-nav-hover-bg)';
+                        }
+                    }}
+                    onMouseLeave={(e) => {
+                        if (!isResultsActive) {
+                            (e.currentTarget as HTMLElement).style.background = 'transparent';
+                        }
+                    }}
                 >
                     <AnalyticsIcon />
-                    <span className="text-xs font-medium tracking-wider uppercase">
-                        My Results
-                    </span>
+                    <span className="text-xs font-medium tracking-wider uppercase">My Results</span>
                 </Link>
             </nav>
 
@@ -212,12 +216,17 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                 <Link
                     href={settingsHref}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-full text-[#c7c4d8] hover:text-[#e4e1ee] hover:bg-[#35343e]/50 transition-colors duration-200"
+                    className="flex items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200"
+                    style={{ color: 'var(--portal-nav-text)' }}
+                    onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = 'var(--portal-nav-hover-bg)';
+                    }}
+                    onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLElement).style.background = 'transparent';
+                    }}
                 >
                     <SettingsIcon />
-                    <span className="text-xs font-medium tracking-wider uppercase">
-                        Settings
-                    </span>
+                    <span className="text-xs font-medium tracking-wider uppercase">Settings</span>
                 </Link>
 
                 <Link
@@ -225,37 +234,30 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                     method="post"
                     as="button"
                     className="flex w-full items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200"
-                    style={{ color: 'rgba(255, 180, 171, 0.8)' }}
+                    style={{ color: 'var(--brand-error)' }}
                     onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.color =
-                            '#ffb4ab';
-                        (e.currentTarget as HTMLElement).style.background =
-                            'rgba(255, 180, 171, 0.1)';
+                        (e.currentTarget as HTMLElement).style.background = 'rgba(255, 180, 171, 0.1)';
                     }}
                     onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLElement).style.color =
-                            'rgba(255, 180, 171, 0.8)';
-                        (e.currentTarget as HTMLElement).style.background =
-                            'transparent';
+                        (e.currentTarget as HTMLElement).style.background = 'transparent';
                     }}
                 >
                     <LogoutIcon />
-                    <span className="text-xs font-medium tracking-wider uppercase">
-                        Logout
-                    </span>
+                    <span className="text-xs font-medium tracking-wider uppercase">Logout</span>
                 </Link>
             </div>
         </>
     );
 
     return (
-        <div className="min-h-screen bg-white dark:bg-[#131313]" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--portal-bg)', fontFamily: 'Inter, sans-serif' }}>
             {/* Desktop sidebar */}
             <aside
-                className="hidden md:flex fixed left-0 top-0 h-screen flex-col py-8 z-50 bg-[#f8f8f8] dark:bg-[#0e0d16]"
+                className="hidden md:flex fixed left-0 top-0 h-screen flex-col py-8 z-50"
                 style={{
                     width: '280px',
-                    borderRight: '1px solid rgba(70, 69, 85, 0.3)',
+                    backgroundColor: 'var(--portal-sidebar-bg)',
+                    borderRight: '1px solid var(--portal-card-border)',
                 }}
             >
                 {sidebarContent}
@@ -272,10 +274,11 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
 
             {/* Mobile sidebar drawer */}
             <aside
-                className="md:hidden fixed left-0 top-0 h-screen flex flex-col py-8 z-50 transition-transform duration-300 bg-[#f8f8f8] dark:bg-[#0e0d16]"
+                className="md:hidden fixed left-0 top-0 h-screen flex flex-col py-8 z-50 transition-transform duration-300"
                 style={{
                     width: '280px',
-                    borderRight: '1px solid rgba(70, 69, 85, 0.3)',
+                    backgroundColor: 'var(--portal-sidebar-bg)',
+                    borderRight: '1px solid var(--portal-card-border)',
                     transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
                 }}
             >
@@ -286,26 +289,29 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             <div className="md:ml-[280px] flex flex-col min-h-screen">
                 {/* Top bar */}
                 <header
-                    className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-white/80 dark:bg-[#13121b]/80 border-b border-zinc-200 dark:border-[#464555]/30"
+                    className="sticky top-0 z-40 flex items-center justify-between h-16 px-6"
                     style={{
+                        backgroundColor: 'var(--portal-topbar-bg)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
+                        borderBottom: '1px solid var(--portal-card-border)',
                     }}
                 >
                     {/* Left: hamburger (mobile) + breadcrumb */}
                     <div className="flex items-center gap-3">
                         <button
-                            className="md:hidden p-2 rounded-full transition-colors text-zinc-500 dark:text-[#c7c4d8]"
+                            className="md:hidden p-2 rounded-full transition-colors"
+                            style={{ color: 'var(--portal-text-secondary)' }}
                             onClick={() => setMobileOpen((v) => !v)}
                             aria-label="Toggle menu"
                         >
                             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
                         </button>
                         <div className="flex items-center gap-2">
-                            <span className="hidden md:block text-sm text-zinc-400 dark:text-[#c7c4d8]">
+                            <span className="hidden md:block text-sm" style={{ color: 'var(--portal-text-muted)' }}>
                                 Portal /
                             </span>
-                            <span className="text-sm font-semibold text-zinc-800 dark:text-[#e4e1ee]">
+                            <span className="text-sm font-semibold" style={{ color: 'var(--portal-text-primary)' }}>
                                 {breadcrumbLabel}
                             </span>
                         </div>
@@ -315,7 +321,8 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                     <div className="flex items-center gap-2">
                         <ThemeDropdown />
                         <button
-                            className="p-2 rounded-full transition-colors text-zinc-500 hover:text-zinc-800 dark:text-[#c7c4d8] dark:hover:text-[#c3c0ff]"
+                            className="p-2 rounded-full transition-colors"
+                            style={{ color: 'var(--portal-text-secondary)' }}
                             aria-label="Notifications"
                         >
                             <BellIcon />
@@ -324,7 +331,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                             <div className="flex items-center gap-2 ml-1">
                                 <UserAvatar user={user} size="sm" />
                                 <div className="hidden md:block">
-                                    <p className="text-xs font-semibold leading-none text-zinc-800 dark:text-[#e4e1ee]">
+                                    <p className="text-xs font-semibold leading-none" style={{ color: 'var(--portal-text-primary)' }}>
                                         {user.name}
                                     </p>
                                 </div>
@@ -339,12 +346,16 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
 
             {/* Mobile bottom nav */}
             <nav
-                className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-6 py-3 z-50 bg-[#f8f8f8] dark:bg-[#0e0d16] border-t border-zinc-200 dark:border-[#464555]/30"
+                className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-6 py-3 z-50"
+                style={{
+                    backgroundColor: 'var(--portal-sidebar-bg)',
+                    borderTop: '1px solid var(--portal-card-border)',
+                }}
             >
                 <Link
                     href={dashboardHref}
                     className="flex flex-col items-center gap-1 transition-colors"
-                    style={{ color: isDashboardActive ? '#c3c0ff' : '#c7c4d8' }}
+                    style={{ color: isDashboardActive ? 'var(--brand-primary-text)' : 'var(--portal-nav-text)' }}
                 >
                     <DashboardIcon />
                     <span className="text-[10px] font-bold">Dashboard</span>
@@ -352,7 +363,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                 <Link
                     href={resultsHref}
                     className="flex flex-col items-center gap-1 transition-colors"
-                    style={{ color: isResultsActive ? '#c3c0ff' : '#c7c4d8' }}
+                    style={{ color: isResultsActive ? 'var(--brand-primary-text)' : 'var(--portal-nav-text)' }}
                 >
                     <AnalyticsIcon />
                     <span className="text-[10px]">Results</span>
