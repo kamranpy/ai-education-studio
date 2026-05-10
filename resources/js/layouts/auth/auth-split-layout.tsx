@@ -101,13 +101,6 @@ export default function AuthSplitLayout({
 
                     {children}
                 </div>
-
-                {/* Footer */}
-                <div className="absolute bottom-4 left-0 right-0 text-center px-6">
-                    <p className="text-[#c7c4d8]/30 text-xs uppercase tracking-tighter">
-                        © {new Date().getFullYear()} AI Education Studio
-                    </p>
-                </div>
             </div>
         </div>
     );
