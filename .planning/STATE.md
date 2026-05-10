@@ -59,7 +59,7 @@ Last activity: 2026-05-10 — Milestone v2.0 started
 
 ### Pending Todos
 
-- [ ] Execute Phase 7: Public Homepage & Auth Pages
+- [x] Execute Phase 7: Public Homepage & Auth Pages
 
 ## Session Continuity
 
