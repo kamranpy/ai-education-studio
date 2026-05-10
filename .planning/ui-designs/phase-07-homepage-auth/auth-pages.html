@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "inverse-primary": "#4d44e3",
+                  "primary": "#c3c0ff",
+                  "secondary-fixed-dim": "#4fdbc8",
+                  "on-surface": "#e5e2e1",
+                  "on-error": "#690005",
+                  "outline-variant": "#464555",
+                  "on-primary-fixed-variant": "#3323cc",
+                  "tertiary-container": "#6f3dd9",
+                  "surface": "#131313",
+                  "on-secondary": "#003731",
+                  "tertiary-fixed-dim": "#d0bcff",
+                  "on-tertiary-fixed-variant": "#5516be",
+                  "on-primary-fixed": "#0f0069",
+                  "on-secondary-fixed-variant": "#005048",
+                  "background": "#131313",
+                  "surface-dim": "#131313",
+                  "tertiary": "#d0bcff",
+                  "on-surface-variant": "#c7c4d8",
+                  "secondary-container": "#04b4a2",
+                  "error-container": "#93000a",
+                  "inverse-surface": "#e5e2e1",
+                  "on-primary": "#1d00a5",
+                  "on-background": "#e5e2e1",
+                  "surface-container-high": "#2a2a2a",
+                  "surface-container": "#201f1f",
+                  "surface-container-low": "#1c1b1b",
+                  "on-tertiary": "#3c0091",
+                  "on-tertiary-container": "#e3d5ff",
+                  "on-secondary-container": "#003f38",
+                  "primary-container": "#4f46e5",
+                  "inverse-on-surface": "#313030",
+                  "on-tertiary-fixed": "#23005c",
+                  "surface-variant": "#353534",
+                  "secondary": "#4fdbc8",
+                  "on-primary-container": "#dad7ff",
+                  "on-secondary-fixed": "#00201c",
+                  "error": "#ffb4ab",
+                  "surface-tint": "#c3c0ff",
+                  "outline": "#918fa1",
+                  "primary-fixed-dim": "#c3c0ff",
+                  "surface-bright": "#3a3939",
+                  "secondary-fixed": "#71f8e4",
+                  "on-error-container": "#ffdad6",
+                  "surface-container-lowest": "#0e0e0e",
+                  "primary-fixed": "#e2dfff",
+                  "tertiary-fixed": "#e9ddff",
+                  "surface-container-highest": "#353534"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "lg": "40px",
+                  "gutter": "24px",
+                  "container-max": "1280px",
+                  "md": "24px",
+                  "sm": "16px",
+                  "base": "4px",
+                  "xs": "8px",
+                  "xl": "64px"
+          },
+          "fontFamily": {
+                  "headline-lg-mobile": ["Inter"],
+                  "label-md": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "mono-sm": ["JetBrains Mono"],
+                  "body-lg": ["Inter"],
+                  "body-md": ["Inter"],
+                  "title-md": ["Inter"],
+                  "display-lg": ["Inter"]
+          },
+          "fontSize": {
+                  "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                  "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "mono-sm": ["13px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                  "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                  "title-md": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                  "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background text-on-background min-h-screen selection:bg-primary-container selection:text-on-primary-container font-body-md">
+<!-- Header Area -->
+<header class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-md border-b border-outline-variant/20 shadow-sm">
+<div class="flex justify-between items-center h-16 px-gutter max-w-container-max mx-auto">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary" data-icon="school" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-title-md font-headline-lg text-primary tracking-tight">AI Education Studio</span>
+</div>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Back to Login</a>
+</div>
+</header>
+<main class="pt-xl pb-xl px-gutter flex flex-col items-center gap-xl">
+<!-- Section 1: Forgot Password -->
+<section class="w-full max-w-[420px] scroll-mt-24" id="forgot">
+<div class="bg-surface-container border border-outline-variant rounded-xl p-md shadow-xl">
+<div class="flex flex-col gap-xs mb-md">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="lock_reset">lock_reset</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Forgot your password?</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter your email and we'll send you instructions to reset your password.</p>
+</div>
+<form class="flex flex-col gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="forgot-email">Email Address</label>
+<input class="bg-background border border-outline-variant rounded-lg px-sm py-xs text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" id="forgot-email" placeholder="name@institution.edu" type="email"/>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded-lg active:scale-95 transition-transform font-bold hover:brightness-110" type="submit">
+            Send Reset Link
+          </button>
+</form>
+</div>
+</section>
+<!-- Section 2: Reset Password -->
+<section class="w-full max-w-[420px] scroll-mt-24" id="reset">
+<div class="bg-surface-container border border-outline-variant rounded-xl p-md shadow-xl">
+<div class="flex flex-col gap-xs mb-md">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="key">key</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Set a new password</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Create a strong password for <span class="text-on-surface font-medium">user@example.com</span></p>
+</div>
+<form class="flex flex-col gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="new-password">New Password</label>
+<input class="bg-background border border-outline-variant rounded-lg px-sm py-xs text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" id="new-password" placeholder="••••••••" type="password"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="confirm-password">Confirm Password</label>
+<input class="bg-background border border-outline-variant rounded-lg px-sm py-xs text-on-surface focus:outline-none focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 transition-all" id="confirm-password" placeholder="••••••••" type="password"/>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded-lg active:scale-95 transition-transform font-bold hover:brightness-110" type="submit">
+            Reset Password
+          </button>
+</form>
+</div>
+</section>
+<!-- Section 3: Verify Email -->
+<section class="w-full max-w-[420px] scroll-mt-24" id="verify">
+<div class="bg-surface-container border border-outline-variant rounded-xl p-md shadow-xl text-center">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-md">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="mark_email_unread" style="font-variation-settings: 'FILL' 1;">mark_email_unread</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-xs">Verify your email</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">We sent a verification link to your email. Please click the link to confirm your account and access the console.</p>
+<div class="flex flex-col gap-sm">
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded-lg active:scale-95 transition-transform font-bold hover:brightness-110" type="button">
+            Resend Verification Email
+          </button>
+<button class="w-full bg-transparent border border-outline-variant text-on-surface-variant font-label-md text-label-md py-sm rounded-lg hover:bg-surface-variant/50 transition-all" type="button">
+            Log out
+          </button>
+</div>
+</div>
+</section>
+<!-- Section 4: 2FA -->
+<section class="w-full max-w-[420px] scroll-mt-24" id="2fa">
+<div class="bg-surface-container border border-outline-variant rounded-xl p-md shadow-xl">
+<div class="flex flex-col gap-xs mb-md text-center">
+<span class="material-symbols-outlined text-secondary text-3xl mx-auto" data-icon="shield_lock" style="font-variation-settings: 'FILL' 1;">shield_lock</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Two-factor authentication</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter the 6-digit code from your authenticator app.</p>
+</div>
+<form class="flex flex-col gap-lg">
+<div class="flex justify-between gap-xs">
+<input class="w-12 h-14 bg-background border border-outline-variant rounded-lg text-center font-headline-lg text-primary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" maxlength="1" type="text"/>
+<input class="w-12 h-14 bg-background border border-outline-variant rounded-lg text-center font-headline-lg text-primary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" maxlength="1" type="text"/>
+<input class="w-12 h-14 bg-background border border-outline-variant rounded-lg text-center font-headline-lg text-primary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" maxlength="1" type="text"/>
+<input class="w-12 h-14 bg-background border border-outline-variant rounded-lg text-center font-headline-lg text-primary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" maxlength="1" type="text"/>
+<input class="w-12 h-14 bg-background border border-outline-variant rounded-lg text-center font-headline-lg text-primary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" maxlength="1" type="text"/>
+<input class="w-12 h-14 bg-background border border-outline-variant rounded-lg text-center font-headline-lg text-primary focus:border-primary-container focus:ring-2 focus:ring-primary-container/20 focus:outline-none" maxlength="1" type="text"/>
+</div>
+<div class="flex flex-col gap-sm">
+<button class="w-full bg-primary-container text-on-primary-container font-label-md text-label-md py-sm rounded-lg active:scale-95 transition-transform font-bold hover:brightness-110" type="submit">
+              Verify
+            </button>
+<p class="font-label-md text-label-md text-on-surface-variant text-center">
+              Lost your device? <a class="text-primary hover:underline" href="#">Use a recovery code</a>
+</p>
+</div>
+</form>
+</div>
+</section>
+</main>
+<footer class="w-full py-xl bg-surface-container-lowest border-t border-outline-variant">
+<div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-4 gap-xl">
+<div class="md:col-span-1">
+<div class="flex items-center gap-xs mb-sm">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+<span class="font-headline-lg text-primary">EduStudio</span>
+</div>
+<p class="font-body-md text-on-surface-variant">© 2024 AI Education Studio. All rights reserved.</p>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-on-surface font-bold">Privacy Policy</span>
+<span class="font-label-md text-on-surface font-bold">Terms of Service</span>
+</div>
+<div class="flex flex-col gap-sm">
+<span class="font-label-md text-on-surface font-bold">Security</span>
+<span class="font-label-md text-on-surface font-bold">Contact</span>
+</div>
+<div class="flex flex-col items-start gap-sm">
+<div class="bg-surface-container border border-outline-variant p-sm rounded-lg w-full">
+<p class="text-mono-sm text-on-surface-variant mb-xs">Status</p>
+<div class="flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-label-md text-on-surface">All Systems Operational</span>
+</div>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

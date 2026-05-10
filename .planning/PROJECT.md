@@ -1,6 +1,19 @@
 # AI Education Studio
 
-## What This Is
+## Current Milestone: v2.0 UI Revamp
+
+**Goal:** Replace the entire UI with a polished, brand-new design across all surfaces — homepage, auth pages, and all three role portals.
+
+**Target features:**
+- Public branded homepage
+- Custom login, register, and all auth pages
+- Student portal — full redesign (layout + all pages)
+- Institute Admin portal — full redesign (layout + all pages)
+- Super Admin portal — full redesign (layout + all pages)
+
+**Workflow:** Design-first per phase — AI generates UI prompt → user generates HTML → AI implements into React/Inertia pages.
+
+
 
 A production-grade AI-powered exam platform (SaaS) for educational institutes. It enables institutes to create and manage exams, evaluate student performance, and automate grading (partially with AI). It is designed to be sold on marketplaces (like CodeCanyon), allowing buyers to host it and monetize via a pay-per-exam model.
 
@@ -32,7 +45,8 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 <!-- Next milestone scope. -->
 
-- [ ] Detailed analytics dashboard for student performance trends (per-student, per-exam breakdowns)
+- [ ] Full UI revamp — homepage, auth pages, student/admin/super-admin portals (v2.0)
+- [ ] Detailed analytics dashboard for student performance trends
 - [ ] Question banks/pools for reusing questions across exams
 - [ ] Export exam results to CSV/PDF
 - [ ] OAuth login (Google, Microsoft)
