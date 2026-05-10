@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { CheckCircle2, Clock, Eye, XCircle } from 'lucide-react';
-import StudentLayout from '@/layouts/student-layout';
 import { results as attemptResults } from '@/actions/App/Http/Controllers/Student/ExamAttemptController';
+import StudentLayout from '@/layouts/student-layout';
 
 interface AttemptExam {
     id: number;
@@ -35,7 +35,7 @@ function ResultsHistory({ attempts }: Props) {
         <>
             <Head title="My Results" />
 
-            <div className="p-6 lg:p-8 max-w-3xl mx-auto space-y-6">
+            <div className="p-6 lg:p-8 space-y-6">
                 {/* Page header */}
                 <div className="space-y-1">
                     <h1

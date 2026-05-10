@@ -1,7 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { useState  } from 'react';
-import type {ReactNode} from 'react';
+import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { index as resultsIndex } from '@/actions/App/Http/Controllers/Student/ResultsController';
+import { ThemeDropdown } from '@/components/theme-dropdown';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
 import { dashboard as studentDashboard } from '@/routes/student';
@@ -31,13 +32,6 @@ function UserAvatar({ user, size = 'md' }: { user: User; size?: 'sm' | 'md' }) {
             {initials}
         </div>
     );
-}
-
-interface NavItem {
-    title: string;
-    href: string;
-    icon: ReactNode;
-    mobileIcon?: ReactNode;
 }
 
 function DashboardIcon() {
@@ -156,43 +150,11 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
     const sidebarContent = (
         <>
             {/* Brand */}
-            <div className="px-6 mb-8">
-                <h1
-                    className="text-xl font-bold tracking-tight"
-                    style={{ color: '#c3c0ff' }}
-                >
+            <div className="px-6 mb-10">
+                <h1 className="text-xl font-bold tracking-tight" style={{ color: '#c3c0ff' }}>
                     AI Education Studio
                 </h1>
             </div>
-
-            {/* User profile */}
-            {user && (
-                <div className="px-4 mb-8">
-                    <div
-                        className="flex items-center gap-3 p-3 rounded-xl"
-                        style={{
-                            background: 'rgba(42, 41, 51, 0.5)',
-                            border: '1px solid rgba(70, 69, 85, 0.2)',
-                        }}
-                    >
-                        <UserAvatar user={user} size="md" />
-                        <div className="overflow-hidden">
-                            <p
-                                className="text-sm font-semibold truncate"
-                                style={{ color: '#e4e1ee' }}
-                            >
-                                {user.name}
-                            </p>
-                            <p
-                                className="text-xs truncate"
-                                style={{ color: '#c7c4d8' }}
-                            >
-                                {user.email}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Nav items */}
             <nav className="flex-1 px-2 space-y-1">
@@ -363,24 +325,32 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                         </div>
                     </div>
 
-                    {/* Right: bell + avatar */}
+                    {/* Right: theme switch + bell + avatar */}
                     <div className="flex items-center gap-2">
+                        <ThemeDropdown />
                         <button
                             className="p-2 rounded-full transition-colors"
                             style={{ color: '#c7c4d8' }}
                             onMouseEnter={(e) =>
-                                ((e.currentTarget as HTMLElement).style.color =
-                                    '#c3c0ff')
+                                ((e.currentTarget as HTMLElement).style.color = '#c3c0ff')
                             }
                             onMouseLeave={(e) =>
-                                ((e.currentTarget as HTMLElement).style.color =
-                                    '#c7c4d8')
+                                ((e.currentTarget as HTMLElement).style.color = '#c7c4d8')
                             }
                             aria-label="Notifications"
                         >
                             <BellIcon />
                         </button>
-                        {user && <UserAvatar user={user} size="sm" />}
+                        {user && (
+                            <div className="flex items-center gap-2 ml-1">
+                                <UserAvatar user={user} size="sm" />
+                                <div className="hidden md:block">
+                                    <p className="text-xs font-semibold leading-none" style={{ color: '#e4e1ee' }}>
+                                        {user.name}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </header>
 
