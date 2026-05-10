@@ -1,13 +1,13 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: milestone
-current_phase: null
+milestone: v2.0
+milestone_name: UI Revamp
+current_phase: 7
 current_plan: null
 status: planning
-last_updated: "2026-05-09T00:00:00.000Z"
+last_updated: "2026-05-10T00:00:00.000Z"
 progress:
-  total_phases: 0
+  total_phases: 8
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -23,10 +23,17 @@ progress:
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-05-09)
+See: `.planning/PROJECT.md` (updated 2026-05-10)
 
 **Core value:** A reliable digital assessment platform with AI-assisted evaluation that focuses on conceptual understanding rather than exact wording.
-**Current focus:** Planning v1.1 milestone
+**Current focus:** v2.0 UI Revamp — Phase 7: Public Homepage & Auth Pages
+
+## Current Position
+
+Phase: 7 (Public Homepage & Auth Pages)
+Plan: Not started
+Status: Ready to begin — awaiting UI prompt generation
+Last activity: 2026-05-10 — Milestone v2.0 started
 
 ## Accumulated Context
 
@@ -40,16 +47,21 @@ See: `.planning/PROJECT.md` (updated 2026-05-09)
 - Pessimistic locking for credit deduction
 - Stripe keys encrypted in DB with .env fallback
 
+### v2.0 Design Workflow
+
+- Each phase: AI generates UI prompt → user generates HTML → AI implements
+- Design system established in Phase 7 carries through all subsequent phases
+- No new backend logic in v2.0 — UI-only changes
+
 ### Active Blockers
 
 - None
 
 ### Pending Todos
 
-- [ ] Plan v1.1 milestone scope
-- [ ] Run `/gsd-new-milestone` to kick off v1.1
+- [ ] Execute Phase 7: Public Homepage & Auth Pages
 
 ## Session Continuity
 
-**Last Action:** v1.0 milestone archived (2026-05-09)
-**Next Action:** Plan v1.1 milestone — analytics, question banks, exports, OAuth
+**Last Action:** v2.0 milestone initialized (2026-05-10)
+**Next Action:** Generate Phase 7 UI prompt for homepage + auth pages
