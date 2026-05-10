@@ -167,22 +167,91 @@
 
 /* ── v2.0 Design Tokens ─────────────────────────────────────────── */
 :root {
-    /* Brand palette (light mode — maps to CSS vars used by Tailwind) */
+    /* Brand accent colors — same in both themes */
     --brand-primary: #4f46e5;
     --brand-primary-hover: #4338ca;
+    --brand-primary-text: #c3c0ff;
     --brand-secondary: #4fdbc8;
-    --brand-surface: #ffffff;
-    --brand-surface-container: #f5f5f5;
+    --brand-tertiary: #ffb695;
+    --brand-error: #ffb4ab;
+
+    /* Portal surface tokens — light mode */
+    --portal-bg: #f4f4f5;
+    --portal-sidebar-bg: #ffffff;
+    --portal-topbar-bg: rgba(255, 255, 255, 0.85);
+    --portal-card-bg: #ffffff;
+    --portal-card-bg-alt: #f9f9fb;
+    --portal-card-border: rgba(0, 0, 0, 0.08);
+    --portal-card-border-hover: rgba(0, 0, 0, 0.18);
+    --portal-input-bg: #f1f1f5;
+    --portal-input-border: rgba(0, 0, 0, 0.12);
+    --portal-divider: rgba(0, 0, 0, 0.08);
+
+    /* Portal text tokens — light mode */
+    --portal-text-primary: #111118;
+    --portal-text-secondary: #52525b;
+    --portal-text-muted: #71717a;
+    --portal-text-disabled: rgba(82, 82, 91, 0.4);
+
+    /* Nav active state */
+    --portal-nav-active-bg: rgba(79, 70, 229, 0.1);
+    --portal-nav-active-text: #4f46e5;
+    --portal-nav-active-border: #4f46e5;
+    --portal-nav-hover-bg: rgba(0, 0, 0, 0.04);
+    --portal-nav-text: #52525b;
+
+    /* Stat/badge tokens */
+    --portal-badge-bg: rgba(0, 0, 0, 0.06);
+    --portal-badge-text: #52525b;
+    --portal-disabled-bg: rgba(0, 0, 0, 0.06);
+    --portal-disabled-text: rgba(82, 82, 91, 0.5);
+    --portal-progress-track: rgba(0, 0, 0, 0.08);
 }
 
 .dark {
-    /* Brand palette (dark mode) */
-    --brand-surface: #131313;
-    --brand-surface-container: #201f1f;
-    --brand-surface-container-low: #1c1b1b;
-    --brand-surface-container-high: #2a2a2a;
-    --brand-surface-container-lowest: #0e0e0e;
-    --brand-outline-variant: #464555;
+    /* Portal surface tokens — dark mode */
+    --portal-bg: #131313;
+    --portal-sidebar-bg: #0e0d16;
+    --portal-topbar-bg: rgba(19, 18, 27, 0.85);
+    --portal-card-bg: #1c1b1b;
+    --portal-card-bg-alt: #161515;
+    --portal-card-border: rgba(70, 69, 85, 0.3);
+    --portal-card-border-hover: rgba(70, 69, 85, 0.6);
+    --portal-input-bg: #0e0d16;
+    --portal-input-border: rgba(70, 69, 85, 0.3);
+    --portal-divider: rgba(70, 69, 85, 0.2);
+
+    /* Portal text tokens — dark mode */
+    --portal-text-primary: #e4e1ee;
+    --portal-text-secondary: #c7c4d8;
+    --portal-text-muted: #918fa1;
+    --portal-text-disabled: rgba(199, 196, 216, 0.4);
+
+    /* Nav active state */
+    --portal-nav-active-bg: rgba(79, 70, 229, 0.2);
+    --portal-nav-active-text: #c3c0ff;
+    --portal-nav-active-border: #4f46e5;
+    --portal-nav-hover-bg: rgba(53, 52, 62, 0.5);
+    --portal-nav-text: #c7c4d8;
+
+    /* Stat/badge tokens */
+    --portal-badge-bg: #35343e;
+    --portal-badge-text: #c7c4d8;
+    --portal-disabled-bg: #2a2933;
+    --portal-disabled-text: rgba(199, 196, 216, 0.5);
+    --portal-progress-track: #35343e;
+}
+
+/* Portal utility classes */
+.portal-card {
+    background: var(--portal-card-bg);
+    border: 1px solid var(--portal-card-border);
+    border-radius: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.portal-card:hover {
+    border-color: var(--portal-card-border-hover);
 }
 
 /* Glass card utility */

@@ -1,14 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import {
-    Award,
-    CalendarDays,
-    CheckCircle2,
-    Clock,
-    Eye,
-    XCircle,
-} from 'lucide-react';
+import { CheckCircle2, Clock, Eye, XCircle } from 'lucide-react';
 import { results as attemptResults } from '@/actions/App/Http/Controllers/Student/ExamAttemptController';
-import { Badge } from '@/components/ui/badge';
 import StudentLayout from '@/layouts/student-layout';
 
 interface AttemptExam {
@@ -43,23 +35,29 @@ function ResultsHistory({ attempts }: Props) {
         <>
             <Head title="My Results" />
 
-            <div className="mx-auto max-w-3xl space-y-6">
+            <div className="p-6 lg:p-8 space-y-6">
+                {/* Page header */}
                 <div className="space-y-1">
-                    <h1 className="text-2xl font-semibold text-zinc-900">
-                        <Award className="mr-2 inline-block size-6" />
+                    <h1 className="text-2xl font-semibold flex items-center gap-2" style={{ color: 'var(--portal-text-primary)' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--brand-primary)' }}>
+                            <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
                         My Results
                     </h1>
-                    <p className="text-sm text-zinc-500">
+                    <p className="text-sm" style={{ color: 'var(--portal-text-secondary)' }}>
                         View your exam scores and performance history.
                     </p>
                 </div>
 
+                {/* Empty state */}
                 {attempts.data.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-                        <CalendarDays className="size-10 text-zinc-300" />
-                        <p className="mt-3 text-sm text-zinc-500">
-                            No results yet. Complete an exam to see your scores
-                            here.
+                    <div className="flex flex-col items-center justify-center rounded-xl py-16"
+                        style={{ border: '2px dashed var(--portal-card-border)' }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style={{ color: 'var(--portal-text-muted)' }}>
+                            <path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
+                        </svg>
+                        <p className="mt-3 text-sm" style={{ color: 'var(--portal-text-secondary)' }}>
+                            No results yet. Complete an exam to see your scores here.
                         </p>
                     </div>
                 ) : (
@@ -70,103 +68,71 @@ return null;
 }
 
                             const exam = attempt.exam;
-                            const percentage =
-                                attempt.can_see_results &&
-                                attempt.final_score !== null &&
-                                attempt.total_points
-                                    ? Math.round(
-                                          (attempt.final_score /
-                                              attempt.total_points) *
-                                              100,
-                                      )
-                                    : null;
-                            const passed =
-                                percentage !== null &&
-                                percentage >= exam.passing_score;
+                            const percentage = attempt.can_see_results && attempt.final_score !== null && attempt.total_points
+                                ? Math.round((attempt.final_score / attempt.total_points) * 100) : null;
+                            const passed = percentage !== null && percentage >= exam.passing_score;
 
                             return (
-                                <div
-                                    key={attempt.id}
-                                    className="rounded-lg border bg-white p-5 shadow-sm transition-colors hover:bg-zinc-50"
-                                >
+                                <div key={attempt.id} className="rounded-xl p-5 transition-colors"
+                                    style={{ background: 'var(--portal-card-bg)', border: '1px solid var(--portal-card-border)' }}
+                                    onMouseEnter={(e) => {
+ (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-card-border-hover)'; 
+}}
+                                    onMouseLeave={(e) => {
+ (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-card-border)'; 
+}}>
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="min-w-0 flex-1">
-                                            <h3 className="truncate text-base font-medium text-zinc-900">
+                                            <h3 className="truncate text-base font-medium" style={{ color: 'var(--portal-text-primary)' }}>
                                                 {exam.title}
                                             </h3>
-                                            <div className="mt-1 flex flex-wrap gap-2 text-xs text-zinc-500">
+                                            <div className="mt-2 flex flex-wrap gap-2 text-xs">
                                                 {exam.class_name && (
-                                                    <span className="rounded bg-blue-50 px-1.5 py-0.5 text-blue-700">
+                                                    <span className="rounded px-1.5 py-0.5" style={{ background: 'rgba(79, 70, 229, 0.12)', color: '#c3c0ff' }}>
                                                         {exam.class_name}
                                                     </span>
                                                 )}
                                                 {exam.subject_name && (
-                                                    <span className="rounded bg-purple-50 px-1.5 py-0.5 text-purple-700">
+                                                    <span className="rounded px-1.5 py-0.5" style={{ background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8' }}>
                                                         {exam.subject_name}
                                                     </span>
                                                 )}
                                                 {attempt.submitted_at && (
-                                                    <span className="flex items-center gap-1">
+                                                    <span className="flex items-center gap-1" style={{ color: 'var(--portal-text-secondary)' }}>
                                                         <Clock className="size-3" />
-                                                        {new Date(
-                                                            attempt.submitted_at,
-                                                        ).toLocaleDateString()}
+                                                        {new Date(attempt.submitted_at).toLocaleDateString()}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-
                                         <div className="flex items-center gap-3">
                                             {attempt.can_see_results ? (
                                                 <>
                                                     {percentage !== null && (
                                                         <div className="text-right">
-                                                            <div
-                                                                className={`text-xl font-bold ${passed ? 'text-emerald-600' : 'text-red-600'}`}
-                                                            >
+                                                            <div className={`text-xl font-bold ${passed ? 'text-emerald-500' : 'text-red-500'}`}>
                                                                 {percentage}%
                                                             </div>
                                                             <div className="flex items-center gap-1 text-xs">
                                                                 {passed ? (
-                                                                    <>
-                                                                        <CheckCircle2 className="size-3 text-emerald-500" />
-                                                                        <span className="text-emerald-600">
-                                                                            Passed
-                                                                        </span>
-                                                                    </>
+                                                                    <><CheckCircle2 className="size-3 text-emerald-500" /><span className="text-emerald-500">Passed</span></>
                                                                 ) : (
-                                                                    <>
-                                                                        <XCircle className="size-3 text-red-500" />
-                                                                        <span className="text-red-600">
-                                                                            Failed
-                                                                        </span>
-                                                                    </>
+                                                                    <><XCircle className="size-3 text-red-500" /><span className="text-red-500">Failed</span></>
                                                                 )}
                                                             </div>
                                                         </div>
                                                     )}
-                                                    <Link
-                                                        href={attemptResults.url(
-                                                            {
-                                                                exam: exam.id,
-                                                                attempt:
-                                                                    attempt.id,
-                                                            },
-                                                        )}
-                                                        className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100"
-                                                    >
-                                                        <Eye className="size-3.5" />
-                                                        View
+                                                    <Link href={attemptResults.url({ exam: exam.id, attempt: attempt.id })}
+                                                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-muted"
+                                                        style={{ border: '1px solid var(--portal-card-border)', color: 'var(--portal-text-secondary)' }}>
+                                                        <Eye className="size-3.5" /> View
                                                     </Link>
                                                 </>
                                             ) : (
-                                                <Badge
-                                                    variant="outline"
-                                                    className="text-amber-600"
-                                                >
-                                                    <Clock className="mr-1 size-3" />
-                                                    Awaiting Announcement
-                                                </Badge>
+                                                <span className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium"
+                                                    style={{ border: '1px solid rgba(255, 182, 149, 0.3)', color: '#ffb695', background: 'rgba(255, 182, 149, 0.08)' }}>
+                                                    <Clock className="size-3" /> Awaiting Announcement
+                                                </span>
                                             )}
                                         </div>
                                     </div>
@@ -180,21 +146,15 @@ return null;
                 {attempts.links.length > 3 && (
                     <div className="flex items-center justify-center gap-1 pt-4">
                         {attempts.links.map((link, i) => (
-                            <Link
-                                key={i}
-                                href={link.url ?? '#'}
-                                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                                    link.active
-                                        ? 'bg-zinc-900 text-white'
-                                        : link.url
-                                            ? 'text-zinc-600 hover:bg-zinc-100'
-                                            : 'cursor-not-allowed text-zinc-300'
-                                }`}
+                            <Link key={i} href={link.url ?? '#'}
+                                className="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors"
+                                style={link.active
+                                    ? { background: 'var(--brand-primary)', color: '#fff' }
+                                    : link.url
+                                        ? { color: 'var(--portal-text-secondary)', border: '1px solid var(--portal-card-border)' }
+                                        : { color: 'var(--portal-text-disabled)', cursor: 'not-allowed', pointerEvents: 'none' }}
                                 preserveScroll
-                                dangerouslySetInnerHTML={{
-                                    __html: link.label,
-                                }}
-                            />
+                                dangerouslySetInnerHTML={{ __html: link.label }} />
                         ))}
                     </div>
                 )}
