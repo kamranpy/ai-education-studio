@@ -313,8 +313,8 @@ return;
                         key={q.id}
                         className="rounded-xl p-6 transition-all"
                         style={{
-                            background: 'linear-gradient(180deg, #1c1b1b 0%, #161515 100%)',
-                            border: '1px solid rgba(70, 69, 85, 0.3)',
+                            background: 'var(--portal-card-bg)',
+                            border: '1px solid var(--portal-card-border)',
                             opacity: submitted ? 0.65 : 1,
                         }}
                     >
@@ -322,17 +322,17 @@ return;
                         <div className="mb-3 flex items-center gap-2">
                             <span
                                 className="rounded px-2 py-0.5 text-xs font-bold uppercase"
-                                style={{ background: 'rgba(79, 70, 229, 0.15)', color: '#c3c0ff' }}
+                                style={{ background: 'rgba(79, 70, 229, 0.15)', color: 'var(--brand-primary-text)' }}
                             >
                                 Q{idx + 1}
                             </span>
-                            <span className="text-xs" style={{ color: '#c7c4d8' }}>
+                            <span className="text-xs" style={{ color: 'var(--portal-text-muted)' }}>
                                 {q.points} pt{q.points !== 1 ? 's' : ''}
                             </span>
                         </div>
 
                         {/* Question text */}
-                        <h3 className="mb-5 text-base font-medium" style={{ color: '#e4e1ee' }}>
+                        <h3 className="mb-5 text-base font-medium" style={{ color: 'var(--portal-text-primary)' }}>
                             {q.text}
                         </h3>
 
@@ -355,32 +355,28 @@ return;
                                             }}
                                             className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-sm transition-all"
                                             style={{
-                                                background: isSelected
-                                                    ? 'rgba(79, 70, 229, 0.15)'
-                                                    : 'rgba(42, 41, 51, 0.4)',
-                                                border: isSelected
-                                                    ? '1px solid rgba(79, 70, 229, 0.6)'
-                                                    : '1px solid rgba(70, 69, 85, 0.3)',
-                                                color: isSelected ? '#c3c0ff' : '#c7c4d8',
+                                                background: isSelected ? 'rgba(79, 70, 229, 0.12)' : 'var(--portal-input-bg)',
+                                                border: isSelected ? '1px solid rgba(79, 70, 229, 0.5)' : '1px solid var(--portal-card-border)',
+                                                color: isSelected ? 'var(--brand-primary-text)' : 'var(--portal-text-secondary)',
                                                 cursor: submitted ? 'not-allowed' : 'pointer',
                                             }}
                                             onMouseEnter={(e) => {
                                                 if (!submitted && !isSelected) {
-                                                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(70, 69, 85, 0.6)';
-                                                    (e.currentTarget as HTMLElement).style.color = '#e4e1ee';
+                                                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-card-border-hover)';
+                                                    (e.currentTarget as HTMLElement).style.color = 'var(--portal-text-primary)';
                                                 }
                                             }}
                                             onMouseLeave={(e) => {
                                                 if (!submitted && !isSelected) {
-                                                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(70, 69, 85, 0.3)';
-                                                    (e.currentTarget as HTMLElement).style.color = '#c7c4d8';
+                                                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-card-border)';
+                                                    (e.currentTarget as HTMLElement).style.color = 'var(--portal-text-secondary)';
                                                 }
                                             }}
                                         >
                                             {isSelected ? (
-                                                <CheckCircle2 className="size-5 shrink-0" style={{ color: '#c3c0ff' }} />
+                                                <CheckCircle2 className="size-5 shrink-0" style={{ color: 'var(--brand-primary-text)' }} />
                                             ) : (
-                                                <Circle className="size-5 shrink-0" style={{ color: 'rgba(70, 69, 85, 0.6)' }} />
+                                                <Circle className="size-5 shrink-0" style={{ color: 'var(--portal-text-muted)' }} />
                                             )}
                                             <span>{choice.text}</span>
                                         </button>
@@ -404,15 +400,15 @@ return;
                                 rows={5}
                                 className="w-full resize-y rounded-xl px-4 py-3 text-sm outline-none transition-all"
                                 style={{
-                                    background: 'rgba(14, 13, 22, 0.8)',
-                                    border: '1px solid rgba(70, 69, 85, 0.3)',
-                                    color: '#e4e1ee',
+                                    background: 'var(--portal-input-bg)',
+                                    border: '1px solid var(--portal-input-border)',
+                                    color: 'var(--portal-text-primary)',
                                 }}
                                 onFocus={(e) => {
-                                    (e.currentTarget as HTMLElement).style.borderColor = '#4f46e5';
+                                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--brand-primary)';
                                 }}
                                 onBlurCapture={(e) => {
-                                    (e.currentTarget as HTMLElement).style.borderColor = 'rgba(70, 69, 85, 0.3)';
+                                    (e.currentTarget as HTMLElement).style.borderColor = 'var(--portal-input-border)';
                                 }}
                             />
                         )}
@@ -453,30 +449,26 @@ return;
             <div
                 className="mb-6 flex items-center justify-between rounded-xl px-6 py-4"
                 style={{
-                    background: 'linear-gradient(180deg, #1c1b1b 0%, #161515 100%)',
-                    border: '1px solid rgba(70, 69, 85, 0.3)',
+                    background: 'var(--portal-card-bg)',
+                    border: '1px solid var(--portal-card-border)',
                 }}
             >
                 <div>
-                    <h1 className="text-xl font-semibold" style={{ color: '#e4e1ee' }}>
+                    <h1 className="text-xl font-semibold" style={{ color: 'var(--portal-text-primary)' }}>
                         {exam.title}
                     </h1>
-                    <p className="mt-0.5 text-sm" style={{ color: '#c7c4d8' }}>
+                    <p className="mt-0.5 text-sm" style={{ color: 'var(--portal-text-secondary)' }}>
                         Submit each section when ready. Submitted sections are locked.
                     </p>
                 </div>
 
                 {timeLeft !== null && (
                     <div
-                        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                            isTimeLow ? 'animate-pulse' : ''
-                        }`}
+                        className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${isTimeLow ? 'animate-pulse' : ''}`}
                         style={{
-                            background: isTimeLow
-                                ? 'rgba(255, 180, 171, 0.1)'
-                                : 'rgba(70, 69, 85, 0.3)',
-                            color: isTimeLow ? '#ffb4ab' : '#c7c4d8',
-                            border: `1px solid ${isTimeLow ? 'rgba(255, 180, 171, 0.3)' : 'rgba(70, 69, 85, 0.3)'}`,
+                            background: isTimeLow ? 'rgba(255, 180, 171, 0.1)' : 'var(--portal-badge-bg)',
+                            color: isTimeLow ? '#ffb4ab' : 'var(--portal-text-secondary)',
+                            border: `1px solid ${isTimeLow ? 'rgba(255, 180, 171, 0.3)' : 'var(--portal-card-border)'}`,
                         }}
                     >
                         <Clock className="h-4 w-4" />
@@ -488,40 +480,28 @@ return;
             {/* Section Progress Pills */}
             <div className="mb-6 flex gap-3">
                 {hasTf && (
-                    <div
-                        className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                        style={
-                            tfSubmitted
-                                ? { background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8', border: '1px solid rgba(79, 219, 200, 0.3)' }
-                                : { background: 'rgba(70, 69, 85, 0.2)', color: '#c7c4d8', border: '1px solid rgba(70, 69, 85, 0.3)' }
-                        }
-                    >
+                    <div className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+                        style={tfSubmitted
+                            ? { background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8', border: '1px solid rgba(79, 219, 200, 0.3)' }
+                            : { background: 'var(--portal-badge-bg)', color: 'var(--portal-text-secondary)', border: '1px solid var(--portal-card-border)' }}>
                         {tfSubmitted ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
                         True/False
                     </div>
                 )}
                 {hasMcq && (
-                    <div
-                        className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                        style={
-                            mcqSubmitted
-                                ? { background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8', border: '1px solid rgba(79, 219, 200, 0.3)' }
-                                : { background: 'rgba(70, 69, 85, 0.2)', color: '#c7c4d8', border: '1px solid rgba(70, 69, 85, 0.3)' }
-                        }
-                    >
+                    <div className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+                        style={mcqSubmitted
+                            ? { background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8', border: '1px solid rgba(79, 219, 200, 0.3)' }
+                            : { background: 'var(--portal-badge-bg)', color: 'var(--portal-text-secondary)', border: '1px solid var(--portal-card-border)' }}>
                         {mcqSubmitted ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
                         MCQs
                     </div>
                 )}
                 {hasWritten && (
-                    <div
-                        className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                        style={
-                            writtenSubmitted
-                                ? { background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8', border: '1px solid rgba(79, 219, 200, 0.3)' }
-                                : { background: 'rgba(70, 69, 85, 0.2)', color: '#c7c4d8', border: '1px solid rgba(70, 69, 85, 0.3)' }
-                        }
-                    >
+                    <div className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+                        style={writtenSubmitted
+                            ? { background: 'rgba(79, 219, 200, 0.12)', color: '#4fdbc8', border: '1px solid rgba(79, 219, 200, 0.3)' }
+                            : { background: 'var(--portal-badge-bg)', color: 'var(--portal-text-secondary)', border: '1px solid var(--portal-card-border)' }}>
                         {writtenSubmitted ? <CheckCircle2 className="size-3.5" /> : <Circle className="size-3.5" />}
                         Written
                     </div>
@@ -530,21 +510,13 @@ return;
 
             {/* Tabbed Sections */}
             <Tabs defaultValue={defaultTab} className="w-full">
-                {/* Custom dark tab list */}
-                <div
-                    className="flex gap-1 rounded-xl p-1 mb-6"
-                    style={{ background: '#0e0d16', border: '1px solid rgba(70, 69, 85, 0.3)' }}
-                >
+                <div className="flex gap-1 rounded-xl p-1 mb-6"
+                    style={{ background: 'var(--portal-input-bg)', border: '1px solid var(--portal-card-border)' }}>
                     {hasTf && (
                         <TabsList className="bg-transparent p-0 h-auto flex-1">
-                            <TabsTrigger
-                                value="true_false"
-                                className="flex-1 gap-1.5 rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:shadow-none"
-                                style={{
-                                    color: '#c7c4d8',
-                                }}
-                                data-active-style="background: rgba(79, 70, 229, 0.2); color: #c3c0ff;"
-                            >
+                            <TabsTrigger value="true_false"
+                                className="flex-1 gap-1.5 rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:shadow-none data-[state=active]:bg-[rgba(79,70,229,0.15)] data-[state=active]:text-[#c3c0ff]"
+                                style={{ color: 'var(--portal-text-secondary)' }}>
                                 <CircleCheck className="size-4" />
                                 True/False
                                 {tfSubmitted && <Lock className="ml-1 size-3" style={{ color: '#4fdbc8' }} />}
@@ -553,10 +525,9 @@ return;
                     )}
                     {hasMcq && (
                         <TabsList className="bg-transparent p-0 h-auto flex-1">
-                            <TabsTrigger
-                                value="mcq"
-                                className="flex-1 gap-1.5 rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:shadow-none"
-                            >
+                            <TabsTrigger value="mcq"
+                                className="flex-1 gap-1.5 rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:shadow-none data-[state=active]:bg-[rgba(79,70,229,0.15)] data-[state=active]:text-[#c3c0ff]"
+                                style={{ color: 'var(--portal-text-secondary)' }}>
                                 <ListChecks className="size-4" />
                                 MCQs
                                 {mcqSubmitted && <Lock className="ml-1 size-3" style={{ color: '#4fdbc8' }} />}
@@ -565,10 +536,9 @@ return;
                     )}
                     {hasWritten && (
                         <TabsList className="bg-transparent p-0 h-auto flex-1">
-                            <TabsTrigger
-                                value="written_answer"
-                                className="flex-1 gap-1.5 rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:shadow-none"
-                            >
+                            <TabsTrigger value="written_answer"
+                                className="flex-1 gap-1.5 rounded-lg py-2.5 text-sm font-medium transition-all data-[state=active]:shadow-none data-[state=active]:bg-[rgba(79,70,229,0.15)] data-[state=active]:text-[#c3c0ff]"
+                                style={{ color: 'var(--portal-text-secondary)' }}>
                                 <PenLine className="size-4" />
                                 Written
                                 {writtenSubmitted && <Lock className="ml-1 size-3" style={{ color: '#4fdbc8' }} />}
@@ -597,31 +567,21 @@ return;
             {/* Anti-Cheat Warning Overlay */}
             {showBlurWarning && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-                    <div
-                        className="mx-4 max-w-md rounded-2xl p-8 text-center shadow-2xl"
-                        style={{
-                            background: '#1c1b1b',
-                            border: '1px solid rgba(255, 180, 171, 0.3)',
-                        }}
-                    >
-                        <div
-                            className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
-                            style={{ background: 'rgba(255, 180, 171, 0.1)' }}
-                        >
+                    <div className="mx-4 max-w-md rounded-2xl p-8 text-center shadow-2xl"
+                        style={{ background: 'var(--portal-card-bg)', border: '1px solid rgba(255, 180, 171, 0.3)' }}>
+                        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+                            style={{ background: 'rgba(255, 180, 171, 0.1)' }}>
                             <AlertTriangle className="h-7 w-7" style={{ color: '#ffb4ab' }} />
                         </div>
-                        <h3 className="mt-2 text-lg font-semibold" style={{ color: '#e4e1ee' }}>
+                        <h3 className="mt-2 text-lg font-semibold" style={{ color: 'var(--portal-text-primary)' }}>
                             Tab Activity Recorded
                         </h3>
-                        <p className="mt-2 text-sm" style={{ color: '#c7c4d8' }}>
+                        <p className="mt-2 text-sm" style={{ color: 'var(--portal-text-secondary)' }}>
                             Action logged: You must remain on this tab while testing. Your instructor will be able to see when you left this page.
                         </p>
-                        <button
-                            type="button"
-                            onClick={() => setShowBlurWarning(false)}
+                        <button type="button" onClick={() => setShowBlurWarning(false)}
                             className="mt-6 rounded-xl px-6 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]"
-                            style={{ background: '#4f46e5', color: '#dad7ff' }}
-                        >
+                            style={{ background: 'var(--brand-primary)', color: '#dad7ff' }}>
                             I Understand
                         </button>
                     </div>
@@ -630,49 +590,30 @@ return;
 
             {/* Section Submit Confirmation Dialog */}
             <Dialog open={showSubmitDialog} onOpenChange={setShowSubmitDialog}>
-                <DialogContent
-                    className="sm:max-w-md"
-                    style={{
-                        background: '#1c1b1b',
-                        border: '1px solid rgba(70, 69, 85, 0.4)',
-                        color: '#e4e1ee',
-                    }}
-                >
+                <DialogContent className="sm:max-w-md"
+                    style={{ background: 'var(--portal-card-bg)', border: '1px solid var(--portal-card-border)', color: 'var(--portal-text-primary)' }}>
                     <DialogHeader className="items-center sm:items-start">
-                        <div
-                            className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full sm:mx-0"
-                            style={{ background: 'rgba(255, 182, 149, 0.1)' }}
-                        >
+                        <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full sm:mx-0"
+                            style={{ background: 'rgba(255, 182, 149, 0.1)' }}>
                             <ShieldAlert className="h-6 w-6" style={{ color: '#ffb695' }} />
                         </div>
-                        <DialogTitle style={{ color: '#e4e1ee' }}>
+                        <DialogTitle style={{ color: 'var(--portal-text-primary)' }}>
                             Submit {submitTarget ? sectionLabel(submitTarget) : ''}
                         </DialogTitle>
-                        <DialogDescription style={{ color: '#c7c4d8' }}>
+                        <DialogDescription style={{ color: 'var(--portal-text-secondary)' }}>
                             Are you sure you want to submit this section? Once submitted, you will not be able to change your answers for{' '}
                             {submitTarget ? sectionLabel(submitTarget) : 'this section'}.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="w-full gap-2 sm:justify-between sm:space-x-0">
-                        <button
-                            type="button"
-                            onClick={() => setShowSubmitDialog(false)}
+                        <button type="button" onClick={() => setShowSubmitDialog(false)}
                             className="rounded-xl px-5 py-2.5 text-sm font-medium transition-all"
-                            style={{
-                                border: '1px solid rgba(70, 69, 85, 0.4)',
-                                color: '#c7c4d8',
-                                background: 'transparent',
-                            }}
-                        >
+                            style={{ border: '1px solid var(--portal-card-border)', color: 'var(--portal-text-secondary)', background: 'transparent' }}>
                             Go Back
                         </button>
-                        <button
-                            type="button"
-                            onClick={handleSectionSubmit}
-                            disabled={isSaving}
+                        <button type="button" onClick={handleSectionSubmit} disabled={isSaving}
                             className="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all disabled:opacity-50"
-                            style={{ background: '#4f46e5', color: '#dad7ff' }}
-                        >
+                            style={{ background: 'var(--brand-primary)', color: '#dad7ff' }}>
                             <Send className="h-4 w-4" />
                             {isSaving ? 'Submitting...' : `Yes, Submit ${submitTarget ? sectionLabel(submitTarget) : ''}`}
                         </button>
