@@ -1,6 +1,6 @@
-import StudentLayout from '@/layouts/student-layout';
 import { Head, Link } from '@inertiajs/react';
 import { Clock, FileText } from 'lucide-react';
+import StudentLayout from '@/layouts/student-layout';
 
 interface Props {
     exam: { id: number; title: string };

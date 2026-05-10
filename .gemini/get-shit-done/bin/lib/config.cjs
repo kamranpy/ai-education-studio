@@ -44,13 +44,22 @@ const VALID_CONFIG_KEYS = new Set([
  * like `agent_skills.<agent-type>` where the sub-key is freeform.
  */
 function isValidConfigKey(keyPath) {
-  if (VALID_CONFIG_KEYS.has(keyPath)) return true;
+  if (VALID_CONFIG_KEYS.has(keyPath)) {
+return true;
+}
+
   // Allow agent_skills.<agent-type> with any agent type string
-  if (/^agent_skills\.[a-zA-Z0-9_-]+$/.test(keyPath)) return true;
+  if (/^agent_skills\.[a-zA-Z0-9_-]+$/.test(keyPath)) {
+return true;
+}
+
   // Allow features.<feature_name> — dynamic namespace for feature flags.
   // Intentionally open-ended so new flags (e.g., features.global_learnings) work
   // without updating VALID_CONFIG_KEYS each time.
-  if (/^features\.[a-zA-Z0-9_]+$/.test(keyPath)) return true;
+  if (/^features\.[a-zA-Z0-9_]+$/.test(keyPath)) {
+return true;
+}
+
   return false;
 }
 
@@ -68,6 +77,7 @@ const CONFIG_KEY_SUGGESTIONS = {
 
 function validateKnownConfigKeyPath(keyPath) {
   const suggested = CONFIG_KEY_SUGGESTIONS[keyPath];
+
   if (suggested) {
     error(`Unknown config key: ${keyPath}. Did you mean ${suggested}?`);
   }
@@ -102,14 +112,17 @@ function buildNewProjectConfig(userChoices) {
   // Load user-level defaults from ~/.gsd/defaults.json if available
   const globalDefaultsPath = path.join(homedir, '.gsd', 'defaults.json');
   let userDefaults = {};
+
   try {
     if (fs.existsSync(globalDefaultsPath)) {
       userDefaults = JSON.parse(fs.readFileSync(globalDefaultsPath, 'utf-8'));
+
       // Migrate deprecated "depth" key to "granularity"
       if ('depth' in userDefaults && !('granularity' in userDefaults)) {
         const depthToGranularity = { quick: 'coarse', standard: 'standard', comprehensive: 'fine' };
         userDefaults.granularity = depthToGranularity[userDefaults.depth] || userDefaults.depth;
         delete userDefaults.depth;
+
         try {
           fs.writeFileSync(globalDefaultsPath, JSON.stringify(userDefaults, null, 2), 'utf-8');
         } catch { /* intentionally empty */ }
@@ -202,11 +215,13 @@ function cmdConfigNewProject(cwd, choicesJson, raw) {
   // Idempotent: don't overwrite existing config
   if (fs.existsSync(configPath)) {
     output({ created: false, reason: 'already_exists' }, raw, 'exists');
+
     return;
   }
 
   // Parse user choices
   let userChoices = {};
+
   if (choicesJson && choicesJson.trim() !== '') {
     try {
       userChoices = JSON.parse(choicesJson);
@@ -262,6 +277,7 @@ function ensureConfigFile(cwd) {
 
   try {
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+
     return { created: true, path: '.planning/config.json' };
   } catch (err) {
     error('Failed to create config.json: ' + err.message);
@@ -276,6 +292,7 @@ function ensureConfigFile(cwd) {
  */
 function cmdConfigEnsureSection(cwd, raw) {
   const ensureConfigFileResult = ensureConfigFile(cwd);
+
   if (ensureConfigFileResult.created) {
     output(ensureConfigFileResult, raw, 'created');
   } else {
@@ -295,6 +312,7 @@ function setConfigValue(cwd, keyPath, parsedValue) {
 
   // Load existing config or start with empty object
   let config = {};
+
   try {
     if (fs.existsSync(configPath)) {
       config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
@@ -306,19 +324,24 @@ function setConfigValue(cwd, keyPath, parsedValue) {
   // Set nested value using dot notation (e.g., "workflow.research")
   const keys = keyPath.split('.');
   let current = config;
+
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
+
     if (current[key] === undefined || typeof current[key] !== 'object') {
       current[key] = {};
     }
+
     current = current[key];
   }
+
   const previousValue = current[keys[keys.length - 1]]; // Capture previous value before overwriting
   current[keys[keys.length - 1]] = parsedValue;
 
   // Write back
   try {
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8');
+
     return { updated: true, key: keyPath, value: parsedValue, previousValue };
   } catch (err) {
     error('Failed to write config.json: ' + err.message);
@@ -345,14 +368,21 @@ function cmdConfigSet(cwd, keyPath, value, raw) {
 
   // Parse value (handle booleans, numbers, and JSON arrays/objects)
   let parsedValue = value;
-  if (value === 'true') parsedValue = true;
-  else if (value === 'false') parsedValue = false;
-  else if (!isNaN(value) && value !== '') parsedValue = Number(value);
-  else if (typeof value === 'string' && (value.startsWith('[') || value.startsWith('{'))) {
-    try { parsedValue = JSON.parse(value); } catch { /* keep as string */ }
+
+  if (value === 'true') {
+parsedValue = true;
+} else if (value === 'false') {
+parsedValue = false;
+} else if (!isNaN(value) && value !== '') {
+parsedValue = Number(value);
+} else if (typeof value === 'string' && (value.startsWith('[') || value.startsWith('{'))) {
+    try {
+ parsedValue = JSON.parse(value); 
+} catch { /* keep as string */ }
   }
 
   const VALID_CONTEXT_VALUES = ['dev', 'research', 'review'];
+
   if (keyPath === 'context' && !VALID_CONTEXT_VALUES.includes(String(parsedValue))) {
     error(`Invalid context value '${value}'. Valid values: ${VALID_CONTEXT_VALUES.join(', ')}`);
   }
@@ -369,6 +399,7 @@ function cmdConfigGet(cwd, keyPath, raw) {
   }
 
   let config = {};
+
   try {
     if (fs.existsSync(configPath)) {
       config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
@@ -376,17 +407,22 @@ function cmdConfigGet(cwd, keyPath, raw) {
       error('No config.json found at ' + configPath);
     }
   } catch (err) {
-    if (err.message.startsWith('No config.json')) throw err;
+    if (err.message.startsWith('No config.json')) {
+throw err;
+}
+
     error('Failed to read config.json: ' + err.message);
   }
 
   // Traverse dot-notation path (e.g., "workflow.auto_advance")
   const keys = keyPath.split('.');
   let current = config;
+
   for (const key of keys) {
     if (current === undefined || current === null || typeof current !== 'object') {
       error(`Key not found: ${keyPath}`);
     }
+
     current = current[key];
   }
 
@@ -408,6 +444,7 @@ function cmdConfigSetModelProfile(cwd, profile, raw) {
   }
 
   const normalizedProfile = profile.toLowerCase().trim();
+
   if (!VALID_PROFILES.includes(normalizedProfile)) {
     error(`Invalid profile '${profile}'. Valid profiles: ${VALID_PROFILES.join(', ')}`);
   }
@@ -458,6 +495,7 @@ function getCmdConfigSetModelProfileResultMessage(
         'Agents are using:',
         agentToModelTable,
       ];
+
   return paragraphs.join('\n\n');
 }
 

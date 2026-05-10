@@ -1,14 +1,3 @@
-import { Button } from '@/components/ui/button';
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
-import InputError from '@/components/input-error';
 import {
     ChevronDown,
     ChevronUp,
@@ -20,6 +9,17 @@ import {
     X,
 } from 'lucide-react';
 import { useState } from 'react';
+import InputError from '@/components/input-error';
+import { Button } from '@/components/ui/button';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Textarea } from '@/components/ui/textarea';
 
 type QuestionType = 'mcq' | 'true_false' | 'written_answer';
 
@@ -77,6 +77,7 @@ function hasQuestionError(
     index: number,
 ): boolean {
     const prefix = `questions.${index}`;
+
     return Object.keys(errors).some((key) => key.startsWith(prefix));
 }
 

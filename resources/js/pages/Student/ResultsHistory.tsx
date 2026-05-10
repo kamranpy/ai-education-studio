@@ -1,6 +1,3 @@
-import { results as attemptResults } from '@/actions/App/Http/Controllers/Student/ExamAttemptController';
-import { Badge } from '@/components/ui/badge';
-import StudentLayout from '@/layouts/student-layout';
 import { Head, Link } from '@inertiajs/react';
 import {
     Award,
@@ -10,6 +7,9 @@ import {
     Eye,
     XCircle,
 } from 'lucide-react';
+import { results as attemptResults } from '@/actions/App/Http/Controllers/Student/ExamAttemptController';
+import { Badge } from '@/components/ui/badge';
+import StudentLayout from '@/layouts/student-layout';
 
 interface AttemptExam {
     id: number;
@@ -65,7 +65,10 @@ function ResultsHistory({ attempts }: Props) {
                 ) : (
                     <div className="space-y-3">
                         {attempts.data.map((attempt) => {
-                            if (!attempt.exam) return null;
+                            if (!attempt.exam) {
+return null;
+}
+
                             const exam = attempt.exam;
                             const percentage =
                                 attempt.can_see_results &&

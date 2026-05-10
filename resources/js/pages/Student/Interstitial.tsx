@@ -1,9 +1,9 @@
-import StudentLayout from '@/layouts/student-layout';
 import { router } from '@inertiajs/react';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import StudentLayout from '@/layouts/student-layout';
 
 interface Props {
     exam: { id: number; title: string };

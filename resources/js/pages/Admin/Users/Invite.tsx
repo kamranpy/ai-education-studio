@@ -1,8 +1,7 @@
-import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
-import { store as usersInviteStore } from '@/actions/App/Http/Controllers/Admin/UserInviteController';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import AdminLayout from '@/layouts/admin-layout';
+import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
+import { store as usersInviteStore } from '@/actions/App/Http/Controllers/Admin/UserInviteController';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +22,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import AdminLayout from '@/layouts/admin-layout';
 
 type Role = {
     id: number;

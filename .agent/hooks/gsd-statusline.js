@@ -4,8 +4,8 @@
 // Shows: model | current task | directory | context usage
 
 const fs = require('fs');
-const path = require('path');
 const os = require('os');
+const path = require('path');
 
 // Read JSON from stdin
 let input = '';
@@ -16,6 +16,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
+
   try {
     const data = JSON.parse(input);
     const model = data.model?.display_name || 'Claude';
@@ -28,6 +29,7 @@ process.stdin.on('end', () => {
     // is 83.5% of the total window. We normalize to show 100% at that point.
     const AUTO_COMPACT_BUFFER_PCT = 16.5;
     let ctx = '';
+
     if (remaining != null) {
       // Normalize: subtract buffer from remaining, scale to usable range
       const usableRemaining = Math.max(0, ((remaining - AUTO_COMPACT_BUFFER_PCT) / (100 - AUTO_COMPACT_BUFFER_PCT)) * 100);
@@ -38,6 +40,7 @@ process.stdin.on('end', () => {
       // Reject session IDs with path separators or traversal sequences to prevent
       // a malicious session_id from writing files outside the temp directory.
       const sessionSafe = session && !/[/\\]|\.\./.test(session);
+
       if (sessionSafe) {
         try {
           const bridgePath = path.join(os.tmpdir(), `claude-ctx-${session}.json`);
@@ -75,6 +78,7 @@ process.stdin.on('end', () => {
     // Respect CLAUDE_CONFIG_DIR for custom config directory setups (#870)
     const claudeDir = process.env.CLAUDE_CONFIG_DIR || path.join(homeDir, '.agent');
     const todosDir = path.join(claudeDir, 'todos');
+
     if (session && fs.existsSync(todosDir)) {
       try {
         const files = fs.readdirSync(todosDir)
@@ -86,7 +90,10 @@ process.stdin.on('end', () => {
           try {
             const todos = JSON.parse(fs.readFileSync(path.join(todosDir, files[0].name), 'utf8'));
             const inProgress = todos.find(t => t.status === 'in_progress');
-            if (inProgress) task = inProgress.activeForm || '';
+
+            if (inProgress) {
+task = inProgress.activeForm || '';
+}
           } catch (e) {}
         }
       } catch (e) {
@@ -101,12 +108,15 @@ process.stdin.on('end', () => {
     const sharedCacheFile = path.join(homeDir, '.cache', 'gsd', 'gsd-update-check.json');
     const legacyCacheFile = path.join(claudeDir, 'cache', 'gsd-update-check.json');
     const cacheFile = fs.existsSync(sharedCacheFile) ? sharedCacheFile : legacyCacheFile;
+
     if (fs.existsSync(cacheFile)) {
       try {
         const cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+
         if (cache.update_available) {
           gsdUpdate = '\x1b[33m⬆ /gsd-update\x1b[0m │ ';
         }
+
         if (cache.stale_hooks && cache.stale_hooks.length > 0) {
           gsdUpdate += '\x1b[31m⚠ stale hooks — run /gsd-update\x1b[0m │ ';
         }
@@ -115,6 +125,7 @@ process.stdin.on('end', () => {
 
     // Output
     const dirname = path.basename(dir);
+
     if (task) {
       process.stdout.write(`${gsdUpdate}\x1b[2m${model}\x1b[0m │ \x1b[1m${task}\x1b[0m │ \x1b[2m${dirname}\x1b[0m${ctx}`);
     } else {

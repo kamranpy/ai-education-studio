@@ -1,6 +1,6 @@
-import StudentLayout from '@/layouts/student-layout';
 import { router } from '@inertiajs/react';
 import { BookOpen, CheckCircle2, Clock, PlayCircle, RotateCcw } from 'lucide-react';
+import StudentLayout from '@/layouts/student-layout';
 
 interface Exam {
     id: number;

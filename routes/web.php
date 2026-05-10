@@ -9,8 +9,11 @@ use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Controllers\Student\ResultsController;
+use App\Http\Controllers\SuperAdmin\DashboardController;
+use App\Http\Controllers\SuperAdmin\InstituteController;
 use App\Http\Controllers\SuperAdmin\LlmSettingController;
 use App\Http\Controllers\SuperAdmin\CreditPackageController;
+use App\Http\Controllers\SuperAdmin\StripeSettingController;
 use App\Http\Middleware\EnsureInstituteAdmin;
 use App\Http\Middleware\EnsureSuperAdmin;
 use Illuminate\Support\Facades\Route;
@@ -21,10 +24,17 @@ Route::inertia('/', 'welcome', [
 ])->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
-
+    // Role-based dashboard redirect — used by the welcome page "Dashboard" link
+    Route::get('dashboard', function () {
+        $route = match (auth()->user()->role?->slug) {
+            \App\Models\Role::SUPER_ADMIN => route('super_admin.dashboard'),
+            \App\Models\Role::STUDENT => route('student.dashboard'),
+            default => route('admin.dashboard'),
+        };
+        return redirect($route);
+    })->name('dashboard');
     Route::prefix('super-admin')->middleware(EnsureSuperAdmin::class)->group(function () {
-        Route::inertia('dashboard', 'SuperAdmin/Dashboard')->name('super_admin.dashboard');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('super_admin.dashboard');
 
         Route::get('llm', [LlmSettingController::class, 'index'])->name('super_admin.llm.index');
         Route::post('llm', [LlmSettingController::class, 'store'])->name('super_admin.llm.store');
@@ -38,6 +48,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('credit-packages/{package}/edit', [CreditPackageController::class, 'edit'])->name('super_admin.credit_packages.edit');
         Route::put('credit-packages/{package}', [CreditPackageController::class, 'update'])->name('super_admin.credit_packages.update');
         Route::delete('credit-packages/{package}', [CreditPackageController::class, 'destroy'])->name('super_admin.credit_packages.destroy');
+
+        Route::get('billing', [StripeSettingController::class, 'index'])->name('super_admin.billing.index');
+        Route::post('billing', [StripeSettingController::class, 'store'])->name('super_admin.billing.store');
+
+        Route::get('institutes', [InstituteController::class, 'index'])->name('super_admin.institutes.index');
+        Route::patch('institutes/{institute}/toggle-status', [InstituteController::class, 'toggleStatus'])->name('super_admin.institutes.toggle-status');
+        Route::post('institutes/{institute}/adjust-credits', [InstituteController::class, 'adjustCredits'])->name('super_admin.institutes.adjust-credits');
+        Route::delete('institutes/{institute}', [InstituteController::class, 'destroy'])->name('super_admin.institutes.destroy');
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {

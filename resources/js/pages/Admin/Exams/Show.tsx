@@ -1,3 +1,15 @@
+import { Head, Link, router } from '@inertiajs/react';
+import {
+    ChevronDown,
+    CircleCheck,
+    Clock,
+    ListChecks,
+    Lock,
+    PenLine,
+    Target,
+} from 'lucide-react';
+import { useState } from 'react';
+import { index as attemptsIndex } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
 import {
     index as examsIndex,
     edit as examsEdit,
@@ -5,7 +17,6 @@ import {
     unpublish as examsUnpublish,
     announceResults as examsAnnounceResults,
 } from '@/actions/App/Http/Controllers/Admin/ExamController';
-import { index as attemptsIndex } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
 import { ExamStatusBadge } from '@/components/exam/exam-status-badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -24,17 +35,6 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import AdminLayout from '@/layouts/admin-layout';
-import { Head, Link, router } from '@inertiajs/react';
-import {
-    ChevronDown,
-    CircleCheck,
-    Clock,
-    ListChecks,
-    Lock,
-    PenLine,
-    Target,
-} from 'lucide-react';
-import { useState } from 'react';
 
 type QuestionChoice = {
     id: number;
@@ -109,12 +109,15 @@ function ExamShow({ exam }: { exam: Exam }) {
         if (confirmAction === 'publish') {
             router.post(examsPublish.url(exam.id));
         }
+
         if (confirmAction === 'unpublish') {
             router.post(examsUnpublish.url(exam.id));
         }
+
         if (confirmAction === 'announce') {
             router.post(examsAnnounceResults.url(exam.id));
         }
+
         setConfirmOpen(false);
     }
 

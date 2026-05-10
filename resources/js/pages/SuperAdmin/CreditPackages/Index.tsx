@@ -1,3 +1,5 @@
+import { Head, Link, router } from '@inertiajs/react';
+import { CreditCard, Edit, Trash } from 'lucide-react';
 import {
     create as packagesCreate,
     edit as packagesEdit,
@@ -13,8 +15,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import SuperAdminLayout from '@/layouts/super-admin-layout';
-import { Head, Link, router } from '@inertiajs/react';
-import { CreditCard, Edit, Trash } from 'lucide-react';
 
 interface CreditPackage {
     id: number;

@@ -35,6 +35,7 @@ function hasGsdMarker(filePath) {
     const fd = fs.openSync(filePath, 'r');
     const bytesRead = fs.readSync(fd, buf, 0, 500, 0);
     fs.closeSync(fd);
+
     return buf.slice(0, bytesRead).toString('utf-8').includes(GSD_MARKER);
   } catch {
     return false;
@@ -58,12 +59,20 @@ function scanExistingDocs(cwd) {
    * @param {number} depth - Current depth (1-based)
    */
   function walkDir(dir, depth) {
-    if (depth > MAX_DEPTH) return;
+    if (depth > MAX_DEPTH) {
+return;
+}
+
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
+
       for (const entry of entries) {
-        if (SKIP_DIRS.has(entry.name)) continue;
+        if (SKIP_DIRS.has(entry.name)) {
+continue;
+}
+
         const abs = path.join(dir, entry.name);
+
         if (entry.isDirectory()) {
           walkDir(abs, depth + 1);
         } else if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
@@ -77,6 +86,7 @@ function scanExistingDocs(cwd) {
   // Scan root-level .md files (non-recursive)
   try {
     const entries = fs.readdirSync(cwd, { withFileTypes: true });
+
     for (const entry of entries) {
       if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
         const abs = path.join(cwd, entry.name);
@@ -95,10 +105,13 @@ function scanExistingDocs(cwd) {
     fs.statSync(docsDir);
   } catch {
     const alternatives = ['documentation', 'doc'];
+
     for (const alt of alternatives) {
       const altDir = path.join(cwd, alt);
+
       try {
         const stat = fs.statSync(altDir);
+
         if (stat.isDirectory()) {
           walkDir(altDir, 1);
           break;
@@ -119,11 +132,16 @@ function scanExistingDocs(cwd) {
  */
 function detectProjectType(cwd) {
   const exists = (rel) => {
-    try { return pathExistsInternal(cwd, rel); } catch { return false; }
+    try {
+ return pathExistsInternal(cwd, rel); 
+} catch {
+ return false; 
+}
   };
 
   // has_cli_bin: package.json has a `bin` field
   let has_cli_bin = false;
+
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8'));
     has_cli_bin = !!(pkg.bin && (typeof pkg.bin === 'string' || Object.keys(pkg.bin).length > 0));
@@ -131,6 +149,7 @@ function detectProjectType(cwd) {
 
   // is_monorepo: pnpm-workspace.yaml, lerna.json, or package.json workspaces
   let is_monorepo = exists('pnpm-workspace.yaml') || exists('lerna.json');
+
   if (!is_monorepo) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8'));
@@ -140,6 +159,7 @@ function detectProjectType(cwd) {
 
   // has_tests: common test directories or test frameworks in devDependencies
   let has_tests = exists('test') || exists('tests') || exists('__tests__') || exists('spec');
+
   if (!has_tests) {
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8'));
@@ -178,7 +198,11 @@ function detectProjectType(cwd) {
  */
 function detectDocTooling(cwd) {
   const exists = (rel) => {
-    try { return pathExistsInternal(cwd, rel); } catch { return false; }
+    try {
+ return pathExistsInternal(cwd, rel); 
+} catch {
+ return false; 
+}
   };
 
   return {
@@ -206,16 +230,24 @@ function detectMonorepoWorkspaces(cwd) {
     const content = fs.readFileSync(path.join(cwd, 'pnpm-workspace.yaml'), 'utf-8');
     const lines = content.split('\n');
     const workspaces = [];
+
     for (const line of lines) {
       const m = line.match(/^\s*-\s+['"]?(.+?)['"]?\s*$/);
-      if (m) workspaces.push(m[1].trim());
+
+      if (m) {
+workspaces.push(m[1].trim());
+}
     }
-    if (workspaces.length > 0) return workspaces;
+
+    if (workspaces.length > 0) {
+return workspaces;
+}
   } catch { /* not present */ }
 
   // package.json workspaces
   try {
     const pkg = JSON.parse(fs.readFileSync(path.join(cwd, 'package.json'), 'utf-8'));
+
     if (Array.isArray(pkg.workspaces) && pkg.workspaces.length > 0) {
       return pkg.workspaces;
     }
@@ -224,6 +256,7 @@ function detectMonorepoWorkspaces(cwd) {
   // lerna.json
   try {
     const lerna = JSON.parse(fs.readFileSync(path.join(cwd, 'lerna.json'), 'utf-8'));
+
     if (Array.isArray(lerna.packages) && lerna.packages.length > 0) {
       return lerna.packages;
     }

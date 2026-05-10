@@ -10,8 +10,8 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const os = require('os');
+const path = require('path');
 const { output, error, safeReadFile } = require('./core.cjs');
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -206,19 +206,32 @@ const CLAUDE_MD_PROFILE_PLACEHOLDER = [
 // ─── Helper Functions ─────────────────────────────────────────────────────────
 
 function isAmbiguousAnswer(dimension, value) {
-  if (dimension === 'communication_style' && value === 'd') return true;
+  if (dimension === 'communication_style' && value === 'd') {
+return true;
+}
+
   const question = PROFILING_QUESTIONS.find(q => q.dimension === dimension);
-  if (!question) return false;
+
+  if (!question) {
+return false;
+}
+
   const option = question.options.find(o => o.value === value);
-  if (!option) return false;
+
+  if (!option) {
+return false;
+}
+
   return option.rating === 'mixed';
 }
 
 function generateClaudeInstruction(dimension, rating) {
   const dimInstructions = CLAUDE_INSTRUCTIONS[dimension];
+
   if (dimInstructions && dimInstructions[rating]) {
     return dimInstructions[rating];
   }
+
   return `Adapt to this developer's ${dimension.replace(/_/g, ' ')} preference: ${rating}.`;
 }
 
@@ -227,9 +240,17 @@ function extractSectionContent(fileContent, sectionName) {
   const endMarker = `<!-- GSD:${sectionName}-end -->`;
   const startIdx = fileContent.indexOf(startMarker);
   const endIdx = fileContent.indexOf(endMarker);
-  if (startIdx === -1 || endIdx === -1) return null;
+
+  if (startIdx === -1 || endIdx === -1) {
+return null;
+}
+
   const startTagEnd = fileContent.indexOf('-->', startIdx);
-  if (startTagEnd === -1) return null;
+
+  if (startTagEnd === -1) {
+return null;
+}
+
   return fileContent.substring(startTagEnd + 3, endIdx);
 }
 
@@ -246,36 +267,55 @@ function updateSection(fileContent, sectionName, newContent) {
   const endMarker = `<!-- GSD:${sectionName}-end -->`;
   const startIdx = fileContent.indexOf(startMarker);
   const endIdx = fileContent.indexOf(endMarker);
+
   if (startIdx !== -1 && endIdx !== -1) {
     const before = fileContent.substring(0, startIdx);
     const after = fileContent.substring(endIdx + endMarker.length);
+
     return { content: before + newContent + after, action: 'replaced' };
   }
+
   return { content: fileContent.trimEnd() + '\n\n' + newContent + '\n', action: 'appended' };
 }
 
 function detectManualEdit(fileContent, sectionName, expectedContent) {
   const currentContent = extractSectionContent(fileContent, sectionName);
-  if (currentContent === null) return false;
+
+  if (currentContent === null) {
+return false;
+}
+
   const normalize = (s) => s.trim().replace(/\n{3,}/g, '\n\n');
+
   return normalize(currentContent) !== normalize(expectedContent);
 }
 
 function extractMarkdownSection(content, sectionName) {
-  if (!content) return null;
+  if (!content) {
+return null;
+}
+
   const lines = content.split('\n');
   let capturing = false;
   const result = [];
   const headingPattern = new RegExp(`^## ${sectionName}\\s*$`);
+
   for (const line of lines) {
     if (headingPattern.test(line)) {
       capturing = true;
       result.push(line);
       continue;
     }
-    if (capturing && /^## /.test(line)) break;
-    if (capturing) result.push(line);
+
+    if (capturing && /^## /.test(line)) {
+break;
+}
+
+    if (capturing) {
+result.push(line);
+}
   }
+
   return result.length > 0 ? result.join('\n').trim() : null;
 }
 
@@ -284,30 +324,52 @@ function extractMarkdownSection(content, sectionName) {
 function generateProjectSection(cwd) {
   const projectPath = path.join(cwd, '.planning', 'PROJECT.md');
   const content = safeReadFile(projectPath);
+
   if (!content) {
     return { content: CLAUDE_MD_FALLBACKS.project, source: 'PROJECT.md', hasFallback: true };
   }
+
   const parts = [];
   const h1Match = content.match(/^# (.+)$/m);
-  if (h1Match) parts.push(`**${h1Match[1]}**`);
+
+  if (h1Match) {
+parts.push(`**${h1Match[1]}**`);
+}
+
   const whatThisIs = extractMarkdownSection(content, 'What This Is');
+
   if (whatThisIs) {
     const body = whatThisIs.replace(/^## What This Is\s*/i, '').trim();
-    if (body) parts.push(body);
+
+    if (body) {
+parts.push(body);
+}
   }
+
   const coreValue = extractMarkdownSection(content, 'Core Value');
+
   if (coreValue) {
     const body = coreValue.replace(/^## Core Value\s*/i, '').trim();
-    if (body) parts.push(`**Core Value:** ${body}`);
+
+    if (body) {
+parts.push(`**Core Value:** ${body}`);
+}
   }
+
   const constraints = extractMarkdownSection(content, 'Constraints');
+
   if (constraints) {
     const body = constraints.replace(/^## Constraints\s*/i, '').trim();
-    if (body) parts.push(`### Constraints\n\n${body}`);
+
+    if (body) {
+parts.push(`### Constraints\n\n${body}`);
+}
   }
+
   if (parts.length === 0) {
     return { content: CLAUDE_MD_FALLBACKS.project, source: 'PROJECT.md', hasFallback: true };
   }
+
   return { content: parts.join('\n\n'), source: 'PROJECT.md', hasFallback: false };
 }
 
@@ -316,58 +378,104 @@ function generateStackSection(cwd) {
   const researchPath = path.join(cwd, '.planning', 'research', 'STACK.md');
   let content = safeReadFile(codebasePath);
   let source = 'codebase/STACK.md';
+
   if (!content) {
     content = safeReadFile(researchPath);
     source = 'research/STACK.md';
   }
+
   if (!content) {
     return { content: CLAUDE_MD_FALLBACKS.stack, source: 'STACK.md', hasFallback: true };
   }
+
   const lines = content.split('\n');
   const summaryLines = [];
   let inTable = false;
+
   for (const line of lines) {
     if (line.startsWith('#')) {
-      if (!line.startsWith('# ') || summaryLines.length > 0) summaryLines.push(line);
+      if (!line.startsWith('# ') || summaryLines.length > 0) {
+summaryLines.push(line);
+}
+
       continue;
     }
-    if (line.startsWith('|')) { inTable = true; summaryLines.push(line); continue; }
-    if (inTable && line.trim() === '') inTable = false;
-    if (line.startsWith('- ') || line.startsWith('* ')) summaryLines.push(line);
+
+    if (line.startsWith('|')) {
+ inTable = true; summaryLines.push(line); continue; 
+}
+
+    if (inTable && line.trim() === '') {
+inTable = false;
+}
+
+    if (line.startsWith('- ') || line.startsWith('* ')) {
+summaryLines.push(line);
+}
   }
+
   const summary = summaryLines.length > 0 ? summaryLines.join('\n') : content.trim();
+
   return { content: summary, source, hasFallback: false };
 }
 
 function generateConventionsSection(cwd) {
   const conventionsPath = path.join(cwd, '.planning', 'codebase', 'CONVENTIONS.md');
   const content = safeReadFile(conventionsPath);
+
   if (!content) {
     return { content: CLAUDE_MD_FALLBACKS.conventions, source: 'CONVENTIONS.md', hasFallback: true };
   }
+
   const lines = content.split('\n');
   const summaryLines = [];
+
   for (const line of lines) {
-    if (line.startsWith('#')) { if (!line.startsWith('# ')) summaryLines.push(line); continue; }
-    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('|')) summaryLines.push(line);
+    if (line.startsWith('#')) {
+ if (!line.startsWith('# ')) {
+summaryLines.push(line);
+}
+
+ continue; 
+}
+
+    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('|')) {
+summaryLines.push(line);
+}
   }
+
   const summary = summaryLines.length > 0 ? summaryLines.join('\n') : content.trim();
+
   return { content: summary, source: 'CONVENTIONS.md', hasFallback: false };
 }
 
 function generateArchitectureSection(cwd) {
   const architecturePath = path.join(cwd, '.planning', 'codebase', 'ARCHITECTURE.md');
   const content = safeReadFile(architecturePath);
+
   if (!content) {
     return { content: CLAUDE_MD_FALLBACKS.architecture, source: 'ARCHITECTURE.md', hasFallback: true };
   }
+
   const lines = content.split('\n');
   const summaryLines = [];
+
   for (const line of lines) {
-    if (line.startsWith('#')) { if (!line.startsWith('# ')) summaryLines.push(line); continue; }
-    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('|') || line.startsWith('```')) summaryLines.push(line);
+    if (line.startsWith('#')) {
+ if (!line.startsWith('# ')) {
+summaryLines.push(line);
+}
+
+ continue; 
+}
+
+    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('|') || line.startsWith('```')) {
+summaryLines.push(line);
+}
   }
+
   const summary = summaryLines.length > 0 ? summaryLines.join('\n') : content.trim();
+
   return { content: summary, source: 'ARCHITECTURE.md', hasFallback: false };
 }
 
@@ -389,9 +497,13 @@ function generateSkillsSection(cwd) {
 
   for (const dir of SKILL_SEARCH_DIRS) {
     const absDir = path.join(cwd, dir);
-    if (!fs.existsSync(absDir)) continue;
+
+    if (!fs.existsSync(absDir)) {
+continue;
+}
 
     let entries;
+
     try {
       entries = fs.readdirSync(absDir, { withFileTypes: true });
     } catch {
@@ -399,22 +511,35 @@ function generateSkillsSection(cwd) {
     }
 
     for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
+      if (!entry.isDirectory()) {
+continue;
+}
+
       // Skip GSD's own installed skills — only surface project-specific skills
-      if (entry.name.startsWith('gsd-')) continue;
+      if (entry.name.startsWith('gsd-')) {
+continue;
+}
 
       const skillMdPath = path.join(absDir, entry.name, 'SKILL.md');
-      if (!fs.existsSync(skillMdPath)) continue;
+
+      if (!fs.existsSync(skillMdPath)) {
+continue;
+}
 
       const content = safeReadFile(skillMdPath);
-      if (!content) continue;
+
+      if (!content) {
+continue;
+}
 
       const frontmatter = extractSkillFrontmatter(content);
       const name = frontmatter.name || entry.name;
       const description = frontmatter.description || '';
 
       // Avoid duplicates when same skill dir is symlinked from multiple locations
-      if (discovered.some(s => s.name === name)) continue;
+      if (discovered.some(s => s.name === name)) {
+continue;
+}
 
       discovered.push({ name, description, path: `${dir}/${entry.name}` });
     }
@@ -425,6 +550,7 @@ function generateSkillsSection(cwd) {
   }
 
   const lines = ['| Skill | Description | Path |', '|-------|-------------|------|'];
+
   for (const skill of discovered) {
     // Sanitize table cell content (escape pipes)
     const desc = skill.description.replace(/\|/g, '\\|').replace(/\n/g, ' ').trim();
@@ -442,22 +568,35 @@ function generateSkillsSection(cwd) {
 function extractSkillFrontmatter(content) {
   const result = { name: '', description: '' };
   const fmMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
-  if (!fmMatch) return result;
+
+  if (!fmMatch) {
+return result;
+}
 
   const fmBlock = fmMatch[1];
   const lines = fmBlock.split('\n');
 
   let currentKey = '';
+
   for (const line of lines) {
     // Top-level key: value
     const kvMatch = line.match(/^(\w[\w-]*):\s*(.*)/);
+
     if (kvMatch) {
       currentKey = kvMatch[1];
       const value = kvMatch[2].trim();
-      if (currentKey === 'name') result.name = value;
-      if (currentKey === 'description') result.description = value;
+
+      if (currentKey === 'name') {
+result.name = value;
+}
+
+      if (currentKey === 'description') {
+result.description = value;
+}
+
       continue;
     }
+
     // Continuation line (indented) for multi-line values
     if (currentKey === 'description' && /^\s+/.test(line)) {
       result.description += ' ' + line.trim();
@@ -477,10 +616,17 @@ function cmdWriteProfile(cwd, options, raw) {
   }
 
   let analysisPath = options.input;
-  if (!path.isAbsolute(analysisPath)) analysisPath = path.join(cwd, analysisPath);
-  if (!fs.existsSync(analysisPath)) error(`Analysis file not found: ${analysisPath}`);
+
+  if (!path.isAbsolute(analysisPath)) {
+analysisPath = path.join(cwd, analysisPath);
+}
+
+  if (!fs.existsSync(analysisPath)) {
+error(`Analysis file not found: ${analysisPath}`);
+}
 
   let analysis;
+
   try {
     analysis = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
   } catch (err) {
@@ -490,6 +636,7 @@ function cmdWriteProfile(cwd, options, raw) {
   if (!analysis.dimensions || typeof analysis.dimensions !== 'object') {
     error('Analysis JSON must contain a "dimensions" object');
   }
+
   if (!analysis.profile_version) {
     error('Analysis JSON must contain "profile_version"');
   }
@@ -511,27 +658,43 @@ function cmdWriteProfile(cwd, options, raw) {
   let redactedCount = 0;
 
   function redactSensitive(text) {
-    if (typeof text !== 'string') return text;
+    if (typeof text !== 'string') {
+return text;
+}
+
     let result = text;
+
     for (const pattern of SENSITIVE_PATTERNS) {
       pattern.lastIndex = 0;
       const matches = result.match(pattern);
+
       if (matches) {
         redactedCount += matches.length;
         result = result.replace(pattern, '[REDACTED]');
       }
     }
+
     return result;
   }
 
   for (const dimKey of Object.keys(analysis.dimensions)) {
     const dim = analysis.dimensions[dimKey];
+
     if (dim.evidence && Array.isArray(dim.evidence)) {
       for (let i = 0; i < dim.evidence.length; i++) {
         const ev = dim.evidence[i];
-        if (ev.quote) ev.quote = redactSensitive(ev.quote);
-        if (ev.example) ev.example = redactSensitive(ev.example);
-        if (ev.signal) ev.signal = redactSensitive(ev.signal);
+
+        if (ev.quote) {
+ev.quote = redactSensitive(ev.quote);
+}
+
+        if (ev.example) {
+ev.example = redactSensitive(ev.example);
+}
+
+        if (ev.signal) {
+ev.signal = redactSensitive(ev.signal);
+}
       }
     }
   }
@@ -541,7 +704,11 @@ function cmdWriteProfile(cwd, options, raw) {
   }
 
   const templatePath = path.join(__dirname, '..', '..', 'templates', 'user-profile.md');
-  if (!fs.existsSync(templatePath)) error(`Template not found: ${templatePath}`);
+
+  if (!fs.existsSync(templatePath)) {
+error(`Template not found: ${templatePath}`);
+}
+
   let template = fs.readFileSync(templatePath, 'utf-8');
 
   const dimensionLabels = {
@@ -560,15 +727,29 @@ function cmdWriteProfile(cwd, options, raw) {
 
   for (const dimKey of DIMENSION_KEYS) {
     const dim = analysis.dimensions[dimKey];
-    if (!dim) continue;
+
+    if (!dim) {
+continue;
+}
+
     const conf = (dim.confidence || '').toUpperCase();
-    if (conf === 'HIGH' || conf === 'MEDIUM' || conf === 'LOW') dimensionsScored++;
+
+    if (conf === 'HIGH' || conf === 'MEDIUM' || conf === 'LOW') {
+dimensionsScored++;
+}
+
     if (conf === 'HIGH') {
       highCount++;
-      if (dim.claude_instruction) summaryLines.push(`- **${dimensionLabels[dimKey] || dimKey}:** ${dim.claude_instruction} (HIGH)`);
+
+      if (dim.claude_instruction) {
+summaryLines.push(`- **${dimensionLabels[dimKey] || dimKey}:** ${dim.claude_instruction} (HIGH)`);
+}
     } else if (conf === 'MEDIUM') {
       mediumCount++;
-      if (dim.claude_instruction) summaryLines.push(`- **${dimensionLabels[dimKey] || dimKey}:** ${dim.claude_instruction} (MEDIUM)`);
+
+      if (dim.claude_instruction) {
+summaryLines.push(`- **${dimensionLabels[dimKey] || dimKey}:** ${dim.claude_instruction} (MEDIUM)`);
+}
     } else if (conf === 'LOW') {
       lowCount++;
     }
@@ -601,11 +782,13 @@ function cmdWriteProfile(cwd, options, raw) {
 
     let evidenceBlock = '';
     const evidenceArr = dim.evidence_quotes || dim.evidence;
+
     if (evidenceArr && Array.isArray(evidenceArr) && evidenceArr.length > 0) {
       const evidenceLines = evidenceArr.map(ev => {
         const signal = ev.signal || ev.pattern || '';
         const quote = ev.quote || ev.example || '';
         const project = ev.project || 'unknown';
+
         return `- **Signal:** ${signal} / **Example:** "${quote}" -- project: ${project}`;
       });
       evidenceBlock = evidenceLines.join('\n');
@@ -621,6 +804,7 @@ function cmdWriteProfile(cwd, options, raw) {
   }
 
   let outputPath = options.output;
+
   if (!outputPath) {
     outputPath = path.join(os.homedir(), '.claude', 'get-shit-done', 'USER-PROFILE.md');
   } else if (!path.isAbsolute(outputPath)) {
@@ -656,10 +840,12 @@ function cmdProfileQuestionnaire(options, raw) {
       })),
     };
     output(questionsOutput, raw);
+
     return;
   }
 
   const answerValues = options.answers.split(',').map(a => a.trim());
+
   if (answerValues.length !== PROFILING_QUESTIONS.length) {
     error(`Expected ${PROFILING_QUESTIONS.length} answers (comma-separated), got ${answerValues.length}`);
   }
@@ -705,13 +891,22 @@ function cmdProfileQuestionnaire(options, raw) {
 }
 
 function cmdGenerateDevPreferences(cwd, options, raw) {
-  if (!options.analysis) error('--analysis <path> is required');
+  if (!options.analysis) {
+error('--analysis <path> is required');
+}
 
   let analysisPath = options.analysis;
-  if (!path.isAbsolute(analysisPath)) analysisPath = path.join(cwd, analysisPath);
-  if (!fs.existsSync(analysisPath)) error(`Analysis file not found: ${analysisPath}`);
+
+  if (!path.isAbsolute(analysisPath)) {
+analysisPath = path.join(cwd, analysisPath);
+}
+
+  if (!fs.existsSync(analysisPath)) {
+error(`Analysis file not found: ${analysisPath}`);
+}
 
   let analysis;
+
   try {
     analysis = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
   } catch (err) {
@@ -734,7 +929,11 @@ function cmdGenerateDevPreferences(cwd, options, raw) {
   };
 
   const templatePath = path.join(__dirname, '..', '..', 'templates', 'dev-preferences.md');
-  if (!fs.existsSync(templatePath)) error(`Template not found: ${templatePath}`);
+
+  if (!fs.existsSync(templatePath)) {
+error(`Template not found: ${templatePath}`);
+}
+
   let template = fs.readFileSync(templatePath, 'utf-8');
 
   const directiveLines = [];
@@ -742,18 +941,25 @@ function cmdGenerateDevPreferences(cwd, options, raw) {
 
   for (const dimKey of DIMENSION_KEYS) {
     const dim = analysis.dimensions[dimKey];
-    if (!dim) continue;
+
+    if (!dim) {
+continue;
+}
+
     const label = devPrefLabels[dimKey] || dimKey;
     const confidence = dim.confidence || 'UNSCORED';
     let instruction = dim.claude_instruction;
+
     if (!instruction) {
       const lookup = CLAUDE_INSTRUCTIONS[dimKey];
+
       if (lookup && dim.rating && lookup[dim.rating]) {
         instruction = lookup[dim.rating];
       } else {
         instruction = `Adapt to this developer's ${dimKey.replace(/_/g, ' ')} preference.`;
       }
     }
+
     directiveLines.push(`### ${label}\n${instruction} (${confidence} confidence)\n`);
     dimensionsIncluded.push(dimKey);
   }
@@ -764,6 +970,7 @@ function cmdGenerateDevPreferences(cwd, options, raw) {
   template = template.replace(/\{\{data_source\}\}/g, analysis.data_source || 'session_analysis');
 
   let stackBlock;
+
   if (analysis.data_source === 'questionnaire') {
     stackBlock = 'Stack preferences not available (questionnaire-only profile). Run `/gsd-profile-user --refresh` with session data to populate.';
   } else if (options.stack) {
@@ -771,9 +978,11 @@ function cmdGenerateDevPreferences(cwd, options, raw) {
   } else {
     stackBlock = 'Stack preferences will be populated from session analysis.';
   }
+
   template = template.replace(/\{\{stack_preferences\}\}/g, stackBlock);
 
   let outputPath = options.output;
+
   if (!outputPath) {
     outputPath = path.join(os.homedir(), '.claude', 'commands', 'gsd', 'dev-preferences.md');
   } else if (!path.isAbsolute(outputPath)) {
@@ -794,13 +1003,22 @@ function cmdGenerateDevPreferences(cwd, options, raw) {
 }
 
 function cmdGenerateClaudeProfile(cwd, options, raw) {
-  if (!options.analysis) error('--analysis <path> is required');
+  if (!options.analysis) {
+error('--analysis <path> is required');
+}
 
   let analysisPath = options.analysis;
-  if (!path.isAbsolute(analysisPath)) analysisPath = path.join(cwd, analysisPath);
-  if (!fs.existsSync(analysisPath)) error(`Analysis file not found: ${analysisPath}`);
+
+  if (!path.isAbsolute(analysisPath)) {
+analysisPath = path.join(cwd, analysisPath);
+}
+
+  if (!fs.existsSync(analysisPath)) {
+error(`Analysis file not found: ${analysisPath}`);
+}
 
   let analysis;
+
   try {
     analysis = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
   } catch (err) {
@@ -829,20 +1047,27 @@ function cmdGenerateClaudeProfile(cwd, options, raw) {
 
   for (const dimKey of DIMENSION_KEYS) {
     const dim = analysis.dimensions[dimKey];
-    if (!dim) continue;
+
+    if (!dim) {
+continue;
+}
+
     const label = profileLabels[dimKey] || dimKey;
     const rating = dim.rating || 'UNSCORED';
     const confidence = dim.confidence || 'UNSCORED';
     tableRows.push(`| ${label} | ${rating} | ${confidence} |`);
     let instruction = dim.claude_instruction;
+
     if (!instruction) {
       const lookup = CLAUDE_INSTRUCTIONS[dimKey];
+
       if (lookup && dim.rating && lookup[dim.rating]) {
         instruction = lookup[dim.rating];
       } else {
         instruction = `Adapt to this developer's ${dimKey.replace(/_/g, ' ')} preference.`;
       }
     }
+
     directiveLines.push(`- **${label}:** ${instruction}`);
     dimensionsIncluded.push(dimKey);
   }
@@ -865,6 +1090,7 @@ function cmdGenerateClaudeProfile(cwd, options, raw) {
   const sectionContent = sectionLines.join('\n');
 
   let targetPath;
+
   if (options.global) {
     targetPath = path.join(os.homedir(), '.claude', 'CLAUDE.md');
   } else if (options.output) {
@@ -891,6 +1117,7 @@ function cmdGenerateClaudeProfile(cwd, options, raw) {
       existingContent = existingContent.trimEnd() + '\n\n' + sectionContent + '\n';
       action = 'appended';
     }
+
     fs.writeFileSync(targetPath, existingContent, 'utf-8');
   } else {
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
@@ -935,6 +1162,7 @@ function cmdGenerateClaudeMd(cwd, options, raw) {
   for (const name of MANAGED_SECTIONS) {
     const gen = generators[name](cwd);
     generated[name] = gen;
+
     if (gen.hasFallback) {
       sectionsFallback.push(name);
     } else {
@@ -943,6 +1171,7 @@ function cmdGenerateClaudeMd(cwd, options, raw) {
   }
 
   let outputPath = options.output;
+
   if (!outputPath) {
     outputPath = path.join(cwd, 'CLAUDE.md');
   } else if (!path.isAbsolute(outputPath)) {
@@ -954,12 +1183,14 @@ function cmdGenerateClaudeMd(cwd, options, raw) {
 
   if (existingContent === null) {
     const sections = [];
+
     for (const name of MANAGED_SECTIONS) {
       const gen = generated[name];
       const heading = sectionHeadings[name];
       const body = `${heading}\n\n${gen.content}`;
       sections.push(buildSection(name, gen.source, body));
     }
+
     sections.push('');
     sections.push(CLAUDE_MD_PROFILE_PLACEHOLDER);
     existingContent = sections.join('\n\n') + '\n';
@@ -980,15 +1211,25 @@ function cmdGenerateClaudeMd(cwd, options, raw) {
       if (hasMarkers) {
         if (options.auto) {
           const expectedBody = `${heading}\n\n${gen.content}`;
+
           if (detectManualEdit(fileContent, name, expectedBody)) {
             sectionsSkipped.push(name);
             const genIdx = sectionsGenerated.indexOf(name);
-            if (genIdx !== -1) sectionsGenerated.splice(genIdx, 1);
+
+            if (genIdx !== -1) {
+sectionsGenerated.splice(genIdx, 1);
+}
+
             const fbIdx = sectionsFallback.indexOf(name);
-            if (fbIdx !== -1) sectionsFallback.splice(fbIdx, 1);
+
+            if (fbIdx !== -1) {
+sectionsFallback.splice(fbIdx, 1);
+}
+
             continue;
           }
         }
+
         const result = updateSection(fileContent, name, fullSection);
         fileContent = result.content;
       } else {
@@ -1006,6 +1247,7 @@ function cmdGenerateClaudeMd(cwd, options, raw) {
 
   const finalContent = safeReadFile(outputPath);
   let profileStatus;
+
   if (finalContent && finalContent.indexOf('<!-- GSD:profile-start') !== -1) {
     if (action === 'created' || existingContent.indexOf('<!-- GSD:profile-start') === -1) {
       profileStatus = 'placeholder_added';
@@ -1019,9 +1261,18 @@ function cmdGenerateClaudeMd(cwd, options, raw) {
   const genCount = sectionsGenerated.length;
   const totalManaged = MANAGED_SECTIONS.length;
   let message = `Generated ${genCount}/${totalManaged} sections.`;
-  if (sectionsFallback.length > 0) message += ` Fallback: ${sectionsFallback.join(', ')}.`;
-  if (sectionsSkipped.length > 0) message += ` Skipped (manually edited): ${sectionsSkipped.join(', ')}.`;
-  if (profileStatus === 'placeholder_added') message += ' Run /gsd-profile-user to unlock Developer Profile.';
+
+  if (sectionsFallback.length > 0) {
+message += ` Fallback: ${sectionsFallback.join(', ')}.`;
+}
+
+  if (sectionsSkipped.length > 0) {
+message += ` Skipped (manually edited): ${sectionsSkipped.join(', ')}.`;
+}
+
+  if (profileStatus === 'placeholder_added') {
+message += ' Run /gsd-profile-user to unlock Developer Profile.';
+}
 
   const result = {
     claude_md_path: outputPath,

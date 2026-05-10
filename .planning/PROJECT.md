@@ -14,20 +14,28 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 <!-- Shipped and confirmed valuable. -->
 
-- ✓ Multi-tenant architecture supporting multiple institutes from day one — Phase 1
-- ✓ Role-based access control (Super Admin, Institute Admin, Student) — Phase 1
+- ✓ Multi-tenant architecture supporting multiple institutes from day one — v1.0
+- ✓ Role-based access control (Super Admin, Institute Admin, Student) — v1.0
+- ✓ Exam creation with Multiple Choice, True/False, and Written answer types — v1.0
+- ✓ Student exam experience with auto-save, countdown timers, resume capability, and question randomization — v1.0
+- ✓ Basic anti-cheat tracking (logging when students leave the tab/window) — v1.0
+- ✓ Asynchronous AI evaluation of written answers (scoring based on concept, logic, and terminology) — v1.0
+- ✓ AI evaluation returns score, confidence level, and explanation — v1.0
+- ✓ Optional teacher override for AI-generated grades — v1.0
+- ✓ Dynamic AI model configuration via the admin panel (provider-agnostic: OpenAI, Anthropic, Google, OpenAI-compatible) — v1.0
+- ✓ Pay-per-exam monetization system (institutes buy credits, deducted per exam attempt) — v1.0
+- ✓ Super Admin oversight of all institutes (suspend/activate/delete/adjust credits) — v1.0
+- ✓ Super Admin global billing configuration (Stripe keys, credit packages) — v1.0
+- ✓ Super Admin global analytics dashboard with range filtering — v1.0
 
 ### Active
 
-<!-- Current scope. Building toward these. -->
-- [ ] Exam creation with Multiple Choice, True/False, and Written answer types
-- [ ] Student exam experience with auto-save, countdown timers, resume capability, and question randomization
-- [ ] Basic anti-cheat tracking (logging when students leave the tab/window)
-- [ ] Asynchronous/batch AI evaluation of written answers (scoring based on concept, logic, and terminology)
-- [ ] AI evaluation returns score, confidence level, and explanation
-- [ ] Optional teacher override for AI-generated grades
-- [ ] Dynamic AI model configuration via the admin panel (allowing buyers to set their own API keys)
-- [ ] Pay-per-exam monetization system (institutes buy credits or pay per student/exam)
+<!-- Next milestone scope. -->
+
+- [ ] Detailed analytics dashboard for student performance trends (per-student, per-exam breakdowns)
+- [ ] Question banks/pools for reusing questions across exams
+- [ ] Export exam results to CSV/PDF
+- [ ] OAuth login (Google, Microsoft)
 
 ### Out of Scope
 
@@ -41,7 +49,8 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 - **Target Audience:** Schools (K-12), Universities, Corporate training platforms.
 - **Market Strategy:** The platform will be sold as a script on a marketplace. The buyer will host it and charge institutes.
-- **Tech Stack:** Backend-driven (Laravel) with a React frontend via Inertia.js.
+- **Tech Stack:** Laravel 13 + React 19 + Inertia.js v3 + Tailwind CSS v4. PHP 8.3+.
+- **Current State:** v1.0 MVP shipped. Full exam lifecycle, AI grading, billing, and Super Admin panel are all operational.
 
 ## Constraints
 
@@ -51,7 +60,7 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 ## Key Decisions
 
-<!-- Decisions that constrain future work. Add throughout project lifecycle. -->
+<!-- Decisions that constrain future work. -->
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
@@ -59,14 +68,20 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 | Single-DB tenancy via global scope | Simpler than schema-per-tenant, works on shared hosting | ✓ Good |
 | Separate roles table with FK | Extensible over string column; supports future role management UI | ✓ Good |
 | UUID primary key for users | Prevents ID enumeration, safer for API exposure, globally unique | ✓ Good |
-| Async AI Evaluation | Prevents user-facing timeouts and ensures reliable exam submission | — Pending |
-| Optional Human Override | Builds trust in AI grading by keeping teachers in control | — Pending |
-| Basic Anti-Cheat | Lowers barrier to entry and technical complexity for v1 | — Pending |
-| Pay-Per-Exam Billing | Aligns platform costs (AI tokens) with revenue | — Pending |
+| Async AI Evaluation | Prevents user-facing timeouts and ensures reliable exam submission | ✓ Good |
+| Optional Human Override | Builds trust in AI grading by keeping teachers in control | ✓ Good |
+| Basic Anti-Cheat | Lowers barrier to entry and technical complexity for v1 | ✓ Good |
+| Pay-Per-Exam Billing | Aligns platform costs (AI tokens) with revenue | ✓ Good |
+| LLM config is Super-Admin global, not per-institute | Simplifies key management; buyer controls the AI provider | ✓ Good |
+| LLM API keys encrypted in DB (not .env) | Keys survive deployments; configurable via UI without server access | ✓ Good |
+| Provider abstraction via driver layer | openai / anthropic / google / openai-compatible covers all major providers | ✓ Good |
+| ai_* columns immutable; override_* separate | Preserves audit trail; final_score = override_score ?? ai_score | ✓ Good |
+| Confidence < 0.7 auto-flags for review | Surfaces uncertain AI grades without blocking the workflow | ✓ Good |
+| Delete-and-recreate for draft exam updates | Avoids orphaned question/choice records on complex nested updates | ✓ Good |
+| Stripe key stored encrypted in DB with .env fallback | Allows UI-based key rotation; .env fallback for initial setup | ✓ Good |
+| Pessimistic locking for credit deduction | Prevents race conditions when multiple students start exams simultaneously | ✓ Good |
 
 ## Evolution
-
-This document evolves at phase transitions and milestone boundaries.
 
 **After each phase transition** (via `/gsd-transition`):
 1. Requirements invalidated? → Move to Out of Scope with reason
@@ -82,4 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-04-12 after UUID primary key migration for users*
+*Last updated: 2026-05-09 after v1.0 milestone*

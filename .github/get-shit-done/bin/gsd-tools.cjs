@@ -158,23 +158,23 @@
 
 const fs = require('fs');
 const path = require('path');
+const commands = require('./lib/commands.cjs');
+const config = require('./lib/config.cjs');
 const core = require('./lib/core.cjs');
 const { error, findProjectRoot, getActiveWorkstream } = core;
-const state = require('./lib/state.cjs');
-const phase = require('./lib/phase.cjs');
-const roadmap = require('./lib/roadmap.cjs');
-const verify = require('./lib/verify.cjs');
-const config = require('./lib/config.cjs');
-const template = require('./lib/template.cjs');
-const milestone = require('./lib/milestone.cjs');
-const commands = require('./lib/commands.cjs');
-const init = require('./lib/init.cjs');
-const frontmatter = require('./lib/frontmatter.cjs');
-const profilePipeline = require('./lib/profile-pipeline.cjs');
-const profileOutput = require('./lib/profile-output.cjs');
-const workstream = require('./lib/workstream.cjs');
 const docs = require('./lib/docs.cjs');
+const frontmatter = require('./lib/frontmatter.cjs');
+const init = require('./lib/init.cjs');
 const learnings = require('./lib/learnings.cjs');
+const milestone = require('./lib/milestone.cjs');
+const phase = require('./lib/phase.cjs');
+const profileOutput = require('./lib/profile-output.cjs');
+const profilePipeline = require('./lib/profile-pipeline.cjs');
+const roadmap = require('./lib/roadmap.cjs');
+const state = require('./lib/state.cjs');
+const template = require('./lib/template.cjs');
+const verify = require('./lib/verify.cjs');
+const workstream = require('./lib/workstream.cjs');
 
 // ─── Arg parsing helpers ──────────────────────────────────────────────────────
 
@@ -188,15 +188,18 @@ const learnings = require('./lib/learnings.cjs');
  */
 function parseNamedArgs(args, valueFlags = [], booleanFlags = []) {
   const result = {};
+
   for (const flag of valueFlags) {
     const idx = args.indexOf(`--${flag}`);
     result[flag] = idx !== -1 && args[idx + 1] !== undefined && !args[idx + 1].startsWith('--')
       ? args[idx + 1]
       : null;
   }
+
   for (const flag of booleanFlags) {
     result[flag] = args.includes(`--${flag}`);
   }
+
   return result;
 }
 
@@ -207,12 +210,21 @@ function parseNamedArgs(args, valueFlags = [], booleanFlags = []) {
  */
 function parseMultiwordArg(args, flag) {
   const idx = args.indexOf(`--${flag}`);
-  if (idx === -1) return null;
+
+  if (idx === -1) {
+return null;
+}
+
   const tokens = [];
+
   for (let i = idx + 1; i < args.length; i++) {
-    if (args[i].startsWith('--')) break;
+    if (args[i].startsWith('--')) {
+break;
+}
+
     tokens.push(args[i]);
   }
+
   return tokens.length > 0 ? tokens.join(' ') : null;
 }
 
@@ -225,14 +237,23 @@ async function main() {
   let cwd = process.cwd();
   const cwdEqArg = args.find(arg => arg.startsWith('--cwd='));
   const cwdIdx = args.indexOf('--cwd');
+
   if (cwdEqArg) {
     const value = cwdEqArg.slice('--cwd='.length).trim();
-    if (!value) error('Missing value for --cwd');
+
+    if (!value) {
+error('Missing value for --cwd');
+}
+
     args.splice(args.indexOf(cwdEqArg), 1);
     cwd = path.resolve(value);
   } else if (cwdIdx !== -1) {
     const value = args[cwdIdx + 1];
-    if (!value || value.startsWith('--')) error('Missing value for --cwd');
+
+    if (!value || value.startsWith('--')) {
+error('Missing value for --cwd');
+}
+
     args.splice(cwdIdx, 2);
     cwd = path.resolve(value);
   }
@@ -245,8 +266,10 @@ async function main() {
   // However, in monorepo worktrees where the subdirectory itself owns .planning/,
   // skip worktree resolution — the CWD is already the correct project root.
   const { resolveWorktreeRoot } = require('./lib/core.cjs');
+
   if (!fs.existsSync(path.join(cwd, '.planning'))) {
     const worktreeRoot = resolveWorktreeRoot(cwd);
+
     if (worktreeRoot !== cwd) {
       cwd = worktreeRoot;
     }
@@ -257,23 +280,34 @@ async function main() {
   const wsEqArg = args.find(arg => arg.startsWith('--ws='));
   const wsIdx = args.indexOf('--ws');
   let ws = null;
+
   if (wsEqArg) {
     ws = wsEqArg.slice('--ws='.length).trim();
-    if (!ws) error('Missing value for --ws');
+
+    if (!ws) {
+error('Missing value for --ws');
+}
+
     args.splice(args.indexOf(wsEqArg), 1);
   } else if (wsIdx !== -1) {
     ws = args[wsIdx + 1];
-    if (!ws || ws.startsWith('--')) error('Missing value for --ws');
+
+    if (!ws || ws.startsWith('--')) {
+error('Missing value for --ws');
+}
+
     args.splice(wsIdx, 2);
   } else if (process.env.GSD_WORKSTREAM) {
     ws = process.env.GSD_WORKSTREAM.trim();
   } else {
     ws = getActiveWorkstream(cwd);
   }
+
   // Validate workstream name to prevent path traversal attacks.
   if (ws && !/^[a-zA-Z0-9_-]+$/.test(ws)) {
     error('Invalid workstream name: must be alphanumeric, hyphens, and underscores only');
   }
+
   // Set env var so all modules (planningDir, planningPaths) auto-resolve workstream paths
   if (ws) {
     process.env.GSD_WORKSTREAM = ws;
@@ -281,16 +315,24 @@ async function main() {
 
   const rawIndex = args.indexOf('--raw');
   const raw = rawIndex !== -1;
-  if (rawIndex !== -1) args.splice(rawIndex, 1);
+
+  if (rawIndex !== -1) {
+args.splice(rawIndex, 1);
+}
 
   // --pick <name>: extract a single field from JSON output (replaces jq dependency).
   // Supports dot-notation (e.g., --pick workflow.research) and bracket notation
   // for arrays (e.g., --pick directories[-1]).
   const pickIdx = args.indexOf('--pick');
   let pickField = null;
+
   if (pickIdx !== -1) {
     pickField = args[pickIdx + 1];
-    if (!pickField || pickField.startsWith('--')) error('Missing value for --pick');
+
+    if (!pickField || pickField.startsWith('--')) {
+error('Missing value for --pick');
+}
+
     args.splice(pickIdx, 2);
   }
 
@@ -304,6 +346,7 @@ async function main() {
   // sometimes hallucinate --help or --version on tool invocations; silently
   // ignoring them can cause destructive operations to proceed unchecked.
   const NEVER_VALID_FLAGS = new Set(['-h', '--help', '-?', '--h', '--version', '-v', '--usage']);
+
   for (const arg of args) {
     if (NEVER_VALID_FLAGS.has(arg)) {
       error(`Unknown flag: ${arg}\ngsd-tools does not accept help or version flags. Run "gsd-tools" with no arguments for usage.`);
@@ -317,6 +360,7 @@ async function main() {
     'generate-slug', 'current-timestamp', 'verify-path-exists',
     'verify-summary', 'template', 'frontmatter',
   ]);
+
   if (!SKIP_ROOT_RESOLUTION.has(command)) {
     cwd = findProjectRoot(cwd);
   }
@@ -326,16 +370,23 @@ async function main() {
     const origWriteSync = fs.writeSync;
     const chunks = [];
     fs.writeSync = function (fd, data, ...rest) {
-      if (fd === 1) { chunks.push(String(data)); return; }
+      if (fd === 1) {
+ chunks.push(String(data));
+
+ return; 
+}
+
       return origWriteSync.call(fs, fd, data, ...rest);
     };
     const cleanup = () => {
       fs.writeSync = origWriteSync;
       const captured = chunks.join('');
       let jsonStr = captured;
+
       if (jsonStr.startsWith('@file:')) {
         jsonStr = fs.readFileSync(jsonStr.slice(6), 'utf-8');
       }
+
       try {
         const obj = JSON.parse(jsonStr);
         const value = extractField(obj, pickField);
@@ -345,13 +396,16 @@ async function main() {
         origWriteSync.call(fs, 1, captured);
       }
     };
+
     try {
       await runCommand(command, args, cwd, raw);
       cleanup();
     } catch (e) {
       fs.writeSync = origWriteSync;
+
       throw e;
     }
+
     return;
   }
 
@@ -365,19 +419,29 @@ async function main() {
 function extractField(obj, fieldPath) {
   const parts = fieldPath.split('.');
   let current = obj;
+
   for (const part of parts) {
-    if (current === null || current === undefined) return undefined;
+    if (current === null || current === undefined) {
+return undefined;
+}
+
     const bracketMatch = part.match(/^(.+?)\[(-?\d+)]$/);
+
     if (bracketMatch) {
       const key = bracketMatch[1];
       const index = parseInt(bracketMatch[2], 10);
       current = current[key];
-      if (!Array.isArray(current)) return undefined;
+
+      if (!Array.isArray(current)) {
+return undefined;
+}
+
       current = index < 0 ? current[current.length + index] : current[index];
     } else {
       current = current[part];
     }
   }
+
   return current;
 }
 
@@ -385,6 +449,7 @@ async function runCommand(command, args, cwd, raw) {
   switch (command) {
     case 'state': {
       const subcommand = args[1];
+
       if (subcommand === 'json') {
         state.cmdStateJson(cwd, raw);
       } else if (subcommand === 'update') {
@@ -393,13 +458,16 @@ async function runCommand(command, args, cwd, raw) {
         state.cmdStateGet(cwd, args[2], raw);
       } else if (subcommand === 'patch') {
         const patches = {};
+
         for (let i = 2; i < args.length; i += 2) {
           const key = args[i].replace(/^--/, '');
           const value = args[i + 1];
+
           if (key && value !== undefined) {
             patches[key] = value;
           }
         }
+
         state.cmdStatePatch(cwd, patches, raw);
       } else if (subcommand === 'advance-plan') {
         state.cmdStateAdvancePlan(cwd, raw);
@@ -438,6 +506,7 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         state.cmdStateLoad(cwd, raw);
       }
+
       break;
     }
 
@@ -489,18 +558,25 @@ async function runCommand(command, args, cwd, raw) {
 
     case 'template': {
       const subcommand = args[1];
+
       if (subcommand === 'select') {
         template.cmdTemplateSelect(cwd, args[2], raw);
       } else if (subcommand === 'fill') {
         const templateType = args[2];
         const { phase, plan, name, type, wave, fields: fieldsRaw } = parseNamedArgs(args, ['phase', 'plan', 'name', 'type', 'wave', 'fields']);
         let fields = {};
+
         if (fieldsRaw) {
           const { safeJsonParse } = require('./lib/security.cjs');
           const result = safeJsonParse(fieldsRaw, { label: '--fields' });
-          if (!result.ok) error(result.error);
+
+          if (!result.ok) {
+error(result.error);
+}
+
           fields = result.value;
         }
+
         template.cmdTemplateFill(cwd, templateType, {
           phase, plan, name, fields,
           type: type || 'execute',
@@ -509,12 +585,14 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown template subcommand. Available: select, fill');
       }
+
       break;
     }
 
     case 'frontmatter': {
       const subcommand = args[1];
       const file = args[2];
+
       if (subcommand === 'get') {
         frontmatter.cmdFrontmatterGet(cwd, file, parseNamedArgs(args, ['field']).field, raw);
       } else if (subcommand === 'set') {
@@ -527,11 +605,13 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown frontmatter subcommand. Available: get, set, merge, validate');
       }
+
       break;
     }
 
     case 'verify': {
       const subcommand = args[1];
+
       if (subcommand === 'plan-structure') {
         verify.cmdVerifyPlanStructure(cwd, args[2], raw);
       } else if (subcommand === 'phase-completeness') {
@@ -550,6 +630,7 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown verify subcommand. Available: plan-structure, phase-completeness, references, commits, artifacts, key-links, schema-drift');
       }
+
       break;
     }
 
@@ -610,6 +691,7 @@ async function runCommand(command, args, cwd, raw) {
 
     case 'phases': {
       const subcommand = args[1];
+
       if (subcommand === 'list') {
         const typeIndex = args.indexOf('--type');
         const phaseIndex = args.indexOf('--phase');
@@ -624,11 +706,13 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown phases subcommand. Available: list, clear');
       }
+
       break;
     }
 
     case 'roadmap': {
       const subcommand = args[1];
+
       if (subcommand === 'get-phase') {
         roadmap.cmdRoadmapGetPhase(cwd, args[2], raw);
       } else if (subcommand === 'analyze') {
@@ -638,27 +722,32 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown roadmap subcommand. Available: get-phase, analyze, update-plan-progress');
       }
+
       break;
     }
 
     case 'requirements': {
       const subcommand = args[1];
+
       if (subcommand === 'mark-complete') {
         milestone.cmdRequirementsMarkComplete(cwd, args.slice(2), raw);
       } else {
         error('Unknown requirements subcommand. Available: mark-complete');
       }
+
       break;
     }
 
     case 'phase': {
       const subcommand = args[1];
+
       if (subcommand === 'next-decimal') {
         phase.cmdPhaseNextDecimal(cwd, args[2], raw);
       } else if (subcommand === 'add') {
         const idIdx = args.indexOf('--id');
         let customId = null;
         const descArgs = [];
+
         for (let i = 2; i < args.length; i++) {
           if (args[i] === '--id' && i + 1 < args.length) {
             customId = args[i + 1];
@@ -667,6 +756,7 @@ async function runCommand(command, args, cwd, raw) {
             descArgs.push(args[i]);
           }
         }
+
         phase.cmdPhaseAdd(cwd, descArgs.join(' '), raw, customId);
       } else if (subcommand === 'insert') {
         phase.cmdPhaseInsert(cwd, args[2], args.slice(3).join(' '), raw);
@@ -678,11 +768,13 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown phase subcommand. Available: next-decimal, add, insert, remove, complete');
       }
+
       break;
     }
 
     case 'milestone': {
       const subcommand = args[1];
+
       if (subcommand === 'complete') {
         const milestoneName = parseMultiwordArg(args, 'name');
         const archivePhases = args.includes('--archive-phases');
@@ -690,11 +782,13 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown milestone subcommand. Available: complete');
       }
+
       break;
     }
 
     case 'validate': {
       const subcommand = args[1];
+
       if (subcommand === 'consistency') {
         verify.cmdValidateConsistency(cwd, raw);
       } else if (subcommand === 'health') {
@@ -705,6 +799,7 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown validate subcommand. Available: consistency, health, agents');
       }
+
       break;
     }
 
@@ -723,12 +818,14 @@ async function runCommand(command, args, cwd, raw) {
     case 'uat': {
       const subcommand = args[1];
       const uat = require('./lib/uat.cjs');
+
       if (subcommand === 'render-checkpoint') {
         const options = parseNamedArgs(args, ['file']);
         uat.cmdRenderCheckpoint(cwd, options, raw);
       } else {
         error('Unknown uat subcommand. Available: render-checkpoint');
       }
+
       break;
     }
 
@@ -740,6 +837,7 @@ async function runCommand(command, args, cwd, raw) {
 
     case 'todo': {
       const subcommand = args[1];
+
       if (subcommand === 'complete') {
         commands.cmdTodoComplete(cwd, args[2], raw);
       } else if (subcommand === 'match-phase') {
@@ -747,6 +845,7 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown todo subcommand. Available: complete, match-phase');
       }
+
       break;
     }
 
@@ -762,6 +861,7 @@ async function runCommand(command, args, cwd, raw) {
 
     case 'init': {
       const workflow = args[1];
+
       switch (workflow) {
         case 'execute-phase': {
           const { validate: epValidate } = parseNamedArgs(args, [], ['validate']);
@@ -818,6 +918,7 @@ async function runCommand(command, args, cwd, raw) {
         default:
           error(`Unknown init workflow: ${workflow}\nAvailable: execute-phase, plan-phase, new-project, new-milestone, quick, resume, verify-work, phase-op, todos, milestone-op, map-codebase, progress, manager, new-workspace, list-workspaces, remove-workspace`);
       }
+
       break;
     }
 
@@ -869,9 +970,11 @@ async function runCommand(command, args, cwd, raw) {
       const pathIdx = args.indexOf('--path');
       const sessionsPath = pathIdx !== -1 ? args[pathIdx + 1] : null;
       const projectArg = args[1];
+
       if (!projectArg || projectArg.startsWith('--')) {
         error('Usage: gsd-tools extract-messages <project> [--session <id>] [--limit N] [--path <dir>]\nRun scan-sessions first to see available projects.');
       }
+
       await profilePipeline.cmdExtractMessages(projectArg, { sessionId, limit }, raw, sessionsPath);
       break;
     }
@@ -894,7 +997,11 @@ async function runCommand(command, args, cwd, raw) {
     case 'write-profile': {
       const inputIdx = args.indexOf('--input');
       const inputPath = inputIdx !== -1 ? args[inputIdx + 1] : null;
-      if (!inputPath) error('--input <analysis-json-path> is required');
+
+      if (!inputPath) {
+error('--input <analysis-json-path> is required');
+}
+
       const outputIdx = args.indexOf('--output');
       const outputPath = outputIdx !== -1 ? args[outputIdx + 1] : null;
       profileOutput.cmdWriteProfile(cwd, { input: inputPath, output: outputPath }, raw);
@@ -940,6 +1047,7 @@ async function runCommand(command, args, cwd, raw) {
 
     case 'workstream': {
       const subcommand = args[1];
+
       if (subcommand === 'create') {
         const migrateNameIdx = args.indexOf('--migrate-name');
         const noMigrate = args.includes('--no-migrate');
@@ -962,6 +1070,7 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown workstream subcommand. Available: create, list, status, complete, set, get, progress');
       }
+
       break;
     }
 
@@ -970,9 +1079,14 @@ async function runCommand(command, args, cwd, raw) {
     case 'intel': {
       const intel = require('./lib/intel.cjs');
       const subcommand = args[1];
+
       if (subcommand === 'query') {
         const term = args[2];
-        if (!term) error('Usage: gsd-tools intel query <term>');
+
+        if (!term) {
+error('Usage: gsd-tools intel query <term>');
+}
+
         const planningDir = path.join(cwd, '.planning');
         core.output(intel.intelQuery(term, planningDir), raw);
       } else if (subcommand === 'status') {
@@ -986,14 +1100,22 @@ async function runCommand(command, args, cwd, raw) {
         core.output(intel.intelSnapshot(planningDir), raw);
       } else if (subcommand === 'patch-meta') {
         const filePath = args[2];
-        if (!filePath) error('Usage: gsd-tools intel patch-meta <file-path>');
+
+        if (!filePath) {
+error('Usage: gsd-tools intel patch-meta <file-path>');
+}
+
         core.output(intel.intelPatchMeta(path.resolve(cwd, filePath)), raw);
       } else if (subcommand === 'validate') {
         const planningDir = path.join(cwd, '.planning');
         core.output(intel.intelValidate(planningDir), raw);
       } else if (subcommand === 'extract-exports') {
         const filePath = args[2];
-        if (!filePath) error('Usage: gsd-tools intel extract-exports <file-path>');
+
+        if (!filePath) {
+error('Usage: gsd-tools intel extract-exports <file-path>');
+}
+
         core.output(intel.intelExtractExports(path.resolve(cwd, filePath)), raw);
       } else if (subcommand === 'update') {
         const planningDir = path.join(cwd, '.planning');
@@ -1001,6 +1123,7 @@ async function runCommand(command, args, cwd, raw) {
       } else {
         error('Unknown intel subcommand. Available: query, status, update, diff, snapshot, patch-meta, validate, extract-exports');
       }
+
       break;
     }
 
@@ -1015,27 +1138,41 @@ async function runCommand(command, args, cwd, raw) {
 
     case 'learnings': {
       const subcommand = args[1];
+
       if (subcommand === 'list') {
         learnings.cmdLearningsList(raw);
       } else if (subcommand === 'query') {
         const tagIdx = args.indexOf('--tag');
         const tag = tagIdx !== -1 ? args[tagIdx + 1] : null;
-        if (!tag) error('Usage: gsd-tools learnings query --tag <tag>');
+
+        if (!tag) {
+error('Usage: gsd-tools learnings query --tag <tag>');
+}
+
         learnings.cmdLearningsQuery(tag, raw);
       } else if (subcommand === 'copy') {
         learnings.cmdLearningsCopy(cwd, raw);
       } else if (subcommand === 'prune') {
         const olderIdx = args.indexOf('--older-than');
         const olderThan = olderIdx !== -1 ? args[olderIdx + 1] : null;
-        if (!olderThan) error('Usage: gsd-tools learnings prune --older-than <duration>');
+
+        if (!olderThan) {
+error('Usage: gsd-tools learnings prune --older-than <duration>');
+}
+
         learnings.cmdLearningsPrune(olderThan, raw);
       } else if (subcommand === 'delete') {
         const id = args[2];
-        if (!id) error('Usage: gsd-tools learnings delete <id>');
+
+        if (!id) {
+error('Usage: gsd-tools learnings delete <id>');
+}
+
         learnings.cmdLearningsDelete(id, raw);
       } else {
         error('Unknown learnings subcommand. Available: list, query, copy, prune, delete');
       }
+
       break;
     }
 

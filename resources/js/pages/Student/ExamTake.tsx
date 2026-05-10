@@ -1,3 +1,17 @@
+import { router } from '@inertiajs/react';
+import {
+    AlertTriangle,
+    CheckCircle2,
+    Circle,
+    CircleCheck,
+    Clock,
+    ListChecks,
+    Lock,
+    PenLine,
+    Send,
+    ShieldAlert,
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
     submitSection as submitSectionAction,
     update as attemptUpdate,
@@ -13,20 +27,6 @@ import {
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import StudentLayout from '@/layouts/student-layout';
-import { router } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    CheckCircle2,
-    Circle,
-    CircleCheck,
-    Clock,
-    ListChecks,
-    Lock,
-    PenLine,
-    Send,
-    ShieldAlert,
-} from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Choice {
     id: number;
@@ -74,6 +74,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
     // Local answer state per question
     const [answers, setAnswers] = useState<Record<number, Record<string, unknown>>>(() => {
         const initial: Record<number, Record<string, unknown>> = {};
+
         for (const section of Object.values(sectionQuestions)) {
             for (const q of section) {
                 if (q.existing_answer) {
@@ -81,6 +82,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
                 }
             }
         }
+
         return initial;
     });
 
@@ -110,7 +112,9 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
 
     // Timer calculation
     useEffect(() => {
-        if (!exam.time_limit_minutes) return;
+        if (!exam.time_limit_minutes) {
+return;
+}
 
         const startedAt = new Date(attempt.started_at).getTime();
         const durationMs = exam.time_limit_minutes * 60 * 1000;
@@ -132,7 +136,9 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
         timerRef.current = setInterval(updateTimer, 1000);
 
         return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
+            if (timerRef.current) {
+clearInterval(timerRef.current);
+}
         };
     }, [exam.time_limit_minutes, attempt.started_at]);
 
@@ -179,6 +185,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
         };
 
         document.addEventListener('visibilitychange', handleVisibilityChange);
+
         return () =>
             document.removeEventListener(
                 'visibilitychange',
@@ -216,7 +223,10 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
     }
 
     function handleSectionSubmit() {
-        if (!submitTarget || isSaving) return;
+        if (!submitTarget || isSaving) {
+return;
+}
+
         setIsSaving(true);
         setShowSubmitDialog(false);
 
@@ -245,6 +255,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
     const formatTime = (seconds: number): string => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
+
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
@@ -323,6 +334,7 @@ function ExamTake({ exam, attempt, sectionQuestions }: Props) {
                                         const isSelected =
                                             currentAnswer?.selected_choice_id ===
                                             choice.id;
+
                                         return (
                                             <button
                                                 key={choice.id}

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Institute;
+use App\Models\StripeSetting;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,8 @@ class StripeWebhookController extends Controller
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');
-        $webhookSecret = config('services.stripe.webhook_secret');
+        $stripeSetting = StripeSetting::where('is_active', true)->first();
+        $webhookSecret = $stripeSetting?->webhook_secret ?? config('services.stripe.webhook_secret');
 
         try {
             $event = Webhook::constructEvent($payload, $sigHeader, $webhookSecret);

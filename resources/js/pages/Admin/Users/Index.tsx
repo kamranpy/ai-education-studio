@@ -1,9 +1,8 @@
-import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
-import { create as usersInvite } from '@/actions/App/Http/Controllers/Admin/UserInviteController';
 import { Head, Link, router } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, Search, Users } from 'lucide-react';
 import { useState } from 'react';
-import AdminLayout from '@/layouts/admin-layout';
+import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
+import { create as usersInvite } from '@/actions/App/Http/Controllers/Admin/UserInviteController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import AdminLayout from '@/layouts/admin-layout';
 
 type Role = {
     id: number;

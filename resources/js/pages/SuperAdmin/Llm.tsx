@@ -1,4 +1,3 @@
-import SuperAdminLayout from '@/layouts/super-admin-layout';
 import { useForm, router } from '@inertiajs/react';
 import { Bot, Eye, EyeOff, KeyRound, Loader2, Server } from 'lucide-react';
 import { useState } from 'react';
@@ -20,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface Provider {
     value: string;
@@ -61,6 +61,7 @@ function Llm({ setting, providers }: Props) {
         const currentProvider = setting?.provider || 'openai';
         const currentModel = setting?.model || '';
         const suggested = recommendedModels[currentProvider] || [];
+
         return currentModel !== '' && !suggested.includes(currentModel);
     });
 
@@ -122,7 +123,7 @@ function Llm({ setting, providers }: Props) {
     }
 
     return (
-        <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="w-full">
             <div className="mb-8">
                 <h1 className="text-3xl font-semibold tracking-tight text-foreground">
                     LLM Provider Settings
@@ -161,11 +162,13 @@ function Llm({ setting, providers }: Props) {
                                         model: '',
                                         api_key: isDifferentProvider ? '' : data.api_key,
                                     }));
+
                                     if (isDifferentProvider) {
                                         setReplacingKey(true);
                                     } else if (setting?.has_api_key) {
                                         setReplacingKey(false);
                                     }
+
                                     setIsCustomModel(false);
                                 }}
                             >

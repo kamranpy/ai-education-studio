@@ -43,9 +43,11 @@ function migrateToWorkstreams(cwd, workstreamName) {
   fs.mkdirSync(wsDir, { recursive: true });
 
   const filesMoved = [];
+
   try {
     for (const item of toMove) {
       const src = path.join(baseDir, item.name);
+
       if (fs.existsSync(src)) {
         const dest = path.join(wsDir, item.name);
         fs.renameSync(src, dest);
@@ -54,10 +56,19 @@ function migrateToWorkstreams(cwd, workstreamName) {
     }
   } catch (err) {
     for (const name of filesMoved) {
-      try { fs.renameSync(path.join(wsDir, name), path.join(baseDir, name)); } catch {}
+      try {
+ fs.renameSync(path.join(wsDir, name), path.join(baseDir, name)); 
+} catch {}
     }
-    try { fs.rmSync(wsDir, { recursive: true }); } catch {}
-    try { fs.rmdirSync(path.join(baseDir, 'workstreams')); } catch {}
+
+    try {
+ fs.rmSync(wsDir, { recursive: true }); 
+} catch {}
+
+    try {
+ fs.rmdirSync(path.join(baseDir, 'workstreams')); 
+} catch {}
+
     throw err;
   }
 
@@ -72,11 +83,13 @@ function cmdWorkstreamCreate(cwd, name, options, raw) {
   }
 
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
   if (!slug) {
     error('Invalid workstream name — must contain at least one alphanumeric character');
   }
 
   const baseDir = planningRoot(cwd);
+
   if (!fs.existsSync(baseDir)) {
     error('.planning/ directory not found — run /gsd-new-project first');
   }
@@ -86,11 +99,13 @@ function cmdWorkstreamCreate(cwd, name, options, raw) {
 
   if (fs.existsSync(wsDir) && fs.existsSync(path.join(wsDir, 'STATE.md'))) {
     output({ created: false, error: 'already_exists', workstream: slug, path: toPosixPath(path.relative(cwd, wsDir)) }, raw);
+
     return;
   }
 
   const isFlatMode = !fs.existsSync(wsRoot);
   let migration = null;
+
   if (isFlatMode && options.migrate !== false) {
     const hasExistingWork = fs.existsSync(path.join(baseDir, 'ROADMAP.md')) ||
                             fs.existsSync(path.join(baseDir, 'STATE.md')) ||
@@ -99,6 +114,7 @@ function cmdWorkstreamCreate(cwd, name, options, raw) {
     if (hasExistingWork) {
       const migrateName = options.migrateName || null;
       let existingWsName;
+
       if (migrateName) {
         existingWsName = migrateName;
       } else {
@@ -114,6 +130,7 @@ function cmdWorkstreamCreate(cwd, name, options, raw) {
         migration = migrateToWorkstreams(cwd, existingWsName);
       } catch (e) {
         output({ created: false, error: 'migration_failed', message: e.message }, raw);
+
         return;
       }
     } else {
@@ -150,6 +167,7 @@ function cmdWorkstreamCreate(cwd, name, options, raw) {
   ].join('\n');
 
   const statePath = path.join(wsDir, 'STATE.md');
+
   if (!fs.existsSync(statePath)) {
     fs.writeFileSync(statePath, stateContent, 'utf-8');
   }
@@ -173,6 +191,7 @@ function cmdWorkstreamList(cwd, raw) {
 
   if (!fs.existsSync(wsRoot)) {
     output({ mode: 'flat', workstreams: [], message: 'No workstreams — operating in flat mode' }, raw);
+
     return;
   }
 
@@ -180,7 +199,9 @@ function cmdWorkstreamList(cwd, raw) {
   const workstreams = [];
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
+    if (!entry.isDirectory()) {
+continue;
+}
 
     const wsDir = path.join(wsRoot, entry.name);
     const phasesDir = path.join(wsDir, 'phases');
@@ -188,16 +209,21 @@ function cmdWorkstreamList(cwd, raw) {
     const phaseDirs = readSubdirectories(phasesDir);
     const phaseCount = phaseDirs.length;
     let completedCount = 0;
+
     for (const d of phaseDirs) {
       try {
         const phaseFiles = fs.readdirSync(path.join(phasesDir, d));
         const plans = filterPlanFiles(phaseFiles);
         const summaries = filterSummaryFiles(phaseFiles);
-        if (plans.length > 0 && summaries.length >= plans.length) completedCount++;
+
+        if (plans.length > 0 && summaries.length >= plans.length) {
+completedCount++;
+}
       } catch {}
     }
 
     let status = 'unknown', currentPhase = null;
+
     try {
       const stateContent = fs.readFileSync(path.join(wsDir, 'STATE.md'), 'utf-8');
       status = stateExtractField(stateContent, 'Status') || 'unknown';
@@ -220,12 +246,19 @@ function cmdWorkstreamList(cwd, raw) {
 }
 
 function cmdWorkstreamStatus(cwd, name, raw) {
-  if (!name) error('workstream name required. Usage: workstream status <name>');
-  if (/[/\\]/.test(name) || name === '.' || name === '..') error('Invalid workstream name');
+  if (!name) {
+error('workstream name required. Usage: workstream status <name>');
+}
+
+  if (/[/\\]/.test(name) || name === '.' || name === '..') {
+error('Invalid workstream name');
+}
 
   const wsDir = path.join(planningRoot(cwd), 'workstreams', name);
+
   if (!fs.existsSync(wsDir)) {
     output({ found: false, workstream: name }, raw);
+
     return;
   }
 
@@ -239,6 +272,7 @@ function cmdWorkstreamStatus(cwd, name, raw) {
   };
 
   const phases = [];
+
   for (const dir of readSubdirectories(p.phases).sort()) {
     try {
       const phaseFiles = fs.readdirSync(path.join(p.phases, dir));
@@ -255,6 +289,7 @@ function cmdWorkstreamStatus(cwd, name, raw) {
   }
 
   let stateInfo = {};
+
   try {
     const stateContent = fs.readFileSync(p.state, 'utf-8');
     stateInfo = {
@@ -277,8 +312,13 @@ function cmdWorkstreamStatus(cwd, name, raw) {
 }
 
 function cmdWorkstreamComplete(cwd, name, options, raw) {
-  if (!name) error('workstream name required. Usage: workstream complete <name>');
-  if (/[/\\]/.test(name) || name === '.' || name === '..') error('Invalid workstream name');
+  if (!name) {
+error('workstream name required. Usage: workstream complete <name>');
+}
+
+  if (/[/\\]/.test(name) || name === '.' || name === '..') {
+error('Invalid workstream name');
+}
 
   const root = planningRoot(cwd);
   const wsRoot = path.join(root, 'workstreams');
@@ -286,16 +326,21 @@ function cmdWorkstreamComplete(cwd, name, options, raw) {
 
   if (!fs.existsSync(wsDir)) {
     output({ completed: false, error: 'not_found', workstream: name }, raw);
+
     return;
   }
 
   const active = getActiveWorkstream(cwd);
-  if (active === name) setActiveWorkstream(cwd, null);
+
+  if (active === name) {
+setActiveWorkstream(cwd, null);
+}
 
   const archiveDir = path.join(root, 'milestones');
   const today = new Date().toISOString().split('T')[0];
   let archivePath = path.join(archiveDir, `ws-${name}-${today}`);
   let suffix = 1;
+
   while (fs.existsSync(archivePath)) {
     archivePath = path.join(archiveDir, `ws-${name}-${today}-${suffix++}`);
   }
@@ -303,28 +348,46 @@ function cmdWorkstreamComplete(cwd, name, options, raw) {
   fs.mkdirSync(archivePath, { recursive: true });
 
   const filesMoved = [];
+
   try {
     const entries = fs.readdirSync(wsDir, { withFileTypes: true });
+
     for (const entry of entries) {
       fs.renameSync(path.join(wsDir, entry.name), path.join(archivePath, entry.name));
       filesMoved.push(entry.name);
     }
   } catch (err) {
     for (const fname of filesMoved) {
-      try { fs.renameSync(path.join(archivePath, fname), path.join(wsDir, fname)); } catch {}
+      try {
+ fs.renameSync(path.join(archivePath, fname), path.join(wsDir, fname)); 
+} catch {}
     }
-    try { fs.rmSync(archivePath, { recursive: true }); } catch {}
-    if (active === name) setActiveWorkstream(cwd, name);
+
+    try {
+ fs.rmSync(archivePath, { recursive: true }); 
+} catch {}
+
+    if (active === name) {
+setActiveWorkstream(cwd, name);
+}
+
     output({ completed: false, error: 'archive_failed', message: err.message, workstream: name }, raw);
+
     return;
   }
 
-  try { fs.rmdirSync(wsDir); } catch {}
+  try {
+ fs.rmdirSync(wsDir); 
+} catch {}
 
   let remainingWs = 0;
+
   try {
     remainingWs = fs.readdirSync(wsRoot, { withFileTypes: true }).filter(e => e.isDirectory()).length;
-    if (remainingWs === 0) fs.rmdirSync(wsRoot);
+
+    if (remainingWs === 0) {
+fs.rmdirSync(wsRoot);
+}
   } catch {}
 
   output({
@@ -343,20 +406,25 @@ function cmdWorkstreamSet(cwd, name, raw) {
     if (name !== '--clear') {
       error('Workstream name required. Usage: workstream set <name> (or workstream set --clear to unset)');
     }
+
     const previous = getActiveWorkstream(cwd);
     setActiveWorkstream(cwd, null);
     output({ active: null, cleared: true, previous: previous || null }, raw);
+
     return;
   }
 
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
     output({ active: null, error: 'invalid_name', message: 'Workstream name must be alphanumeric, hyphens, and underscores only' }, raw);
+
     return;
   }
 
   const wsDir = path.join(planningRoot(cwd), 'workstreams', name);
+
   if (!fs.existsSync(wsDir)) {
     output({ active: null, error: 'not_found', workstream: name }, raw);
+
     return;
   }
 
@@ -376,6 +444,7 @@ function cmdWorkstreamProgress(cwd, raw) {
 
   if (!fs.existsSync(wsRoot)) {
     output({ mode: 'flat', workstreams: [], message: 'No workstreams — operating in flat mode' }, raw);
+
     return;
   }
 
@@ -384,7 +453,9 @@ function cmdWorkstreamProgress(cwd, raw) {
   const workstreams = [];
 
   for (const entry of entries) {
-    if (!entry.isDirectory()) continue;
+    if (!entry.isDirectory()) {
+continue;
+}
 
     const wsDir = path.join(wsRoot, entry.name);
     const phasesDir = path.join(wsDir, 'phases');
@@ -392,6 +463,7 @@ function cmdWorkstreamProgress(cwd, raw) {
     const phaseDirsProgress = readSubdirectories(phasesDir);
     const phaseCount = phaseDirsProgress.length;
     let completedCount = 0, totalPlans = 0, completedPlans = 0;
+
     for (const d of phaseDirsProgress) {
       try {
         const phaseFiles = fs.readdirSync(path.join(phasesDir, d));
@@ -399,18 +471,26 @@ function cmdWorkstreamProgress(cwd, raw) {
         const summaries = filterSummaryFiles(phaseFiles);
         totalPlans += plans.length;
         completedPlans += Math.min(summaries.length, plans.length);
-        if (plans.length > 0 && summaries.length >= plans.length) completedCount++;
+
+        if (plans.length > 0 && summaries.length >= plans.length) {
+completedCount++;
+}
       } catch {}
     }
 
     let roadmapPhaseCount = phaseCount;
+
     try {
       const roadmapContent = fs.readFileSync(path.join(wsDir, 'ROADMAP.md'), 'utf-8');
       const phaseMatches = roadmapContent.match(/^###?\s+Phase\s+\d/gm);
-      if (phaseMatches) roadmapPhaseCount = phaseMatches.length;
+
+      if (phaseMatches) {
+roadmapPhaseCount = phaseMatches.length;
+}
     } catch {}
 
     let status = 'unknown', currentPhase = null;
+
     try {
       const stateContent = fs.readFileSync(path.join(wsDir, 'STATE.md'), 'utf-8');
       status = stateExtractField(stateContent, 'Status') || 'unknown';
@@ -440,18 +520,24 @@ function cmdWorkstreamProgress(cwd, raw) {
  */
 function getOtherActiveWorkstreams(cwd, excludeWs) {
   const wsRoot = path.join(planningRoot(cwd), 'workstreams');
-  if (!fs.existsSync(wsRoot)) return [];
+
+  if (!fs.existsSync(wsRoot)) {
+return [];
+}
 
   const entries = fs.readdirSync(wsRoot, { withFileTypes: true });
   const others = [];
 
   for (const entry of entries) {
-    if (!entry.isDirectory() || entry.name === excludeWs) continue;
+    if (!entry.isDirectory() || entry.name === excludeWs) {
+continue;
+}
 
     const wsDir = path.join(wsRoot, entry.name);
     const statePath = path.join(wsDir, 'STATE.md');
 
     let status = 'unknown', currentPhase = null;
+
     try {
       const content = fs.readFileSync(statePath, 'utf-8');
       status = stateExtractField(content, 'Status') || 'unknown';
@@ -467,12 +553,16 @@ function getOtherActiveWorkstreams(cwd, excludeWs) {
     const phaseDirsOther = readSubdirectories(phasesDir);
     const phaseCount = phaseDirsOther.length;
     let completedCount = 0;
+
     for (const d of phaseDirsOther) {
       try {
         const phaseFiles = fs.readdirSync(path.join(phasesDir, d));
         const plans = filterPlanFiles(phaseFiles);
         const summaries = filterSummaryFiles(phaseFiles);
-        if (plans.length > 0 && summaries.length >= plans.length) completedCount++;
+
+        if (plans.length > 0 && summaries.length >= plans.length) {
+completedCount++;
+}
       } catch {}
     }
 
