@@ -1,11 +1,79 @@
 ﻿import { Head, Link } from '@inertiajs/react';
+import { useEffect, useRef, useState } from 'react';
 import { login, register } from '@/routes';
+
+const NAV_ITEMS = [
+    { id: 'features', label: 'Features' },
+    { id: 'pricing', label: 'Pricing' },
+    { id: 'solutions', label: 'Solutions' },
+    { id: 'faq', label: 'FAQ' },
+];
 
 export default function Welcome({
     canRegister = true,
 }: {
     canRegister?: boolean;
 }) {
+    const [activeSection, setActiveSection] = useState<string>('');
+    const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+    const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+
+    // Scroll-spy: track which section is in view
+    useEffect(() => {
+        const observers: IntersectionObserver[] = [];
+
+        NAV_ITEMS.forEach(({ id }) => {
+            const el = document.getElementById(id);
+
+            if (!el) {
+return;
+}
+
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(id);
+                    }
+                },
+                { rootMargin: '-30% 0px -60% 0px', threshold: 0 },
+            );
+            observer.observe(el);
+            observers.push(observer);
+        });
+
+        return () => observers.forEach((o) => o.disconnect());
+    }, []);
+
+    // Move the sliding indicator to the active nav item
+    useEffect(() => {
+        const el = navRefs.current[activeSection];
+
+        if (!el) {
+            setIndicatorStyle((s) => ({ ...s, opacity: 0 }));
+
+            return;
+        }
+
+        const parent = el.parentElement;
+
+        if (!parent) {
+return;
+}
+
+        const parentRect = parent.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+        setIndicatorStyle({
+            left: rect.left - parentRect.left,
+            width: rect.width,
+            opacity: 1,
+        });
+    }, [activeSection]);
+
+    const handleNavClick = (id: string) => {
+        setActiveSection(id);
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    };
+
     return (
         <>
             <Head title="AI Education Studio" />
@@ -18,11 +86,36 @@ export default function Welcome({
                                 AI Education Studio
                             </span>
                         </div>
-                        <div className="hidden md:flex items-center gap-10">
-                            <a href="#features" className="text-[#c3c0ff] font-bold border-b-2 border-[#c3c0ff] pb-1 text-base">Features</a>
-                            <a href="#pricing" className="text-[#c7c4d8] font-medium hover:text-[#c3c0ff] transition-colors text-base">Pricing</a>
-                            <a href="#solutions" className="text-[#c7c4d8] font-medium hover:text-[#c3c0ff] transition-colors text-base">Solutions</a>
-                            <a href="#faq" className="text-[#c7c4d8] font-medium hover:text-[#c3c0ff] transition-colors text-base">FAQ</a>
+                        <div className="relative hidden md:flex items-center gap-10">
+                            {/* Sliding underline indicator */}
+                            <span
+                                className="pointer-events-none absolute bottom-[-4px] h-0.5 rounded-full bg-[#c3c0ff]"
+                                style={{
+                                    left: indicatorStyle.left,
+                                    width: indicatorStyle.width,
+                                    opacity: indicatorStyle.opacity,
+                                    transition: 'left 0.3s cubic-bezier(0.4,0,0.2,1), width 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease',
+                                }}
+                            />
+                            {NAV_ITEMS.map(({ id, label }) => (
+                                <a
+                                    key={id}
+                                    href={`#${id}`}
+                                    ref={(el) => {
+ navRefs.current[id] = el; 
+}}
+                                    onClick={(e) => {
+ e.preventDefault(); handleNavClick(id); 
+}}
+                                    className="relative pb-1 text-base font-medium transition-colors duration-200"
+                                    style={{
+                                        color: activeSection === id ? '#c3c0ff' : '#c7c4d8',
+                                        fontWeight: activeSection === id ? 700 : 500,
+                                    }}
+                                >
+                                    {label}
+                                </a>
+                            ))}
                         </div>
                         <div className="flex items-center gap-4">
                             <Link href={login()} className="text-[#c7c4d8] font-medium hover:text-[#c3c0ff] px-4 py-2 transition-colors text-base">
