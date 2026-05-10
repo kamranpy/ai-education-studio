@@ -43,7 +43,7 @@ export default function Welcome({
                     <div className="max-w-[1280px] mx-auto relative z-10 flex flex-col items-center text-center">
                         <div className="inline-flex items-center gap-2 px-4 py-1 bg-[#c3c0ff]/10 border border-[#c3c0ff]/20 rounded-full mb-10">
                             <span className="material-symbols-outlined text-[#c3c0ff] text-sm">auto_awesome</span>
-                            <span className="text-[#c3c0ff] text-sm font-medium">v2.0 Now with AI-Proctoring</span>
+                            <span className="text-[#c3c0ff] text-sm font-medium">AI-Powered Exam Platform for Institutes</span>
                         </div>
                         <h1 className="font-bold text-5xl md:text-6xl max-w-[900px] mb-6 text-[#e5e2e1] leading-tight tracking-tight">
                             The{' '}
@@ -67,46 +67,107 @@ export default function Welcome({
                         {/* Dashboard Mockup */}
                         <div className="w-full max-w-[1100px] mt-4 relative">
                             <div className="glass-card rounded-xl p-2 shadow-2xl">
-                                <div className="bg-[#0e0e0e] rounded-lg border border-[#464555]/30 p-6 min-h-[320px] flex flex-col gap-4">
-                                    {/* Fake top bar */}
-                                    <div className="flex items-center justify-between mb-2">
+                                <div className="bg-[#0e0e0e] rounded-lg border border-[#464555]/30 overflow-hidden">
+                                    {/* Window chrome */}
+                                    <div className="flex items-center justify-between px-5 py-3 border-b border-[#464555]/30 bg-[#131313]">
                                         <div className="flex gap-2">
                                             <div className="w-3 h-3 rounded-full bg-[#464555]" />
                                             <div className="w-3 h-3 rounded-full bg-[#464555]" />
                                             <div className="w-3 h-3 rounded-full bg-[#464555]" />
                                         </div>
-                                        <div className="h-4 w-48 bg-[#201f1f] rounded" />
-                                        <div className="h-4 w-16 bg-[#4f46e5]/30 rounded" />
+                                        <div className="h-4 w-48 bg-[#201f1f] rounded-full" />
+                                        <div className="h-6 w-16 bg-[#4f46e5]/40 rounded text-[10px] text-[#c3c0ff] flex items-center justify-center font-medium">
+                                            Live
+                                        </div>
                                     </div>
-                                    {/* Fake chart bars */}
-                                    <div className="flex items-end gap-3 h-32 px-4">
-                                        {[60, 85, 45, 90, 70, 55, 80, 65, 95, 50, 75, 88].map((h, i) => (
-                                            <div
-                                                key={i}
-                                                className="flex-1 rounded-t"
-                                                style={{
-                                                    height: `${h}%`,
-                                                    background: i % 3 === 0
-                                                        ? 'linear-gradient(to top, #4f46e5, #c3c0ff)'
-                                                        : i % 3 === 1
-                                                        ? 'linear-gradient(to top, #4fdbc8, #4fdbc8aa)'
-                                                        : '#2a2a2a',
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                    {/* Fake table rows */}
-                                    <div className="flex flex-col gap-2 mt-2">
-                                        {[90, 75, 60].map((score, i) => (
-                                            <div key={i} className="flex items-center gap-4 bg-[#201f1f] rounded px-4 py-2">
-                                                <div className="w-6 h-6 rounded-full bg-[#464555]" />
-                                                <div className="flex-1 h-3 bg-[#2a2a2a] rounded" />
-                                                <div
-                                                    className="h-3 w-12 rounded"
-                                                    style={{ background: score > 80 ? '#4fdbc8' : score > 65 ? '#c3c0ff' : '#464555' }}
-                                                />
+
+                                    <div className="p-5 flex flex-col gap-5">
+                                        {/* Stat cards row */}
+                                        <div className="grid grid-cols-4 gap-3">
+                                            {[
+                                                { label: 'Total Exams', value: '1,284', color: '#c3c0ff' },
+                                                { label: 'Students', value: '8,420', color: '#4fdbc8' },
+                                                { label: 'Avg Score', value: '78.4%', color: '#d0bcff' },
+                                                { label: 'AI Graded', value: '96.2%', color: '#c3c0ff' },
+                                            ].map((stat) => (
+                                                <div key={stat.label} className="bg-[#1c1b1b] rounded-lg p-3 border border-[#464555]/20">
+                                                    <div className="text-[10px] text-[#c7c4d8] mb-1">{stat.label}</div>
+                                                    <div className="text-base font-bold" style={{ color: stat.color }}>{stat.value}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Chart area */}
+                                        <div className="bg-[#131313] rounded-lg p-4 border border-[#464555]/20">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <span className="text-xs text-[#c7c4d8] font-medium">Exam Attempts — Last 12 Weeks</span>
+                                                <div className="flex gap-3">
+                                                    <span className="flex items-center gap-1 text-[10px] text-[#c7c4d8]">
+                                                        <span className="w-2 h-2 rounded-sm bg-[#c3c0ff] inline-block" /> Submitted
+                                                    </span>
+                                                    <span className="flex items-center gap-1 text-[10px] text-[#c7c4d8]">
+                                                        <span className="w-2 h-2 rounded-sm bg-[#4fdbc8] inline-block" /> Graded
+                                                    </span>
+                                                </div>
                                             </div>
-                                        ))}
+                                            {/* Bar chart */}
+                                            <div className="flex items-end gap-2 h-28">
+                                                {[
+                                                    { a: 55, b: 70 }, { a: 80, b: 90 }, { a: 40, b: 50 },
+                                                    { a: 85, b: 95 }, { a: 65, b: 75 }, { a: 50, b: 60 },
+                                                    { a: 75, b: 85 }, { a: 60, b: 70 }, { a: 90, b: 100 },
+                                                    { a: 45, b: 55 }, { a: 70, b: 80 }, { a: 82, b: 92 },
+                                                ].map((bar, i) => (
+                                                    <div key={i} className="flex-1 flex items-end gap-0.5">
+                                                        <div
+                                                            className="flex-1 rounded-t-sm"
+                                                            style={{
+                                                                height: `${bar.a}%`,
+                                                                background: 'linear-gradient(to top, #4f46e5, #c3c0ff)',
+                                                                opacity: 0.85,
+                                                            }}
+                                                        />
+                                                        <div
+                                                            className="flex-1 rounded-t-sm"
+                                                            style={{
+                                                                height: `${bar.b}%`,
+                                                                background: 'linear-gradient(to top, #0d9488, #4fdbc8)',
+                                                                opacity: 0.85,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {/* X-axis labels */}
+                                            <div className="flex gap-2 mt-2">
+                                                {['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'].map((w) => (
+                                                    <div key={w} className="flex-1 text-center text-[9px] text-[#464555]">{w}</div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        {/* Student rows with progress bars */}
+                                        <div className="flex flex-col gap-2">
+                                            {[
+                                                { name: 'Mathematics Final', score: 92, color: '#4fdbc8', pct: '92%' },
+                                                { name: 'Physics Mid-Term', score: 76, color: '#c3c0ff', pct: '76%' },
+                                                { name: 'English Literature', score: 58, color: '#464555', pct: '58%' },
+                                            ].map((row) => (
+                                                <div key={row.name} className="flex items-center gap-3 bg-[#1c1b1b] rounded-lg px-4 py-2.5 border border-[#464555]/20">
+                                                    <div className="w-6 h-6 rounded-full bg-[#2a2a2a] border border-[#464555]/40 flex items-center justify-center">
+                                                        <span className="text-[8px] text-[#c7c4d8]">✓</span>
+                                                    </div>
+                                                    <span className="text-xs text-[#c7c4d8] w-36 shrink-0">{row.name}</span>
+                                                    <div className="flex-1 h-1.5 bg-[#2a2a2a] rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full rounded-full transition-all"
+                                                            style={{ width: row.pct, background: row.color }}
+                                                        />
+                                                    </div>
+                                                    <span className="text-xs font-bold ml-2" style={{ color: row.color }}>{row.pct}</span>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -305,31 +366,46 @@ export default function Welcome({
 
                 {/* Testimonials */}
                 <section className="py-16 px-6 max-w-[1280px] mx-auto">
+                    <div className="mb-16 text-center">
+                        <h2 className="font-semibold text-3xl text-[#e5e2e1] mb-4">What institutes are saying</h2>
+                        <p className="text-[#c7c4d8] text-base">Trusted by educators and administrators worldwide.</p>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                         {[
                             {
-                                quote: '"The AI grading component saved our faculty over 40 hours per week during the finals season. It\'s incredibly accurate."',
+                                quote: '"The AI grading component saved our faculty over 40 hours per week during the finals season. The conceptual scoring is incredibly accurate."',
                                 name: 'Dr. Sarah Jenkins',
                                 role: 'Dean of Sciences, Metro University',
+                                initials: 'SJ',
+                                avatarBg: 'linear-gradient(135deg, #4f46e5, #c3c0ff)',
                             },
                             {
-                                quote: '"We switched for the anti-cheat proctoring and stayed for the analytics. The data we get on student progress is unparalleled."',
+                                quote: '"We switched for the anti-cheat tracking and stayed for the analytics. The per-student performance data we get is unparalleled."',
                                 name: 'Marcus Thorne',
                                 role: 'Director of L&D, TechCorp',
+                                initials: 'MT',
+                                avatarBg: 'linear-gradient(135deg, #0d9488, #4fdbc8)',
                             },
                             {
-                                quote: '"Integrating EduStudio with our existing LMS took less than a day. The API is robust and well-documented for developers."',
+                                quote: '"Setting up AI Education Studio took less than a day. The multi-tenant architecture is solid and the API is well-documented for our dev team."',
                                 name: 'Elena Rodriguez',
-                                role: 'CTO, Global Learnings',
+                                role: 'CTO, Global Learnings Institute',
+                                initials: 'ER',
+                                avatarBg: 'linear-gradient(135deg, #6f3dd9, #d0bcff)',
                             },
                         ].map((t) => (
-                            <div key={t.name} className="p-10 rounded-xl bg-[#2a2a2a] relative">
+                            <div key={t.name} className="p-10 rounded-xl bg-[#2a2a2a] relative flex flex-col justify-between min-h-[220px]">
                                 <span className="material-symbols-outlined text-[#c3c0ff] text-5xl absolute top-4 right-4 opacity-10">
                                     format_quote
                                 </span>
-                                <p className="text-[#e5e2e1] text-base mb-16 italic relative z-10">{t.quote}</p>
+                                <p className="text-[#e5e2e1] text-base mb-8 italic relative z-10 leading-relaxed">{t.quote}</p>
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-[#464555]" />
+                                    <div
+                                        className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+                                        style={{ background: t.avatarBg }}
+                                    >
+                                        {t.initials}
+                                    </div>
                                     <div>
                                         <div className="font-bold text-[#e5e2e1] text-sm">{t.name}</div>
                                         <div className="text-[#c7c4d8] text-xs">{t.role}</div>
@@ -389,7 +465,7 @@ export default function Welcome({
                 <footer className="w-full py-16 bg-[#0e0e0e] border-t border-[#464555]">
                     <div className="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16">
                         <div className="col-span-1">
-                            <div className="font-semibold text-2xl text-[#c3c0ff] mb-6">EduStudio Pro</div>
+                            <div className="font-semibold text-2xl text-[#c3c0ff] mb-6">AI Education Studio</div>
                             <p className="text-[#c7c4d8] text-base">
                                 Empowering education through ethical AI and seamless assessment tools.
                             </p>
