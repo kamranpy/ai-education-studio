@@ -151,7 +151,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
         <>
             {/* Brand */}
             <div className="px-6 mb-10">
-                <h1 className="text-xl font-bold tracking-tight" style={{ color: '#c3c0ff' }}>
+                <h1 className="text-xl font-bold tracking-tight text-[#c3c0ff] dark:text-[#c3c0ff]">
                     AI Education Studio
                 </h1>
             </div>
@@ -249,16 +249,12 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
     );
 
     return (
-        <div
-            className="min-h-screen"
-            style={{ backgroundColor: '#131313', fontFamily: 'Inter, sans-serif' }}
-        >
+        <div className="min-h-screen bg-white dark:bg-[#131313]" style={{ fontFamily: 'Inter, sans-serif' }}>
             {/* Desktop sidebar */}
             <aside
-                className="hidden md:flex fixed left-0 top-0 h-screen flex-col py-8 z-50"
+                className="hidden md:flex fixed left-0 top-0 h-screen flex-col py-8 z-50 bg-[#f8f8f8] dark:bg-[#0e0d16]"
                 style={{
                     width: '280px',
-                    backgroundColor: '#0e0d16',
                     borderRight: '1px solid rgba(70, 69, 85, 0.3)',
                 }}
             >
@@ -276,10 +272,9 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
 
             {/* Mobile sidebar drawer */}
             <aside
-                className="md:hidden fixed left-0 top-0 h-screen flex flex-col py-8 z-50 transition-transform duration-300"
+                className="md:hidden fixed left-0 top-0 h-screen flex flex-col py-8 z-50 transition-transform duration-300 bg-[#f8f8f8] dark:bg-[#0e0d16]"
                 style={{
                     width: '280px',
-                    backgroundColor: '#0e0d16',
                     borderRight: '1px solid rgba(70, 69, 85, 0.3)',
                     transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
                 }}
@@ -291,35 +286,26 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             <div className="md:ml-[280px] flex flex-col min-h-screen">
                 {/* Top bar */}
                 <header
-                    className="sticky top-0 z-40 flex items-center justify-between h-16 px-6"
+                    className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-white/80 dark:bg-[#13121b]/80 border-b border-zinc-200 dark:border-[#464555]/30"
                     style={{
-                        backgroundColor: 'rgba(19, 18, 27, 0.8)',
                         backdropFilter: 'blur(20px)',
                         WebkitBackdropFilter: 'blur(20px)',
-                        borderBottom: '1px solid rgba(70, 69, 85, 0.3)',
                     }}
                 >
                     {/* Left: hamburger (mobile) + breadcrumb */}
                     <div className="flex items-center gap-3">
                         <button
-                            className="md:hidden p-2 rounded-full transition-colors"
-                            style={{ color: '#c7c4d8' }}
+                            className="md:hidden p-2 rounded-full transition-colors text-zinc-500 dark:text-[#c7c4d8]"
                             onClick={() => setMobileOpen((v) => !v)}
                             aria-label="Toggle menu"
                         >
                             {mobileOpen ? <CloseIcon /> : <MenuIcon />}
                         </button>
                         <div className="flex items-center gap-2">
-                            <span
-                                className="hidden md:block text-sm"
-                                style={{ color: '#c7c4d8' }}
-                            >
+                            <span className="hidden md:block text-sm text-zinc-400 dark:text-[#c7c4d8]">
                                 Portal /
                             </span>
-                            <span
-                                className="text-sm font-semibold"
-                                style={{ color: '#e4e1ee' }}
-                            >
+                            <span className="text-sm font-semibold text-zinc-800 dark:text-[#e4e1ee]">
                                 {breadcrumbLabel}
                             </span>
                         </div>
@@ -329,14 +315,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                     <div className="flex items-center gap-2">
                         <ThemeDropdown />
                         <button
-                            className="p-2 rounded-full transition-colors"
-                            style={{ color: '#c7c4d8' }}
-                            onMouseEnter={(e) =>
-                                ((e.currentTarget as HTMLElement).style.color = '#c3c0ff')
-                            }
-                            onMouseLeave={(e) =>
-                                ((e.currentTarget as HTMLElement).style.color = '#c7c4d8')
-                            }
+                            className="p-2 rounded-full transition-colors text-zinc-500 hover:text-zinc-800 dark:text-[#c7c4d8] dark:hover:text-[#c3c0ff]"
                             aria-label="Notifications"
                         >
                             <BellIcon />
@@ -345,7 +324,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
                             <div className="flex items-center gap-2 ml-1">
                                 <UserAvatar user={user} size="sm" />
                                 <div className="hidden md:block">
-                                    <p className="text-xs font-semibold leading-none" style={{ color: '#e4e1ee' }}>
+                                    <p className="text-xs font-semibold leading-none text-zinc-800 dark:text-[#e4e1ee]">
                                         {user.name}
                                     </p>
                                 </div>
@@ -360,11 +339,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
 
             {/* Mobile bottom nav */}
             <nav
-                className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-6 py-3 z-50"
-                style={{
-                    backgroundColor: '#0e0d16',
-                    borderTop: '1px solid rgba(70, 69, 85, 0.3)',
-                }}
+                className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-6 py-3 z-50 bg-[#f8f8f8] dark:bg-[#0e0d16] border-t border-zinc-200 dark:border-[#464555]/30"
             >
                 <Link
                     href={dashboardHref}
