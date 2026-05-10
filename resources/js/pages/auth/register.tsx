@@ -124,15 +124,6 @@ export default function Register() {
                             </Button>
                         </div>
 
-                        <div className="relative py-3">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-[#464555]/30" />
-                            </div>
-                            <div className="relative flex justify-center">
-                                <span className="bg-[#0e0e0e] px-3 text-[#c7c4d8] text-xs uppercase tracking-widest">OR</span>
-                            </div>
-                        </div>
-
                         <div className="text-center">
                             <p className="text-sm text-[#c7c4d8]">
                                 Already have an account?{' '}

@@ -181,12 +181,21 @@ export default function Welcome({
                         <p className="text-[#c7c4d8] text-sm font-medium mb-10 uppercase tracking-widest">
                             Trusted by leading institutions
                         </p>
-                        <div className="flex flex-wrap justify-center gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-                            <div className="h-8 w-32 bg-[#464555]/40 rounded" />
-                            <div className="h-8 w-24 bg-[#464555]/40 rounded" />
-                            <div className="h-8 w-36 bg-[#464555]/40 rounded" />
-                            <div className="h-8 w-28 bg-[#464555]/40 rounded" />
-                            <div className="h-8 w-32 bg-[#464555]/40 rounded" />
+                        <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16">
+                            {[
+                                'Metro University',
+                                'TechCorp Academy',
+                                'Global Learnings',
+                                'Apex Institute',
+                                'Bright Schools',
+                            ].map((name) => (
+                                <span
+                                    key={name}
+                                    className="text-[#464555] font-semibold text-base tracking-wide hover:text-[#c7c4d8] transition-colors"
+                                >
+                                    {name}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </section>
