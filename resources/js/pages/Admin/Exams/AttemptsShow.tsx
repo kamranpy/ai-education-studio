@@ -141,6 +141,7 @@ function ConfidenceBadge({ confidence }: { confidence: number | null }) {
 function AttemptsShow({ exam, attempt }: Props) {
     const [editingAnswer, setEditingAnswer] = useState<number | null>(null);
     const { data, setData, post, processing } = useForm({
+        answer_id: 0,
         override_score: 0,
         override_comment: '',
     });
@@ -150,13 +151,14 @@ function AttemptsShow({ exam, attempt }: Props) {
     function startEdit(answer: Answer) {
         setEditingAnswer(answer.id);
         setData({
+            answer_id: answer.id,
             override_score: answer.final_score ?? answer.ai_score ?? 0,
             override_comment: answer.override_comment ?? '',
         });
     }
 
-    function saveOverride(answerId: number) {
-        post(`/admin/exams/${exam.id}/attempts/${attempt.id}/answers/${answerId}/override`, {
+    function saveOverride() {
+        post(`/admin/exams/${exam.id}/attempts/${attempt.id}/override`, {
             onSuccess: () => {
                 setEditingAnswer(null);
             },
@@ -226,9 +228,10 @@ function AttemptsShow({ exam, attempt }: Props) {
                         key={answer.id}
                         answer={answer}
                         index={idx}
+                        passingScore={exam.passing_score}
                         isEditing={editingAnswer === answer.id}
                         onStartEdit={() => startEdit(answer)}
-                        onSave={() => saveOverride(answer.id)}
+                        onSave={() => saveOverride()}
                         onCancel={() => setEditingAnswer(null)}
                         editData={data}
                         setEditData={setData}
@@ -256,6 +259,7 @@ function AttemptsShow({ exam, attempt }: Props) {
 function AnswerCard({
     answer,
     index,
+    passingScore,
     isEditing,
     onStartEdit,
     onSave,
@@ -266,6 +270,7 @@ function AnswerCard({
 }: {
     answer: Answer;
     index: number;
+    passingScore: number;
     isEditing: boolean;
     onStartEdit: () => void;
     onSave: () => void;
@@ -306,10 +311,19 @@ function AnswerCard({
                         </div>
                     </div>
                     <div className="text-right">
-                        <p className="text-2xl font-bold" style={{ color: (answer.final_score ?? 0) >= 50 ? '#4fdbc8' : '#ffb4ab' }}>
-                            {answer.final_score?.toFixed(1) ?? '—'}%
-                        </p>
-                        <p className="text-xs text-[#918fa1]">of {answer.question.points} points</p>
+                        {(() => {
+                            const score = answer.final_score ?? answer.ai_score ?? answer.override_score ?? 0;
+                            const percentage = answer.question.points > 0 ? (score / answer.question.points) * 100 : 0;
+
+                            return (
+                                <>
+                                    <p className="text-2xl font-bold" style={{ color: percentage >= passingScore ? '#4fdbc8' : '#ffb4ab' }}>
+                                        {percentage.toFixed(1)}%
+                                    </p>
+                                    <p className="text-xs text-[#918fa1]">of {answer.question.points} points</p>
+                                </>
+                            );
+                        })()}
                     </div>
                 </div>
             </div>
