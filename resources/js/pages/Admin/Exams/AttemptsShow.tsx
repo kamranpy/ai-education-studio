@@ -150,15 +150,26 @@ function AttemptsShow({ exam, attempt }: Props) {
 
     function startEdit(answer: Answer) {
         setEditingAnswer(answer.id);
+        const currentScore = answer.final_score ?? answer.ai_score ?? 0;
+        const percentage = answer.question.points > 0 ? (currentScore / answer.question.points) * 100 : 0;
         setData({
             answer_id: answer.id,
-            override_score: answer.final_score ?? answer.ai_score ?? 0,
+            override_score: Math.round(percentage),
             override_comment: answer.override_comment ?? '',
         });
     }
 
-    function saveOverride() {
+    function saveOverride(answer: Answer) {
+        const points = answer.question.points;
+        const percentage = data.override_score;
+        const pointScore = (percentage / 100) * points;
+
         post(`/admin/exams/${exam.id}/attempts/${attempt.id}/override`, {
+            data: {
+                answer_id: data.answer_id,
+                override_score: pointScore,
+                override_comment: data.override_comment,
+            },
             onSuccess: () => {
                 setEditingAnswer(null);
             },
@@ -231,7 +242,7 @@ function AttemptsShow({ exam, attempt }: Props) {
                         passingScore={exam.passing_score}
                         isEditing={editingAnswer === answer.id}
                         onStartEdit={() => startEdit(answer)}
-                        onSave={() => saveOverride()}
+                        onSave={() => saveOverride(answer)}
                         onCancel={() => setEditingAnswer(null)}
                         editData={data}
                         setEditData={setData}
@@ -448,7 +459,7 @@ function AnswerCard({
                                     onChange={(e) => setEditData({ ...editData, override_comment: e.target.value })}
                                     placeholder="Reason for override..."
                                     rows={2}
-                                    className="bg-[#201f1f] border-[#918fa1]/30 text-[#e5e2e1] placeholder:text-[#918fa1]/50 focus:border-[#c3c0ff]"
+                                    className="!bg-[#201f1f] border-[#918fa1]/30 text-[#e5e2e1] placeholder:text-[#918fa1]/50 focus:border-[#c3c0ff] focus:!bg-[#201f1f]"
                                 />
                             </div>
                             <div className="flex gap-2">
