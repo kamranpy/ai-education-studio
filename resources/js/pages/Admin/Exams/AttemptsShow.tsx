@@ -1,4 +1,4 @@
-import { Link, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import {
     AlertTriangle,
     ArrowLeft,
@@ -140,7 +140,7 @@ function ConfidenceBadge({ confidence }: { confidence: number | null }) {
 
 function AttemptsShow({ exam, attempt }: Props) {
     const [editingAnswer, setEditingAnswer] = useState<number | null>(null);
-    const { data, setData, post, processing } = useForm({
+    const { data, setData, processing } = useForm({
         answer_id: 0,
         override_score: 0,
         override_comment: '',
@@ -164,15 +164,19 @@ function AttemptsShow({ exam, attempt }: Props) {
         const percentage = data.override_score;
         const pointScore = (percentage / 100) * points;
 
-        post(`/admin/exams/${exam.id}/attempts/${attempt.id}/override`, {
-            data: {
-                answer_id: data.answer_id,
-                override_score: pointScore,
-                override_comment: data.override_comment,
-            },
+        // Use Inertia's router directly with properly formatted data
+        router.post(`/admin/exams/${exam.id}/attempts/${attempt.id}/override`, {
+            answer_id: data.answer_id,
+            override_score: pointScore,
+            override_comment: data.override_comment,
+        }, {
             onSuccess: () => {
                 setEditingAnswer(null);
             },
+            onError: (errors) => {
+                console.error('Override failed:', errors);
+            },
+            preserveScroll: true,
         });
     }
 
