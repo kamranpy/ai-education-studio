@@ -404,17 +404,22 @@ function AnswerCard({
                                 Override History
                             </h4>
                             <div className="space-y-2">
-                                {answer.overrides.map((override) => (
-                                    <div key={override.id} className="flex items-center gap-3 text-sm">
-                                        <span className="text-[#918fa1]">{override.actor.name}</span>
-                                        <span className="text-[#c7c4d8]">
-                                            {override.from_score?.toFixed(1) ?? '—'}% → {override.to_score.toFixed(1)}%
-                                        </span>
-                                        {override.comment && (
-                                            <span className="text-[#918fa1] italic">"{override.comment}"</span>
-                                        )}
-                                    </div>
-                                ))}
+                                {answer.overrides.map((override) => {
+                                    const fromScore = override.from_score !== null ? Number(override.from_score) : null;
+                                    const toScore = Number(override.to_score);
+
+                                    return (
+                                        <div key={override.id} className="flex items-center gap-3 text-sm">
+                                            <span className="text-[#918fa1]">{override.actor.name}</span>
+                                            <span className="text-[#c7c4d8]">
+                                                {fromScore !== null ? fromScore.toFixed(1) : '—'}% → {toScore.toFixed(1)}%
+                                            </span>
+                                            {override.comment && (
+                                                <span className="text-[#918fa1] italic">"{override.comment}"</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
