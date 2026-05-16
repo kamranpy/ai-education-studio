@@ -1,34 +1,24 @@
-import { Link, router, useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import {
     AlertTriangle,
     ArrowLeft,
     CheckCircle2,
-    ChevronLeft,
-    ChevronRight,
     Clock,
     Edit3,
     ListChecks,
     PenLine,
     Save,
     Sparkles,
-    Target,
     User,
     XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { show as attemptsIndex } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
+import { index as attemptsIndex } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
 import { show as examsShow } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
 
@@ -98,19 +88,6 @@ function questionTypeIcon(type: string) {
     }
 }
 
-function questionTypeLabel(type: string) {
-    switch (type) {
-        case 'mcq':
-            return 'Multiple Choice';
-        case 'true_false':
-            return 'True/False';
-        case 'written_answer':
-            return 'Written Answer';
-        default:
-            return type;
-    }
-}
-
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case 'grading':
@@ -140,16 +117,24 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function ConfidenceBadge({ confidence }: { confidence: number | null }) {
-    if (confidence === null) return null;
+    if (confidence === null) {
+        return null;
+    }
+
     const value = typeof confidence === 'string' ? parseFloat(confidence) : confidence;
-    if (isNaN(value)) return null;
+
+    if (isNaN(value)) {
+        return null;
+    }
 
     if (value >= 0.85) {
         return <span className="text-[#4fdbc8] text-sm font-medium">High Confidence ({Math.round(value * 100)}%)</span>;
     }
+
     if (value >= 0.6) {
         return <span className="text-[#fbe188] text-sm font-medium">Medium Confidence ({Math.round(value * 100)}%)</span>;
     }
+
     return <span className="text-[#ffb4ab] text-sm font-medium">Low Confidence ({Math.round(value * 100)}%)</span>;
 }
 
@@ -241,8 +226,6 @@ function AttemptsShow({ exam, attempt }: Props) {
                         key={answer.id}
                         answer={answer}
                         index={idx}
-                        examId={exam.id}
-                        attemptId={attempt.id}
                         isEditing={editingAnswer === answer.id}
                         onStartEdit={() => startEdit(answer)}
                         onSave={() => saveOverride(answer.id)}
@@ -274,8 +257,6 @@ function AttemptsShow({ exam, attempt }: Props) {
 function AnswerCard({
     answer,
     index,
-    examId,
-    attemptId,
     isEditing,
     onStartEdit,
     onSave,
@@ -286,8 +267,6 @@ function AnswerCard({
 }: {
     answer: Answer;
     index: number;
-    examId: number;
-    attemptId: number;
     isEditing: boolean;
     onStartEdit: () => void;
     onSave: () => void;
