@@ -357,9 +357,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 }
             `}</style>
 
-            {/* Force dark mode — admin portal is dark-only by design */}
             <div
-                className="dark min-h-screen"
+                className="min-h-screen"
                 style={{ backgroundColor: 'var(--portal-bg)', fontFamily: 'Inter, sans-serif' }}
             >
                 {/* Desktop sidebar */}
