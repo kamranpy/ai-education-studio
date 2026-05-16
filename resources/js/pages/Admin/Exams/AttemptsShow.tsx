@@ -116,28 +116,6 @@ function StatusBadge({ status }: { status: string }) {
     }
 }
 
-function ConfidenceBadge({ confidence }: { confidence: number | null }) {
-    if (confidence === null) {
-        return null;
-    }
-
-    const value = typeof confidence === 'string' ? parseFloat(confidence) : confidence;
-
-    if (isNaN(value)) {
-        return null;
-    }
-
-    if (value >= 0.85) {
-        return <span className="text-[#4fdbc8] text-sm font-medium">High Confidence ({Math.round(value * 100)}%)</span>;
-    }
-
-    if (value >= 0.6) {
-        return <span className="text-[#fbe188] text-sm font-medium">Medium Confidence ({Math.round(value * 100)}%)</span>;
-    }
-
-    return <span className="text-[#ffb4ab] text-sm font-medium">Low Confidence ({Math.round(value * 100)}%)</span>;
-}
-
 function AttemptsShow({ exam, attempt }: Props) {
     const [editingAnswer, setEditingAnswer] = useState<number | null>(null);
     const { data, setData, processing } = useForm({
@@ -320,7 +298,6 @@ function AnswerCard({
                             <div className="flex items-center gap-2 mb-1">
                                 <span className="text-sm font-medium text-[#918fa1]">Q{index + 1}</span>
                                 <StatusBadge status={answer.status} />
-                                <ConfidenceBadge confidence={answer.ai_confidence} />
                             </div>
                             <p className="text-[#e5e2e1] font-medium">{answer.question.text}</p>
                         </div>
