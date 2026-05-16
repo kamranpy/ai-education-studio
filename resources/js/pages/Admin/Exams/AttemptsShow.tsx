@@ -420,14 +420,17 @@ function AnswerCard({
                             </h4>
                             <div className="space-y-2">
                                 {answer.overrides.map((override) => {
-                                    const fromScore = override.from_score !== null ? Number(override.from_score) : null;
-                                    const toScore = Number(override.to_score);
+                                    const questionPoints = answer.question.points;
+                                    const fromPoints = override.from_score !== null ? Number(override.from_score) : null;
+                                    const toPoints = Number(override.to_score);
+                                    const fromPercentage = fromPoints !== null && questionPoints > 0 ? (fromPoints / questionPoints) * 100 : null;
+                                    const toPercentage = questionPoints > 0 ? (toPoints / questionPoints) * 100 : 0;
 
                                     return (
                                         <div key={override.id} className="flex items-center gap-3 text-sm">
                                             <span className="text-[#918fa1]">{override.actor.name}</span>
                                             <span className="text-[#c7c4d8]">
-                                                {fromScore !== null ? fromScore.toFixed(1) : '—'}% → {toScore.toFixed(1)}%
+                                                {fromPercentage !== null ? fromPercentage.toFixed(1) : '—'}% → {toPercentage.toFixed(1)}%
                                             </span>
                                             {override.comment && (
                                                 <span className="text-[#918fa1] italic">"{override.comment}"</span>
