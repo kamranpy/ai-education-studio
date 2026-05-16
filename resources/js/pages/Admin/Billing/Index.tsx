@@ -53,65 +53,35 @@ function formatPrice(cents: number, currency: string): string {
     }).format(cents / 100);
 }
 
-// Credit Usage Indicator - Shows CONSUMED percentage with improved UI
-function CreditUsageIndicator({ consumed, total }: { consumed: number; total: number }) {
+// Compact Credit Usage Bar
+function CreditUsageBar({ consumed, total }: { consumed: number; total: number }) {
     const consumedPercentage = total > 0 ? Math.round((consumed / total) * 100) : 0;
     const remaining = total - consumed;
 
     return (
-        <div className="flex items-center gap-5">
-            {/* Circular Progress */}
-            <div className="relative w-24 h-24">
-                <svg className="w-full h-full transform -rotate-90">
-                    {/* Background track */}
-                    <circle
-                        className="text-[#2a292e]"
-                        cx={48}
-                        cy={48}
-                        fill="transparent"
-                        r={42}
-                        stroke="currentColor"
-                        strokeWidth={10}
+        <div className="space-y-2">
+            {/* Progress bar */}
+            <div className="flex items-center gap-3">
+                <div className="flex-1 h-3 bg-[#2a292e] rounded-full overflow-hidden">
+                    <div
+                        className="h-full bg-gradient-to-r from-[#ff6b6b] to-[#ff8585] rounded-full"
+                        style={{ width: `${consumedPercentage}%` }}
                     />
-                    {/* Consumed arc - red/orange gradient effect */}
-                    <circle
-                        className="text-[#ff6b6b]"
-                        cx={48}
-                        cy={48}
-                        fill="transparent"
-                        r={42}
-                        stroke="currentColor"
-                        strokeDasharray={264}
-                        strokeDashoffset={264 - (consumedPercentage / 100) * 264}
-                        strokeWidth={10}
-                        strokeLinecap="round"
-                        style={{
-                            filter: 'drop-shadow(0 0 4px rgba(255, 107, 107, 0.5))',
-                        }}
-                    />
-                </svg>
-                {/* Center content */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="font-headline-md text-headline-md text-[#ff6b6b] font-bold">
-                        {consumedPercentage}%
-                    </span>
-                    <span className="text-[10px] text-[#928f9a] uppercase">used</span>
                 </div>
+                <span className="font-label-md text-label-md text-[#ff6b6b] font-bold">
+                    {consumedPercentage}%
+                </span>
             </div>
 
-            {/* Stats */}
-            <div className="space-y-2">
-                <div>
-                    <p className="text-xs text-[#928f9a] uppercase tracking-wide">Consumed</p>
-                    <p className="font-body-md text-body-md text-[#ff6b6b]">
-                        {consumed.toLocaleString()} credits
-                    </p>
+            {/* Stats row */}
+            <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#ff6b6b]" />
+                    <span className="text-[#928f9a]">Used: <span className="text-[#ff6b6b] font-medium">{consumed.toLocaleString()}</span></span>
                 </div>
-                <div>
-                    <p className="text-xs text-[#928f9a] uppercase tracking-wide">Remaining</p>
-                    <p className="font-body-md text-body-md text-[#4fdbc8]">
-                        {remaining.toLocaleString()} credits
-                    </p>
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-[#4fdbc8]" />
+                    <span className="text-[#928f9a]">Left: <span className="text-[#4fdbc8] font-medium">{remaining.toLocaleString()}</span></span>
                 </div>
             </div>
         </div>
@@ -153,32 +123,28 @@ function Index({ credits, packages, transactions }: Props) {
 
                 {/* Dashboard Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    {/* Current Balance Card */}
+                    {/* Current Balance Card - Compact */}
                     <div
-                        className="md:col-span-5 rounded-xl p-5"
+                        className="md:col-span-5 rounded-xl p-4"
                         style={{
                             background: 'rgba(32, 31, 35, 0.8)',
                             backdropFilter: 'blur(20px)',
                             border: '1px solid rgba(255, 255, 255, 0.05)',
                         }}
                     >
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between mb-3">
                             <div>
-                                <p className="font-label-md text-label-md text-[#928f9a] uppercase tracking-wider text-xs">
-                                    Current Balance
-                                </p>
-                                <h2 className="font-headline-lg text-headline-lg text-[#e2dfff] mt-1">
-                                    {credits.toLocaleString()} <span className="text-headline-md opacity-60">Credits</span>
+                                <p className="text-xs text-[#928f9a] uppercase tracking-wider">Balance</p>
+                                <h2 className="text-2xl font-bold text-[#e2dfff]">
+                                    {credits.toLocaleString()} <span className="text-base font-normal opacity-60">Credits</span>
                                 </h2>
                             </div>
-                            <div className="bg-[#2a292e] p-2.5 rounded-full">
-                                <Wallet className="size-5 text-[#c3c0ff]" />
+                            <div className="bg-[#2a292e] p-2 rounded-full">
+                                <Wallet className="size-4 text-[#c3c0ff]" />
                             </div>
                         </div>
 
-                        <div className="mt-4 pt-4 border-t border-white/5">
-                            <CreditUsageIndicator consumed={maxCredits - credits} total={maxCredits} />
-                        </div>
+                        <CreditUsageBar consumed={maxCredits - credits} total={maxCredits} />
                     </div>
 
                     {/* Credit Packages - Original Cards */}
