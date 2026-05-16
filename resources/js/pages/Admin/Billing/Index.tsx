@@ -25,56 +25,22 @@ interface CreditPackage {
     currency: string;
 }
 
-interface Props {
-    credits: number;
-    packages: CreditPackage[];
-    current_package_id: number | null;
-}
-
-// Mock transaction data - replace with actual data from backend
 interface Transaction {
     id: string;
     date: string;
     description: string;
     amount: number;
+    credits: number;
     type: 'credit' | 'debit';
     status: 'completed' | 'pending' | 'failed';
 }
 
-const MOCK_TRANSACTIONS: Transaction[] = [
-    {
-        id: '1',
-        date: 'Oct 24, 2023',
-        description: 'Credit Top-up - Visa •••• 4242',
-        amount: 45,
-        type: 'credit',
-        status: 'completed',
-    },
-    {
-        id: '2',
-        date: 'Oct 22, 2023',
-        description: 'AI Training Compute Consumption',
-        amount: -120,
-        type: 'debit',
-        status: 'completed',
-    },
-    {
-        id: '3',
-        date: 'Oct 20, 2023',
-        description: 'Curriculum Generation API Units',
-        amount: -15,
-        type: 'debit',
-        status: 'completed',
-    },
-    {
-        id: '4',
-        date: 'Oct 18, 2023',
-        description: 'Credit Top-up - Visa •••• 4242',
-        amount: 10,
-        type: 'credit',
-        status: 'completed',
-    },
-];
+interface Props {
+    credits: number;
+    packages: CreditPackage[];
+    current_package_id: number | null;
+    transactions: Transaction[];
+}
 
 function formatPrice(cents: number, currency: string): string {
     if (cents === 0) {
@@ -87,46 +53,72 @@ function formatPrice(cents: number, currency: string): string {
     }).format(cents / 100);
 }
 
-// Circular Progress Component - Shows CONSUMED percentage
-function CircularProgress({ consumed, total, size = 96 }: { consumed: number; total: number; size?: number }) {
-    const radius = 40;
-    const circumference = 2 * Math.PI * radius;
+// Credit Usage Indicator - Shows CONSUMED percentage with improved UI
+function CreditUsageIndicator({ consumed, total }: { consumed: number; total: number }) {
     const consumedPercentage = total > 0 ? Math.round((consumed / total) * 100) : 0;
-    const strokeDashoffset = circumference - (consumedPercentage / 100) * circumference;
+    const remaining = total - consumed;
 
     return (
-        <div className="relative" style={{ width: size, height: size }}>
-            <svg className="w-full h-full transform -rotate-90">
-                <circle
-                    className="text-[#353439]"
-                    cx={size / 2}
-                    cy={size / 2}
-                    fill="transparent"
-                    r={radius}
-                    stroke="currentColor"
-                    strokeWidth={8}
-                />
-                <circle
-                    className="text-[#ffb4ab] transition-all duration-500"
-                    cx={size / 2}
-                    cy={size / 2}
-                    fill="transparent"
-                    r={radius}
-                    stroke="currentColor"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeWidth={8}
-                    strokeLinecap="round"
-                />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-label-md text-label-md text-[#ffb4ab]">{consumedPercentage}%</span>
+        <div className="flex items-center gap-5">
+            {/* Circular Progress */}
+            <div className="relative w-24 h-24">
+                <svg className="w-full h-full transform -rotate-90">
+                    {/* Background track */}
+                    <circle
+                        className="text-[#2a292e]"
+                        cx={48}
+                        cy={48}
+                        fill="transparent"
+                        r={42}
+                        stroke="currentColor"
+                        strokeWidth={10}
+                    />
+                    {/* Consumed arc - red/orange gradient effect */}
+                    <circle
+                        className="text-[#ff6b6b]"
+                        cx={48}
+                        cy={48}
+                        fill="transparent"
+                        r={42}
+                        stroke="currentColor"
+                        strokeDasharray={264}
+                        strokeDashoffset={264 - (consumedPercentage / 100) * 264}
+                        strokeWidth={10}
+                        strokeLinecap="round"
+                        style={{
+                            filter: 'drop-shadow(0 0 4px rgba(255, 107, 107, 0.5))',
+                        }}
+                    />
+                </svg>
+                {/* Center content */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="font-headline-md text-headline-md text-[#ff6b6b] font-bold">
+                        {consumedPercentage}%
+                    </span>
+                    <span className="text-[10px] text-[#928f9a] uppercase">used</span>
+                </div>
+            </div>
+
+            {/* Stats */}
+            <div className="space-y-2">
+                <div>
+                    <p className="text-xs text-[#928f9a] uppercase tracking-wide">Consumed</p>
+                    <p className="font-body-md text-body-md text-[#ff6b6b]">
+                        {consumed.toLocaleString()} credits
+                    </p>
+                </div>
+                <div>
+                    <p className="text-xs text-[#928f9a] uppercase tracking-wide">Remaining</p>
+                    <p className="font-body-md text-body-md text-[#4fdbc8]">
+                        {remaining.toLocaleString()} credits
+                    </p>
+                </div>
             </div>
         </div>
     );
 }
 
-function Index({ credits, packages }: Props) {
+function Index({ credits, packages, transactions }: Props) {
     // Calculate percentage (assume 3000 is max for demo)
     const maxCredits = 3000;
     const percentage = Math.round((credits / maxCredits) * 100);
@@ -184,12 +176,8 @@ function Index({ credits, packages }: Props) {
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6 mt-6">
-                            <CircularProgress consumed={maxCredits - credits} total={maxCredits} />
-                            <div>
-                                <p className="font-body-md text-body-md text-[#e4e1e7]">Credits Consumed</p>
-                                <p className="font-body-sm text-body-sm text-[#928f9a]">of {maxCredits.toLocaleString()} monthly quota</p>
-                            </div>
+                        <div className="mt-6">
+                            <CreditUsageIndicator consumed={maxCredits - credits} total={maxCredits} />
                         </div>
                     </div>
 
@@ -280,7 +268,16 @@ function Index({ credits, packages }: Props) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">
-                                {MOCK_TRANSACTIONS.map((transaction) => (
+                                {transactions.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={5} className="p-8 text-center">
+                                            <p className="font-body-md text-body-md text-[#928f9a]">
+                                                No transactions yet. Purchase credits to get started.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    transactions.map((transaction) => (
                                     <tr key={transaction.id} className="hover:bg-white/[0.02] transition-colors">
                                         <td className="p-6 font-body-md text-body-md text-[#e4e1e7]">{transaction.date}</td>
                                         <td className="p-6">
@@ -325,7 +322,8 @@ function Index({ credits, packages }: Props) {
                                             </button>
                                         </td>
                                     </tr>
-                                ))}
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -333,7 +331,7 @@ function Index({ credits, packages }: Props) {
                     {/* Pagination */}
                     <div className="p-6 flex items-center justify-between border-t border-white/5">
                         <span className="font-body-sm text-body-sm text-[#928f9a]">
-                            Showing 1 to {MOCK_TRANSACTIONS.length} of {MOCK_TRANSACTIONS.length} transactions
+                            Showing 1 to {transactions.length} of {transactions.length} transactions
                         </span>
                         <div className="flex gap-2">
                             <button
