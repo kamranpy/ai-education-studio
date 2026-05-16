@@ -56,7 +56,7 @@ class ExamAttemptAdminController extends Controller
         $finalScore = $attempt->answers->sum(fn ($a) => $a->final_score ?? 0);
 
         return Inertia::render('Admin/Exams/AttemptsShow', [
-            'exam' => $exam->only('id', 'title'),
+            'exam' => $exam->only('id', 'title', 'passing_score'),
             'attempt' => array_merge($attempt->toArray(), [
                 'total_points' => $totalPoints,
                 'final_score' => $finalScore,
