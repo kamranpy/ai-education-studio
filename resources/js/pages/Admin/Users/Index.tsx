@@ -164,7 +164,7 @@ function UsersIndex({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="rounded-xl p-6 flex flex-col justify-between bg-card border border-border">
                         <div>
-                            <p className="font-label-md text-label-md text-muted-foreground mb-2">Active Licenses</p>
+                            <p className="font-label-md text-label-md text-muted-foreground mb-2">Active Users</p>
                             <h3 className="font-headline-lg text-headline-lg text-card-foreground">
                                 {activeUsers} <span className="text-brand-secondary text-body-md font-normal">/ {users.total}</span>
                             </h3>

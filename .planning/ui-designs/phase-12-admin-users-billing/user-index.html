@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduAdmin AI - User Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #131317;
+            color: #e4e1e7;
+        }
+        .glass-card {
+            background: rgba(32, 31, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed": "#e5e1e6",
+                      "surface-container-high": "#2a292e",
+                      "on-background": "#e4e1e7",
+                      "on-primary": "#2c2a5e",
+                      "inverse-on-surface": "#303034",
+                      "inverse-surface": "#e4e1e7",
+                      "on-tertiary-fixed": "#1c1b1f",
+                      "inverse-primary": "#5a5890",
+                      "surface-dim": "#131317",
+                      "tertiary-fixed-dim": "#c9c5ca",
+                      "secondary-fixed-dim": "#4fdbc8",
+                      "surface-container-lowest": "#0e0e12",
+                      "surface-variant": "#353439",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "primary-container": "#c3c0ff",
+                      "tertiary": "#e5e1e6",
+                      "on-tertiary-fixed-variant": "#48464a",
+                      "on-error-container": "#ffdad6",
+                      "primary": "#e2dfff",
+                      "on-surface-variant": "#c8c5d0",
+                      "surface-container": "#1f1f23",
+                      "secondary-container": "#03b4a2",
+                      "on-tertiary-container": "#535256",
+                      "on-secondary-container": "#003f38",
+                      "on-secondary-fixed": "#00201c",
+                      "surface-bright": "#39393d",
+                      "on-primary-container": "#4e4c83",
+                      "background": "#131317",
+                      "on-tertiary": "#313034",
+                      "surface-container-highest": "#353439",
+                      "surface": "#131317",
+                      "on-surface": "#e4e1e7",
+                      "surface-tint": "#c3c0ff",
+                      "tertiary-container": "#c9c5ca",
+                      "on-secondary": "#003731",
+                      "on-primary-fixed-variant": "#434176",
+                      "error": "#ffb4ab",
+                      "outline": "#928f9a",
+                      "on-secondary-fixed-variant": "#005048",
+                      "error-container": "#93000a",
+                      "on-error": "#690005",
+                      "secondary-fixed": "#71f8e4",
+                      "surface-container-low": "#1b1b1f",
+                      "secondary": "#4fdbc8",
+                      "on-primary-fixed": "#161349",
+                      "primary-fixed": "#e3dfff",
+                      "outline-variant": "#47464f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "xl": "64px",
+                      "sm": "12px",
+                      "margin": "32px",
+                      "gutter": "24px",
+                      "md": "24px",
+                      "lg": "40px",
+                      "xs": "4px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-xl": ["Inter"]
+              },
+              "fontSize": {
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="overflow-x-hidden">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col p-margin gap-base z-50">
+<div class="mb-lg">
+<h1 class="font-headline-md text-headline-md font-bold text-primary">EduAdmin AI</h1>
+<p class="font-body-sm text-on-surface-variant">Management Portal</p>
+</div>
+<nav class="flex flex-col gap-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Exams -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="quiz">quiz</span>
+<span class="font-body-md text-body-md">Exams</span>
+</a>
+<!-- Users (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-xl font-bold transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body-md text-body-md">Users</span>
+</a>
+<!-- Billing -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-body-md text-body-md">Billing</span>
+</a>
+<!-- Settings -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto">
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-primary-container text-on-primary-container font-bold rounded-xl transition-transform active:scale-95">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Curriculum
+            </button>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 left-[280px] right-0 h-xl bg-surface/80 backdrop-blur-md border-b border-outline-variant/10 flex justify-between items-center px-margin z-40 shadow-sm">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-background border border-white/10 rounded-full py-2 pl-10 pr-4 text-on-surface focus:ring-2 focus:ring-primary/20 focus:border-primary/50 outline-none transition-all" placeholder="Search students or faculty..." type="text"/>
+</div>
+<div class="hidden md:flex gap-md">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface" href="#">Overview</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface" href="#">Analytics</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="notifications">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" data-icon="help_outline">help_outline</button>
+<div class="h-8 w-[1px] bg-outline-variant/20 mx-2"></div>
+<button class="px-4 py-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface">Support</button>
+<div class="flex items-center gap-2 bg-surface-container-high px-3 py-1.5 rounded-full border border-white/5">
+<span class="font-label-md text-label-md font-bold text-on-surface">Profile</span>
+<img alt="User avatar" class="w-8 h-8 rounded-full border border-primary/20" data-alt="A professional close-up portrait of a tech administrator with a focused expression, set against a blurred high-tech office background. The lighting is crisp and modern, featuring cool blue and soft purple highlights that reflect the corporate modern aesthetic of a high-performance AI studio. The overall atmosphere is clean, professional, and authoritative." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhfcHfaGxyztgORGDy9GtFw4_R4mzT-xkmtxXud-sx5LWv_BhFebkvowyfIdKzDQhx5U5rt8JAS6lxRJMKONP875Dvu3ht-O9D6_kDIlda6lTJKDAOZ4Sq2yA9GgKDLwjl0LT6yVbAbQUb-yoOAsKvOEl_FI3Y4fkelL2icgUVmBUE8VBbug2Ewg3L0FYhuhoIXK9VH1OlWi7NVe0ofndik9xUo61xq3IZU4FI2rCz1A-vBuS6dH92OCuGD-cogqQ-7ID5yK2w9JkL"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-xl p-margin min-h-screen">
+<div class="max-w-[1440px] mx-auto space-y-lg">
+<!-- Page Header Section -->
+<div class="flex items-end justify-between">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">User Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage access permissions, track engagement, and invite new members to the workspace.</p>
+</div>
+<button class="bg-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+                    Invite User
+                </button>
+</div>
+<!-- Bento Grid - Stats & Table -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Data Table Card (The Hero Component) -->
+<div class="col-span-12 glass-card rounded-xl overflow-hidden">
+<div class="px-md py-4 border-b border-white/5 flex items-center justify-between">
+<div class="flex gap-4">
+<span class="font-label-md text-label-md text-primary border-b-2 border-primary pb-4">All Users</span>
+<span class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface pb-4 transition-colors cursor-pointer">Admins</span>
+<span class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface pb-4 transition-colors cursor-pointer">Instructors</span>
+<span class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface pb-4 transition-colors cursor-pointer">Students</span>
+</div>
+<button class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md hover:text-on-surface">
+<span class="material-symbols-outlined" data-icon="filter_list">filter_list</span>
+                            Filters
+                        </button>
+</div>
+<table class="w-full text-left">
+<thead class="bg-white/[0.02] border-b border-white/5">
+<tr>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant">USER PROFILE</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant">EMAIL ADDRESS</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant">ROLE</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant">STATUS</th>
+<th class="px-md py-4 font-label-md text-label-md text-on-surface-variant"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/[0.05]">
+<!-- Row 1 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img alt="User" class="w-10 h-10 rounded-lg" data-alt="A vibrant professional headshot of a female educator smiling, set against a clean, modern studio background with soft glowing geometric patterns in lavender and teal. The image style is polished and high-end, fitting for a corporate software environment, with high detail and a cinematic feel to the lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrisu2GoXdnZufk0q4Iza_sJXMllKGYhzfyH2XUe_6kHzBT8S0R24faI3fpWkQsI0Pa2Oi922Ihi95-l1aM6WYHGdK70qt4nKSBVzqnh9gZHyK78ZaNXqQKDJ2yI9I6y3gqJ6hPlsdKakGG5BoRvC6EgdxRcZaGKf_fBUwXXguAdDot-ivvrfaIaDGe5yl_LRT4aI8TQuG30SBf0cJqzwadKj313xOx847_Pk-T7FP-2ZosbiVzYmRbHLBxSDKdHnwGKMGJQ6rhQ_v"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Dr. Sarah Jenkins</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ID: EDU-9421-AI</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 font-body-sm text-body-sm text-on-surface-variant">s.jenkins@ai-edu.studio</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full bg-secondary-container/10 text-secondary text-xs font-bold border border-secondary/20">Instructor</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2 text-secondary">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm">Active</span>
+</div>
+</td>
+<td class="px-md py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 hover:text-primary transition-all" data-icon="more_vert">more_vert</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img alt="User" class="w-10 h-10 rounded-lg" data-alt="A portrait of a male data scientist wearing modern glasses, looking thoughtfully at the camera. The background is a dark, sophisticated AI laboratory with subtle teal and purple lighting effects. The image represents intelligence and technical expertise, rendered in a crisp, high-resolution digital style with soft focus on the peripheral details." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD560y-Zc646jdaMme0VKgE3Qw_n_lev3jYHyjQsgSw9S6N0IHwze_sQoPueK0_kRC2AQTeQ9_FofTovI-uRuBAtptz9G1xRCwvgF5UXn2RlSm-nUuH7TwQyofmMfyVw4DvkuHZXwFpWQRGOEvQ4CjmI2XVhODtGwGQWa8giFlbMlgOCfI_-eG4anDUMEtPl1schiTH0m9xS7ywMMuv8dxNQtXhugXoTzJCXhsWw_tK5jJlIJwYs-l7Y-jvSd77LtXLatCWTBkBsZ0f"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Marcus Chen</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ID: ADM-1029-AI</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 font-body-sm text-body-sm text-on-surface-variant">m.chen@sys-admin.edu</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full bg-primary-container/10 text-primary text-xs font-bold border border-primary/20">Admin</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2 text-secondary">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm">Active</span>
+</div>
+</td>
+<td class="px-md py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 hover:text-primary transition-all" data-icon="more_vert">more_vert</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img alt="User" class="w-10 h-10 rounded-lg" data-alt="A friendly young male student with a bright smile, positioned in a modern learning environment. The aesthetic is clean and corporate, featuring a palette of dark charcoal and light purple accents. High-quality lighting emphasizes clear skin tones and professional attire, symbolizing the accessible and user-friendly nature of the educational platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTlbeZUmBeen32x4rq4XjSScZMxyCyaDgA6i8jKO2crR4YuBtDrFERSBWvdfVZ9umV1RpBYN_nx0-mVo3lZFnt9HXOm1Ket1C_Ly4_1zXQPrlFz5vREKZPUfTH7tavtqVOgcTSxa0FsZuf9Z2HxgeZ5qBsn6pTCHhKkqfOUu1-r4PjLaidR16d4-8T6vXFnxB3tjGIUIk4hzY6KgwRV29JGqwtvGra4nF64nPfK7OID19hB739iIkYBHpL6xgmjhRh-LoDsVZZcTfM"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ID: STU-5502-AI</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 font-body-sm text-body-sm text-on-surface-variant">arivera.st@learning.ai</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-xs font-bold border border-white/5">Student</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2 text-outline">
+<div class="w-2 h-2 rounded-full bg-outline"></div>
+<span class="font-label-sm text-label-sm">Pending</span>
+</div>
+</td>
+<td class="px-md py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 hover:text-primary transition-all" data-icon="more_vert">more_vert</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-white/[0.02] transition-colors group">
+<td class="px-md py-4">
+<div class="flex items-center gap-3">
+<img alt="User" class="w-10 h-10 rounded-lg" data-alt="A portrait of a confident woman in a sleek, minimalist workplace. The lighting is soft and diffused, highlighting a clean and modern professional atmosphere. The color palette revolves around deep greys and soft whites with a touch of secondary teal, creating a sense of calm and efficiency within a high-tech corporate environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCssA_bHssOsk4SoduA3rxE0WMKoxDi6KpHTWafR0G7v84JOGGXMBgCO1KZ3KY58_Sq11bcLq2-F7p0d0szpvZXjoA9_79buMbW1VcI7Q6WCdKtPClPUOrZ4PIbjaNbUuw81t5X2qQ_D3-X9JTd9k7HUc3uYTfbXtcg9XYTZr_g9uGjKqUGYQr1zuJDhqQ_eu28pbLjUd4eK_RI0dXDs2QxI4UKp-m_AEcXBm0ntJiQFrialeL-SeayQHcpbN63Y9Py_cD3jLd5vLkS"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Linda Thompson</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">ID: STU-1129-AI</p>
+</div>
+</div>
+</td>
+<td class="px-md py-4 font-body-sm text-body-sm text-on-surface-variant">l.thompson@design.ai</td>
+<td class="px-md py-4">
+<span class="px-3 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-xs font-bold border border-white/5">Student</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-2 text-error">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<span class="font-label-sm text-label-sm">Inactive</span>
+</div>
+</td>
+<td class="px-md py-4 text-right">
+<button class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 hover:text-primary transition-all" data-icon="more_vert">more_vert</button>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="px-md py-4 bg-white/[0.01] border-t border-white/5 flex items-center justify-between">
+<p class="font-body-sm text-body-sm text-on-surface-variant">Showing 1-10 of 2,482 users</p>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg border border-white/5 text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-primary text-on-primary font-bold">1</button>
+<button class="w-10 h-10 rounded-lg border border-white/5 text-on-surface-variant hover:bg-surface-container-high transition-colors font-bold">2</button>
+<button class="w-10 h-10 rounded-lg border border-white/5 text-on-surface-variant hover:bg-surface-container-high transition-colors font-bold">3</button>
+<span class="text-on-surface-variant px-2">...</span>
+<button class="p-2 rounded-lg border border-white/5 text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Summary / License Widget (Bento Style) -->
+<div class="col-span-12 md:col-span-4 glass-card rounded-xl p-md flex flex-col justify-between">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-base">Active Licenses</p>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">1,842 <span class="text-secondary text-body-md font-normal">/ 2,500</span></h3>
+</div>
+<div class="mt-md">
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[74%] rounded-full"></div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-2">74% capacity utilized</p>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 glass-card rounded-xl p-md flex flex-col justify-between border-primary/20 bg-primary-container/5">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label-md text-label-md text-primary mb-base">Plan Status</p>
+<h3 class="font-headline-md text-headline-md text-on-surface">Enterprise AI</h3>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="auto_awesome" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<button class="w-full py-2 bg-primary/10 border border-primary/30 text-primary font-bold rounded-lg text-body-sm hover:bg-primary/20 transition-colors">
+                        Manage Plan
+                    </button>
+</div>
+<div class="col-span-12 md:col-span-4 glass-card rounded-xl p-md flex flex-col justify-between">
+<p class="font-label-md text-label-md text-on-surface-variant mb-base">Quick Summary</p>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-secondary font-bold text-headline-md">12</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Pending Requests</p>
+</div>
+<div>
+<p class="text-error font-bold text-headline-md">4</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Inactive Seats</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-white/5">
+<a class="text-primary font-label-md text-label-md flex items-center gap-2 hover:underline" href="#">
+                            View detailed audit log
+                            <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

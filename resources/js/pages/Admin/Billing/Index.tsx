@@ -105,17 +105,17 @@ function Index({ credits, packages, transactions }: Props) {
             <div className="space-y-6">
                 {/* Warning Banner */}
                 {isLowCredit && (
-                    <div className="bg-destructive text-destructive-foreground px-6 py-4 rounded-xl flex items-center justify-between border border-destructive/20">
+                    <div className="bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-100 px-6 py-4 rounded-xl flex items-center justify-between border border-amber-200 dark:border-amber-800">
                         <div className="flex items-center gap-3">
-                            <AlertTriangle className="size-5" />
+                            <AlertTriangle className="size-5 text-amber-600 dark:text-amber-400" />
                             <div>
                                 <p className="font-label-md text-label-md">Low Credit Warning</p>
-                                <p className="font-body-sm text-body-sm opacity-90">
+                                <p className="font-body-sm text-body-sm opacity-80">
                                     Your account balance is reaching the critical threshold. AI modeling capabilities may be restricted soon.
                                 </p>
                             </div>
                         </div>
-                        <button className="bg-destructive-foreground text-destructive px-4 py-2 rounded-lg font-bold text-label-sm hover:opacity-90 transition-opacity">
+                        <button className="bg-amber-600 dark:bg-amber-500 text-white px-4 py-2 rounded-lg font-bold text-label-sm hover:opacity-90 transition-opacity">
                             RECHARGE NOW
                         </button>
                     </div>
