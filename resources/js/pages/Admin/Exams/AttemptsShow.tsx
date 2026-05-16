@@ -240,9 +240,8 @@ function AttemptsShow({ exam, attempt }: Props) {
             {/* Back Button */}
             <div className="mt-8 flex justify-center">
                 <Button
-                    variant="outline"
                     asChild
-                    className="border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                    className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                 >
                     <Link href={attemptsIndex.url({ exam: exam.id })}>
                         <ArrowLeft className="mr-2 size-4" />
@@ -443,9 +442,8 @@ function AnswerCard({
                                     {processing ? 'Saving...' : 'Save Override'}
                                 </Button>
                                 <Button
-                                    variant="outline"
                                     onClick={onCancel}
-                                    className="border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                                    className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                                 >
                                     Cancel
                                 </Button>
@@ -453,9 +451,8 @@ function AnswerCard({
                         </div>
                     ) : (
                         <Button
-                            variant="outline"
                             onClick={onStartEdit}
-                            className="border-[#c3c0ff]/40 text-[#c3c0ff] hover:bg-[#c3c0ff]/10"
+                            className="bg-transparent border border-[#c3c0ff]/40 text-[#c3c0ff] hover:bg-[#c3c0ff]/10"
                         >
                             <Edit3 className="mr-2 size-4" />
                             Override Score

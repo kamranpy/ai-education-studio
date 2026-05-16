@@ -134,8 +134,7 @@ function AttemptsIndex({ exam, attempts, filters }: Props) {
                         </div>
                     </div>
                     <Button
-                        variant="outline"
-                        className="border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                        className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                     >
                         <Download className="mr-2 size-4" />
                         Export CSV
@@ -275,10 +274,9 @@ function AttemptsIndex({ exam, attempts, filters }: Props) {
                                 return (
                                     <Button
                                         key={idx}
-                                        variant="outline"
                                         disabled={!link.url}
                                         onClick={() => link.url && router.get(link.url)}
-                                        className="border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a] disabled:opacity-30"
+                                        className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a] disabled:opacity-30"
                                     >
                                         <ChevronLeft className="size-4" />
                                     </Button>
@@ -288,10 +286,9 @@ function AttemptsIndex({ exam, attempts, filters }: Props) {
                                 return (
                                     <Button
                                         key={idx}
-                                        variant="outline"
                                         disabled={!link.url}
                                         onClick={() => link.url && router.get(link.url)}
-                                        className="border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a] disabled:opacity-30"
+                                        className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a] disabled:opacity-30"
                                     >
                                         <ChevronRight className="size-4" />
                                     </Button>
@@ -300,12 +297,11 @@ function AttemptsIndex({ exam, attempts, filters }: Props) {
                             return (
                                 <Button
                                     key={idx}
-                                    variant={link.active ? 'default' : 'outline'}
                                     onClick={() => link.url && router.get(link.url)}
                                     className={
                                         link.active
                                             ? 'bg-[#c3c0ff] text-[#161349]'
-                                            : 'border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]'
+                                            : 'bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]'
                                     }
                                 >
                                     {link.label}

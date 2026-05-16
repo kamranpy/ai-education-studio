@@ -222,9 +222,8 @@ function ExamShow({ exam }: { exam: Exam }) {
                     </div>
                     <div className="flex gap-3">
                         <Button
-                            variant="outline"
                             asChild
-                            className="border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                            className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                         >
                             <Link href={examsEdit.url(exam.id)}>
                                 <Edit3 className="mr-2 size-4" />
@@ -242,8 +241,7 @@ function ExamShow({ exam }: { exam: Exam }) {
                         {exam.status === 'published' && (
                             <Button
                                 onClick={() => openConfirm('unpublish')}
-                                variant="outline"
-                                className="border-[#ffb4ab]/40 text-[#ffb4ab] hover:bg-[#ffb4ab]/10"
+                                className="bg-transparent border border-[#ffb4ab]/40 text-[#ffb4ab] hover:bg-[#ffb4ab]/10"
                             >
                                 Unpublish
                             </Button>
@@ -387,9 +385,8 @@ function ExamShow({ exam }: { exam: Exam }) {
                         <h3 className="text-lg font-semibold text-[#e5e2e1]">Quick Actions</h3>
                         <div className="space-y-2">
                             <Button
-                                variant="outline"
                                 asChild
-                                className="w-full justify-start border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                                className="w-full justify-start bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                             >
                                 <Link href={attemptsIndex.url({ exam: exam.id })}>
                                     <Eye className="mr-2 size-4" />
@@ -397,8 +394,7 @@ function ExamShow({ exam }: { exam: Exam }) {
                                 </Link>
                             </Button>
                             <Button
-                                variant="outline"
-                                className="w-full justify-start border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                                className="w-full justify-start bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                                 onClick={() => navigator.clipboard.writeText(window.location.href)}
                             >
                                 <Copy className="mr-2 size-4" />
@@ -468,7 +464,7 @@ function ExamShow({ exam }: { exam: Exam }) {
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline" className="border-[#918fa1]/30 text-[#918fa1]">
+                            <Button className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]">
                                 Cancel
                             </Button>
                         </DialogClose>

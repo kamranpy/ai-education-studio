@@ -35,14 +35,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import AdminLayout from '@/layouts/admin-layout';
 
 type QuestionChoice = {
@@ -738,10 +730,10 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                             )}
                             {!isLocked && (
                                 <Button
-                                    onClick={() => handleSubmit('draft')}
+                                    type="button"
                                     disabled={processing}
-                                    variant="outline"
-                                    className="w-full border-[#c3c0ff]/40 text-[#c3c0ff] hover:bg-[#c3c0ff]/10 py-5 rounded-xl font-medium disabled:opacity-50"
+                                    onClick={() => handleSubmit('draft')}
+                                    className="w-full bg-transparent border border-[#c3c0ff]/40 text-[#c3c0ff] hover:bg-[#c3c0ff]/10 py-5 rounded-xl font-medium disabled:opacity-50"
                                 >
                                     {processing ? (
                                         <>
@@ -754,9 +746,8 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                 </Button>
                             )}
                             <Button
-                                variant="outline"
                                 asChild
-                                className="w-full border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                                className="w-full bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                             >
                                 <Link href={examsIndex.url()}>Cancel</Link>
                             </Button>
@@ -794,7 +785,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline" className="border-[#918fa1]/30 text-[#918fa1]">
+                            <Button className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]">
                                 Cancel
                             </Button>
                         </DialogClose>
