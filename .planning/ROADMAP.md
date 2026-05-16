@@ -25,10 +25,10 @@
 
 ### � v2.0 UI Revamp (In Progress)
 
-- [ ] Phase 7: Public Homepage & Auth Pages
-- [ ] Phase 8: Student Layout, Dashboard & Exam List
-- [ ] Phase 9: Student Exam Taking & Results
-- [ ] Phase 10: Admin Layout, Dashboard & Exam List
+- [x] Phase 7: Public Homepage & Auth Pages
+- [x] Phase 8: Student Layout, Dashboard & Exam List
+- [x] Phase 9: Student Exam Taking & Results
+- [x] Phase 10: Admin Layout, Dashboard & Exam List
 - [ ] Phase 11: Admin Exam Builder & Attempt Views
 - [ ] Phase 12: Admin Users & Billing
 - [ ] Phase 13: Super Admin Layout, Dashboard & Institutes
@@ -45,10 +45,10 @@
 | 4.1. Enhancements & Settings | v1.0 | 1/1 | Complete | 2026-04-30 |
 | 5. Monetization & Billing | v1.0 | 4/4 | Complete | 2026-05-09 |
 | 6. Super Admin & Global Management | v1.0 | 4/4 | Complete | 2026-05-09 |
-| 7. Public Homepage & Auth Pages | v2.0 | 0/1 | Not started | — |
-| 8. Student Layout, Dashboard & Exam List | v2.0 | 0/1 | Not started | — |
-| 9. Student Exam Taking & Results | v2.0 | 0/1 | Not started | — |
-| 10. Admin Layout, Dashboard & Exam List | v2.0 | 0/1 | Not started | — |
+| 7. Public Homepage & Auth Pages | v2.0 | 1/1 | Complete | 2026-05-11 |
+| 8. Student Layout, Dashboard & Exam List | v2.0 | 1/1 | Complete | 2026-05-11 |
+| 9. Student Exam Taking & Results | v2.0 | 1/1 | Complete | 2026-05-11 |
+| 10. Admin Layout, Dashboard & Exam List | v2.0 | 1/1 | Complete | 2026-05-16 |
 | 11. Admin Exam Builder & Attempt Views | v2.0 | 0/1 | Not started | — |
 | 12. Admin Users & Billing | v2.0 | 0/1 | Not started | — |
 | 13. Super Admin Layout, Dashboard & Institutes | v2.0 | 0/1 | Not started | — |

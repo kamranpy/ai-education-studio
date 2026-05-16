@@ -12,6 +12,8 @@ class ExamAttemptAnswer extends Model
 {
     use HasFactory;
 
+    protected $appends = ['final_score'];
+
     protected $fillable = [
         'exam_attempt_id',
         'question_id',

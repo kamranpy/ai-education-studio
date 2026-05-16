@@ -250,7 +250,7 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
     );
 
     return (
-        <div className="min-h-screen" style={{ backgroundColor: 'var(--portal-bg)', fontFamily: 'Inter, sans-serif' }}>
+        <div className="dark min-h-screen" style={{ backgroundColor: 'var(--portal-bg)', fontFamily: 'Inter, sans-serif' }}>
             {/* Desktop sidebar */}
             <aside
                 className="hidden md:flex fixed left-0 top-0 h-screen flex-col py-8 z-50"

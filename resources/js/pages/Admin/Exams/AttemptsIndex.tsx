@@ -2,19 +2,20 @@ import { Link, router } from '@inertiajs/react';
 import {
     AlertTriangle,
     CheckCircle2,
+    ChevronLeft,
+    ChevronRight,
     Download,
+    Eye,
+    Filter,
     Loader2,
+    Search,
 } from 'lucide-react';
+import { useState } from 'react';
+import { index as examsIndex, show as examsShow } from '@/actions/App/Http/Controllers/Admin/ExamController';
+import { show as attemptsShow } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
 import AdminLayout from '@/layouts/admin-layout';
 
 interface Attempt {
@@ -22,208 +23,295 @@ interface Attempt {
     user: { id: string; name: string; email: string };
     status: string;
     submitted_at: string | null;
-    answers?: Array<{
-        final_score: number | null;
-        question: { points: number };
-    }>;
+    score?: number | null;
+    total_points?: number;
 }
 
 interface Props {
-    exam: { id: number; title: string; status: string };
+    exam: { id: number; title: string; status: string; passing_score: number };
     attempts: {
         data: Attempt[];
         links: Array<{ url: string | null; label: string; active: boolean }>;
         total: number;
+        current_page: number;
+        last_page: number;
     };
-    filters: { status?: string };
+    filters: { status?: string; search?: string };
 }
 
 const statusTabs = [
-    { value: '', label: 'All' },
-    { value: 'grading', label: 'Grading' },
-    { value: 'needs_review', label: 'Needs review' },
-    { value: 'graded', label: 'Graded' },
+    { value: '', label: 'All', count: null as number | null },
+    { value: 'grading', label: 'Grading', count: null as number | null },
+    { value: 'needs_review', label: 'Needs Review', count: null as number | null },
+    { value: 'graded', label: 'Graded', count: null as number | null },
 ];
 
 function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case 'grading':
             return (
-                <Badge variant="secondary" className="gap-1">
+                <Badge className="gap-1 bg-[#dec56f]/20 text-[#fbe188] border-[#fbe188]/30 hover:bg-[#dec56f]/30">
                     <Loader2 className="size-3 animate-spin" />
                     Grading
                 </Badge>
             );
         case 'needs_review':
             return (
-                <Badge
-                    variant="destructive"
-                    className="bg-destructive/10 text-destructive hover:bg-destructive/20"
-                >
+                <Badge className="bg-[#ffb4ab]/20 text-[#ffb4ab] border-[#ffb4ab]/30 hover:bg-[#ffb4ab]/30">
                     <AlertTriangle className="mr-1 size-3" />
-                    Needs review
+                    Needs Review
                 </Badge>
             );
         case 'graded':
             return (
-                <Badge variant="secondary">
+                <Badge className="bg-[#03b4a2]/20 text-[#4fdbc8] border-[#4fdbc8]/30 hover:bg-[#03b4a2]/30">
                     <CheckCircle2 className="mr-1 size-3" />
                     Graded
                 </Badge>
             );
         default:
-            return <Badge variant="secondary">{status}</Badge>;
+            return <Badge className="bg-[#918fa1]/20 text-[#918fa1]">{status}</Badge>;
     }
 }
 
+function ScoreBadge({ score, passingScore }: { score: number | null | undefined; passingScore: number }) {
+    if (score === null || score === undefined) {
+        return <span className="text-[#918fa1]">—</span>;
+    }
+    const passed = score >= passingScore;
+    return (
+        <span className={`font-semibold ${passed ? 'text-[#4fdbc8]' : 'text-[#ffb4ab]'}`}>
+            {score.toFixed(1)}%
+        </span>
+    );
+}
+
 function AttemptsIndex({ exam, attempts, filters }: Props) {
+    const [searchTerm, setSearchTerm] = useState(filters.search ?? '');
+
     function handleFilter(status: string) {
         router.get(
             `/admin/exams/${exam.id}/attempts`,
-            status ? { status } : {},
+            { status, search: searchTerm },
+            { preserveState: true, replace: true },
+        );
+    }
+
+    function handleSearch(e: React.FormEvent) {
+        e.preventDefault();
+        router.get(
+            `/admin/exams/${exam.id}/attempts`,
+            { status: filters.status, search: searchTerm },
             { preserveState: true, replace: true },
         );
     }
 
     return (
-        <div className="mx-auto max-w-5xl px-4 py-8">
-            <div className="mb-6 flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-                        Attempts — {exam.title}
-                    </h1>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                        {attempts.total} student attempt
-                        {attempts.total !== 1 ? 's' : ''}
-                    </p>
-                </div>
-                <Button variant="outline" asChild>
-                    <a
-                        href={`/admin/exams/${exam.id}/attempts/export`}
-                        download
+        <>
+            {/* Header */}
+            <div className="mb-8">
+                <nav className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#918fa1] mb-3">
+                    <Link href={examsIndex.url()} className="hover:text-[#c3c0ff] transition-colors">
+                        Exams
+                    </Link>
+                    <span className="text-[#c3c0ff]">/</span>
+                    <Link href={examsShow.url(exam.id)} className="hover:text-[#c3c0ff] transition-colors">
+                        {exam.title}
+                    </Link>
+                    <span className="text-[#c3c0ff]">/</span>
+                    <span className="text-[#c3c0ff]">Attempts</span>
+                </nav>
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl font-semibold text-[#e5e2e1]">
+                            Attempts — {exam.title}
+                        </h1>
+                        <div className="flex items-center gap-2 mt-2">
+                            <div className="w-2 h-2 rounded-full bg-[#4fdbc8]" />
+                            <span className="text-sm text-[#c7c4d8]">
+                                {attempts.total} student {attempts.total !== 1 ? 'attempts' : 'attempt'} recorded
+                            </span>
+                        </div>
+                    </div>
+                    <Button
+                        className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
                     >
                         <Download className="mr-2 size-4" />
-                        Download CSV
-                    </a>
-                </Button>
+                        Export CSV
+                    </Button>
+                </div>
             </div>
 
-            {/* Status filter tabs */}
-            <div className="mb-4 flex gap-1 rounded-lg border border-border bg-muted p-1">
-                {statusTabs.map((tab) => (
-                    <button
-                        key={tab.value}
-                        type="button"
-                        onClick={() => handleFilter(tab.value)}
-                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                            (filters.status || '') === tab.value
-                                ? 'bg-background text-foreground shadow-sm'
-                                : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
-            {attempts.data.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <CheckCircle2 className="mb-4 size-12 text-muted-foreground" />
-                    <h2 className="text-xl font-semibold text-foreground">
-                        No attempts yet
-                    </h2>
-                    <p className="mt-2 max-w-prose text-sm text-muted-foreground">
-                        Once students submit this exam, their attempts and
-                        AI grades will appear here.
-                    </p>
-                </div>
-            ) : (
-                <div className="rounded-lg border border-border">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Student</TableHead>
-                                <TableHead>Submitted</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead className="text-right">
-                                    Score
-                                </TableHead>
-                                <TableHead className="w-20" />
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {attempts.data.map((attempt) => (
-                                <TableRow key={attempt.id}>
-                                    <TableCell>
-                                        <div>
-                                            <p className="text-sm font-medium">
-                                                {attempt.user.name}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {attempt.user.email}
-                                            </p>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-sm text-muted-foreground">
-                                        {attempt.submitted_at
-                                            ? new Date(
-                                                  attempt.submitted_at,
-                                              ).toLocaleDateString(
-                                                  undefined,
-                                                  {
-                                                      month: 'short',
-                                                      day: 'numeric',
-                                                      hour: '2-digit',
-                                                      minute: '2-digit',
-                                                  },
-                                              )
-                                            : '—'}
-                                    </TableCell>
-                                    <TableCell>
-                                        <StatusBadge
-                                            status={attempt.status}
-                                        />
-                                    </TableCell>
-                                    <TableCell className="text-right font-mono text-sm">
-                                        —
-                                    </TableCell>
-                                    <TableCell>
-                                        <Link
-                                            href={`/admin/exams/${exam.id}/attempts/${attempt.id}`}
-                                            className="text-sm font-medium text-primary hover:underline"
-                                        >
-                                            Review
-                                        </Link>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </div>
-            )}
-
-            {/* Pagination */}
-            {attempts.links && attempts.links.length > 3 && (
-                <div className="mt-4 flex justify-center gap-1">
-                    {attempts.links.map((link, i) => (
-                        <Link
-                            key={i}
-                            href={link.url || '#'}
-                            className={`rounded-md px-3 py-1.5 text-sm ${
-                                link.active
-                                    ? 'bg-primary text-primary-foreground'
-                                    : link.url
-                                      ? 'text-muted-foreground hover:bg-muted'
-                                      : 'pointer-events-none text-muted-foreground/50'
+            {/* Filters & Search */}
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+                {/* Status Tabs */}
+                <div className="flex p-1 bg-[#0e0e0e] rounded-xl gap-1">
+                    {statusTabs.map((tab) => (
+                        <button
+                            key={tab.value}
+                            onClick={() => handleFilter(tab.value)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                                filters.status === tab.value || (!filters.status && !tab.value)
+                                    ? 'bg-[#2a2a2a] text-[#e5e2e1]'
+                                    : 'text-[#918fa1] hover:text-[#e5e2e1]'
                             }`}
-                            dangerouslySetInnerHTML={{
-                                __html: link.label,
-                            }}
-                        />
+                        >
+                            {tab.label}
+                        </button>
                     ))}
                 </div>
+
+                {/* Search */}
+                <form onSubmit={handleSearch} className="flex-1 max-w-md">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#918fa1]" />
+                        <Input
+                            type="text"
+                            placeholder="Search by student name or email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 bg-[#201f1f] border-[#918fa1]/30 text-[#e5e2e1] placeholder:text-[#918fa1]/50 focus:border-[#c3c0ff]"
+                        />
+                    </div>
+                </form>
+            </div>
+
+            {/* Attempts Table */}
+            <div
+                className="rounded-xl overflow-hidden"
+                style={{
+                    background: 'rgba(26, 26, 26, 0.6)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(146, 143, 154, 0.25)',
+                }}
+            >
+                <table className="w-full">
+                    <thead>
+                        <tr className="border-b border-[#918fa1]/20">
+                            <th className="text-left px-4 py-3 text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                Student
+                            </th>
+                            <th className="text-left px-4 py-3 text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                Status
+                            </th>
+                            <th className="text-left px-4 py-3 text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                Submitted
+                            </th>
+                            <th className="text-left px-4 py-3 text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                Score
+                            </th>
+                            <th className="text-right px-4 py-3 text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {attempts.data.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="px-4 py-12 text-center text-[#918fa1]">
+                                    <Filter className="mx-auto size-8 mb-3 opacity-50" />
+                                    <p>No attempts found</p>
+                                    <p className="text-sm mt-1">Try adjusting your filters</p>
+                                </td>
+                            </tr>
+                        ) : (
+                            attempts.data.map((attempt) => (
+                                <tr
+                                    key={attempt.id}
+                                    className="border-b border-[#918fa1]/10 hover:bg-[#2a2a2a]/30 transition-colors"
+                                >
+                                    <td className="px-4 py-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#c3c0ff]/20 to-[#4fdbc8]/20 flex items-center justify-center text-sm font-semibold text-[#c3c0ff]">
+                                                {attempt.user.name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <p className="font-medium text-[#e5e2e1]">{attempt.user.name}</p>
+                                                <p className="text-sm text-[#918fa1]">{attempt.user.email}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-4 py-4">
+                                        <StatusBadge status={attempt.status} />
+                                    </td>
+                                    <td className="px-4 py-4 text-[#c7c4d8]">
+                                        {attempt.submitted_at
+                                            ? new Date(attempt.submitted_at).toLocaleDateString()
+                                            : '—'}
+                                    </td>
+                                    <td className="px-4 py-4">
+                                        <ScoreBadge score={attempt.score} passingScore={exam.passing_score} />
+                                    </td>
+                                    <td className="px-4 py-4 text-right">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            asChild
+                                            className="text-[#918fa1] hover:text-[#c3c0ff] hover:bg-[#c3c0ff]/10"
+                                        >
+                                            <Link href={attemptsShow.url({ exam: exam.id, attempt: attempt.id })}>
+                                                <Eye className="mr-2 size-4" />
+                                                Review
+                                            </Link>
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Pagination */}
+            {attempts.last_page > 1 && (
+                <div className="flex items-center justify-between mt-6">
+                    <p className="text-sm text-[#918fa1]">
+                        Page {attempts.current_page} of {attempts.last_page}
+                    </p>
+                    <div className="flex gap-2">
+                        {attempts.links.map((link, idx) => {
+                            if (idx === 0) {
+                                return (
+                                    <Button
+                                        key={idx}
+                                        disabled={!link.url}
+                                        onClick={() => link.url && router.get(link.url)}
+                                        className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a] disabled:opacity-30"
+                                    >
+                                        <ChevronLeft className="size-4" />
+                                    </Button>
+                                );
+                            }
+                            if (idx === attempts.links.length - 1) {
+                                return (
+                                    <Button
+                                        key={idx}
+                                        disabled={!link.url}
+                                        onClick={() => link.url && router.get(link.url)}
+                                        className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a] disabled:opacity-30"
+                                    >
+                                        <ChevronRight className="size-4" />
+                                    </Button>
+                                );
+                            }
+                            return (
+                                <Button
+                                    key={idx}
+                                    onClick={() => link.url && router.get(link.url)}
+                                    className={
+                                        link.active
+                                            ? 'bg-[#c3c0ff] text-[#161349]'
+                                            : 'bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]'
+                                    }
+                                >
+                                    {link.label}
+                                </Button>
+                            );
+                        })}
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     );
 }
 

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ExamAI Portal - Grading In Progress</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #13121b;
+        }
+
+        /* Shimmer Animation */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .animate-shimmer {
+            background: linear-gradient(90deg, #1f1f28 25%, #35343e 50%, #1f1f28 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite linear;
+        }
+
+        /* Pulse for Teal Dot */
+        @keyframes pulse-teal {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .animate-pulse-teal {
+            animation: pulse-teal 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Spin for Indigo Spinner */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 1.5s linear infinite;
+        }
+
+        .glass-card {
+            background: rgba(28, 27, 27, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(70, 69, 85, 0.3);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#35343e",
+                      "surface-variant": "#35343e",
+                      "surface-tint": "#c3c0ff",
+                      "surface": "#13121b",
+                      "error-container": "#93000a",
+                      "on-tertiary-container": "#ffd2be",
+                      "outline-variant": "#464555",
+                      "on-tertiary-fixed": "#351000",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "tertiary-fixed-dim": "#ffb695",
+                      "on-background": "#e4e1ee",
+                      "inverse-on-surface": "#302f39",
+                      "surface-container-low": "#1b1b24",
+                      "on-primary-fixed": "#0f0069",
+                      "on-error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#7b2f00",
+                      "primary-container": "#4f46e5",
+                      "on-surface": "#e4e1ee",
+                      "on-secondary-fixed": "#00201c",
+                      "secondary-fixed-dim": "#4fdbc8",
+                      "on-secondary-container": "#003f38",
+                      "primary-fixed": "#e2dfff",
+                      "tertiary-container": "#a44100",
+                      "surface-container-high": "#2a2933",
+                      "tertiary-fixed": "#ffdbcc",
+                      "error": "#ffb4ab",
+                      "outline": "#918fa1",
+                      "background": "#13121b",
+                      "surface-container-lowest": "#0e0d16",
+                      "secondary": "#4fdbc8",
+                      "surface-container": "#1f1f28",
+                      "on-surface-variant": "#c7c4d8",
+                      "secondary-container": "#03b4a2",
+                      "surface-bright": "#393842",
+                      "on-secondary-fixed-variant": "#005048",
+                      "on-secondary": "#003731",
+                      "on-error": "#690005",
+                      "tertiary": "#ffb695",
+                      "primary": "#c3c0ff",
+                      "surface-dim": "#13121b",
+                      "on-tertiary": "#571f00",
+                      "inverse-surface": "#e4e1ee",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "on-primary-container": "#dad7ff",
+                      "inverse-primary": "#4d44e3",
+                      "secondary-fixed": "#71f8e4",
+                      "on-primary": "#1d00a5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "sidebar-width": "280px",
+                      "margin-sm": "1rem",
+                      "gutter-xs": "0.5rem",
+                      "gutter-md": "1.5rem",
+                      "margin-lg": "2rem"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-md": ["Inter"]
+              },
+              "fontSize": {
+                      "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface overflow-hidden">
+<!-- Main Content Canvas -->
+<main class="relative h-screen w-full flex flex-col items-center justify-center p-gutter-md">
+<!-- Animated Background Elements (Glass Orbs) -->
+<div class="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-primary/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-secondary/10 blur-[120px] rounded-full"></div>
+<!-- Interstitial Content Container -->
+<div class="relative z-10 flex flex-col items-center text-center max-w-xl w-full">
+<!-- Primary Spinner -->
+<div class="relative mb-margin-lg">
+<div class="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin-slow"></div>
+<!-- Central Icon Core -->
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[24px]" data-icon="neurology">neurology</span>
+</div>
+</div>
+<!-- Heading Section -->
+<div class="space-y-unit">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Grading your exam...</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto">
+                    Our AI is evaluating your written answers. This usually takes under a minute.
+                </p>
+</div>
+<!-- Indicator -->
+<div class="mt-margin-sm flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/5 border border-secondary/20">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse-teal"></span>
+<span class="font-label-md text-label-md text-secondary tracking-wider">● AI grading in progress</span>
+</div>
+<!-- Skeleton Progress Section -->
+<div class="mt-margin-lg w-full glass-card p-6 rounded-xl space-y-6">
+<div class="space-y-3">
+<div class="flex justify-between items-center mb-1">
+<div class="h-4 w-32 bg-surface-container-highest rounded animate-shimmer"></div>
+<div class="h-4 w-8 bg-surface-container-highest rounded animate-shimmer"></div>
+</div>
+<!-- Skeleton Bar 1: 75% -->
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full w-3/4 bg-primary-container rounded-full opacity-50 relative overflow-hidden">
+<div class="absolute inset-0 animate-shimmer" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);"></div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center mb-1">
+<div class="h-4 w-40 bg-surface-container-highest rounded animate-shimmer"></div>
+<div class="h-4 w-8 bg-surface-container-highest rounded animate-shimmer"></div>
+</div>
+<!-- Skeleton Bar 2: 50% -->
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full w-1/2 bg-secondary-container rounded-full opacity-50 relative overflow-hidden">
+<div class="absolute inset-0 animate-shimmer" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);"></div>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-center mb-1">
+<div class="h-4 w-24 bg-surface-container-highest rounded animate-shimmer"></div>
+<div class="h-4 w-8 bg-surface-container-highest rounded animate-shimmer"></div>
+</div>
+<!-- Skeleton Bar 3: 65% -->
+<div class="h-2 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full w-[65%] bg-primary-container rounded-full opacity-50 relative overflow-hidden">
+<div class="absolute inset-0 animate-shimmer" style="background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Subtle Hint Footer -->
+<p class="mt-margin-lg font-label-md text-label-md text-on-surface-variant/50 uppercase tracking-widest">
+                Analyzing linguistic patterns &amp; conceptual accuracy
+            </p>
+</div>
+<!-- Decorative Background Card to simulate depth -->
+<div class="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[90%] h-32 glass-card rounded-t-[40px] opacity-20 pointer-events-none"></div>
+</main>
+<!-- Hidden Sidebar context as per Brand Anchors, but suppressed due to Task-Focused intent -->
+<!-- TopAppBar suppressed as per Shell Visibility Rule for Interstitial focus -->
+</body></html>
