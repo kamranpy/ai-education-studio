@@ -274,8 +274,8 @@ function AnswerCard({
 }) {
     const [showDetails, setShowDetails] = useState(false);
 
-    const answerText = answer.answer_data?.answer_text as string | undefined;
-    const selectedChoice = answer.answer_data?.selected_choice as number | undefined;
+    const answerText = answer.answer_data?.text as string | undefined;
+    const selectedChoiceId = answer.answer_data?.selected_choice_id as number | undefined;
     const isCorrect = answer.answer_data?.is_correct as boolean | undefined;
 
     return (
@@ -340,7 +340,7 @@ function AnswerCard({
                         }`}>
                             {isCorrect ? <CheckCircle2 className="size-4" /> : <XCircle className="size-4" />}
                             <span className="font-medium">
-                                {answer.question.choices.find(c => c.id === selectedChoice)?.text || 'No answer selected'}
+                                {answer.question.choices.find(c => c.id === selectedChoiceId)?.text || 'No answer selected'}
                             </span>
                         </div>
                     )}
