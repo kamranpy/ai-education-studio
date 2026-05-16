@@ -53,13 +53,15 @@ class ExamAttemptAdminController extends Controller
 
         // Calculate totals
         $totalPoints = $attempt->answers->sum(fn ($a) => $a->question->points);
-        $finalScore = $attempt->answers->sum(fn ($a) => $a->final_score ?? 0);
+        $earnedPoints = $attempt->answers->sum(fn ($a) => $a->final_score ?? 0);
+        $finalScorePercentage = $totalPoints > 0 ? ($earnedPoints / $totalPoints) * 100 : 0;
 
         return Inertia::render('Admin/Exams/AttemptsShow', [
             'exam' => $exam->only('id', 'title', 'passing_score'),
             'attempt' => array_merge($attempt->toArray(), [
                 'total_points' => $totalPoints,
-                'final_score' => $finalScore,
+                'earned_points' => $earnedPoints,
+                'final_score' => $finalScorePercentage,
             ]),
         ]);
     }
