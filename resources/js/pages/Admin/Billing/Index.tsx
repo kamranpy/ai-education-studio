@@ -155,28 +155,28 @@ function Index({ credits, packages, transactions }: Props) {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                     {/* Current Balance Card */}
                     <div
-                        className="md:col-span-5 rounded-xl p-6 flex flex-col justify-between min-h-[280px]"
+                        className="md:col-span-5 rounded-xl p-5"
                         style={{
                             background: 'rgba(32, 31, 35, 0.8)',
                             backdropFilter: 'blur(20px)',
                             border: '1px solid rgba(255, 255, 255, 0.05)',
                         }}
                     >
-                        <div className="flex justify-between items-start">
+                        <div className="flex justify-between items-center">
                             <div>
-                                <p className="font-label-md text-label-md text-[#928f9a] uppercase tracking-widest">
+                                <p className="font-label-md text-label-md text-[#928f9a] uppercase tracking-wider text-xs">
                                     Current Balance
                                 </p>
-                                <h2 className="font-headline-xl text-headline-xl text-[#e2dfff] mt-2">
+                                <h2 className="font-headline-lg text-headline-lg text-[#e2dfff] mt-1">
                                     {credits.toLocaleString()} <span className="text-headline-md opacity-60">Credits</span>
                                 </h2>
                             </div>
-                            <div className="bg-[#2a292e] p-3 rounded-full">
-                                <Wallet className="size-6 text-[#c3c0ff]" />
+                            <div className="bg-[#2a292e] p-2.5 rounded-full">
+                                <Wallet className="size-5 text-[#c3c0ff]" />
                             </div>
                         </div>
 
-                        <div className="mt-6">
+                        <div className="mt-4 pt-4 border-t border-white/5">
                             <CreditUsageIndicator consumed={maxCredits - credits} total={maxCredits} />
                         </div>
                     </div>
