@@ -69,29 +69,22 @@ function InviteUser({ roles }: { roles: Role[] }) {
 
             <div className="min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
                 {/* Modal Card */}
-                <div
-                    className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-[0px_40px_40px_0px_rgba(0,0,0,0.4)]"
-                    style={{
-                        background: 'rgba(22, 18, 30, 0.8)',
-                        backdropFilter: 'blur(20px)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                    }}
-                >
+                <div className="w-full max-w-2xl rounded-2xl overflow-hidden shadow-lg bg-card border border-border">
                     <form onSubmit={submit}>
                         {/* Modal Header */}
-                        <div className="p-8 border-b border-white/5">
+                        <div className="p-8 border-b border-border">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h2 className="font-headline-md text-headline-md text-[#e4e1e7]">
+                                    <h2 className="font-headline-md text-headline-md text-card-foreground">
                                         Invite New User
                                     </h2>
-                                    <p className="font-body-sm text-body-sm text-[#928f9a] mt-1">
+                                    <p className="font-body-sm text-body-sm text-muted-foreground mt-1">
                                         Grant access to the management portal and curriculum tools.
                                     </p>
                                 </div>
                                 <Link
                                     href={usersIndex.url()}
-                                    className="text-[#928f9a] hover:text-[#e4e1e7] transition-colors"
+                                    className="text-muted-foreground hover:text-card-foreground transition-colors"
                                 >
                                     <X className="size-6" />
                                 </Link>
@@ -103,19 +96,19 @@ function InviteUser({ roles }: { roles: Role[] }) {
                             {/* Form Fields - 2 Column Grid */}
                             <div className="grid grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="font-label-md text-label-md text-[#928f9a]">
+                                    <Label className="font-label-md text-label-md text-muted-foreground">
                                         Full Name
                                     </Label>
                                     <Input
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="e.g. Dr. Helena Vance"
-                                        className="w-full bg-[#0e0e12] border border-white/10 rounded-xl py-3 px-4 text-[#e4e1e7] placeholder:text-[#928f9a]/50 focus:border-[#c3c0ff] focus:ring-1 focus:ring-[#c3c0ff]"
+                                        className="w-full bg-muted border border-border rounded-xl py-3 px-4 text-card-foreground placeholder:text-muted-foreground/50 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                     />
                                     <InputError message={errors.name} />
                                 </div>
                                 <div className="space-y-2 relative">
-                                    <Label className="font-label-md text-label-md text-[#928f9a]">
+                                    <Label className="font-label-md text-label-md text-muted-foreground">
                                         Email Address
                                     </Label>
                                     <div className="relative">
@@ -124,10 +117,10 @@ function InviteUser({ roles }: { roles: Role[] }) {
                                             value={data.email}
                                             onChange={(e) => setData('email', e.target.value)}
                                             placeholder="user@organization.edu"
-                                            className="w-full bg-[#0e0e12] border border-white/10 rounded-xl py-3 px-4 text-[#e4e1e7] placeholder:text-[#928f9a]/50 focus:border-[#c3c0ff] focus:ring-1 focus:ring-[#c3c0ff]"
+                                            className="w-full bg-muted border border-border rounded-xl py-3 px-4 text-card-foreground placeholder:text-muted-foreground/50 focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
                                         />
                                         {data.email && !errors.email && (
-                                            <Check className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-[#4fdbc8]" />
+                                            <Check className="absolute right-3 top-1/2 -translate-y-1/2 size-5 text-brand-secondary" />
                                         )}
                                     </div>
                                     <InputError message={errors.email} />
@@ -136,7 +129,7 @@ function InviteUser({ roles }: { roles: Role[] }) {
 
                             {/* Role Selection */}
                             <div className="space-y-4">
-                                <h3 className="font-label-md text-label-md text-[#928f9a] uppercase tracking-wider">
+                                <h3 className="font-label-md text-label-md text-muted-foreground uppercase tracking-wider">
                                     Select Access Role
                                 </h3>
                                 <div className="grid grid-cols-3 gap-4">
@@ -157,16 +150,16 @@ function InviteUser({ roles }: { roles: Role[] }) {
                                                 onClick={() => setData('role_id', String(roleData.id))}
                                                 className={`group relative cursor-pointer rounded-xl p-5 border transition-all active:scale-[0.98] text-left ${
                                                     isSelected
-                                                        ? 'bg-[#c3c0ff]/10 border-[#c3c0ff]/40'
-                                                        : 'bg-[#1f1f23] border-white/5 hover:border-[#c3c0ff]/50'
+                                                        ? 'bg-brand-primary/10 border-brand-primary/40'
+                                                        : 'bg-muted border-border hover:border-brand-primary/50'
                                                 }`}
                                             >
                                                 <div className="flex justify-between items-start mb-3">
                                                     <div
                                                         className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                                                             isSelected
-                                                                ? 'bg-[#c3c0ff]/20 text-[#c3c0ff]'
-                                                                : 'bg-[#c3c0ff]/10 text-[#c3c0ff]'
+                                                                ? 'bg-brand-primary/20 text-brand-primary'
+                                                                : 'bg-brand-primary/10 text-brand-primary'
                                                         }`}
                                                     >
                                                         <Icon className="size-5" />
@@ -174,19 +167,19 @@ function InviteUser({ roles }: { roles: Role[] }) {
                                                     <div
                                                         className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
                                                             isSelected
-                                                                ? 'border-[#c3c0ff] bg-[#c3c0ff]'
-                                                                : 'border-white/20 group-hover:border-[#c3c0ff]'
+                                                                ? 'border-brand-primary bg-brand-primary'
+                                                                : 'border-border group-hover:border-brand-primary'
                                                         }`}
                                                     >
                                                         {isSelected && (
-                                                            <div className="w-2 h-2 rounded-full bg-[#161349]" />
+                                                            <div className="w-2 h-2 rounded-full bg-brand-surface" />
                                                         )}
                                                     </div>
                                                 </div>
-                                                <p className="font-label-md text-label-md text-[#e4e1e7] mb-1">
+                                                <p className="font-label-md text-label-md text-card-foreground mb-1">
                                                     {role.name}
                                                 </p>
-                                                <p className="font-body-sm text-body-sm text-[#928f9a] leading-tight">
+                                                <p className="font-body-sm text-body-sm text-muted-foreground leading-tight">
                                                     {role.description}
                                                 </p>
                                             </button>
@@ -205,11 +198,11 @@ function InviteUser({ roles }: { roles: Role[] }) {
                                         onCheckedChange={(checked) =>
                                             setData('send_email', checked === true)
                                         }
-                                        className="border-white/20 data-[state=checked]:bg-[#c3c0ff] data-[state=checked]:border-[#c3c0ff]"
+                                        className="border-border data-[state=checked]:bg-brand-primary data-[state=checked]:border-brand-primary"
                                     />
                                     <Label
                                         htmlFor="send_email"
-                                        className="cursor-pointer font-body-sm text-body-sm text-[#c8c5d0]"
+                                        className="cursor-pointer font-body-sm text-body-sm text-muted-foreground"
                                     >
                                         Send invitation email
                                     </Label>
@@ -222,11 +215,11 @@ function InviteUser({ roles }: { roles: Role[] }) {
                                         onCheckedChange={(checked) =>
                                             setInviteAnother(checked === true)
                                         }
-                                        className="border-white/20 data-[state=checked]:bg-[#c3c0ff] data-[state=checked]:border-[#c3c0ff]"
+                                        className="border-border data-[state=checked]:bg-brand-primary data-[state=checked]:border-brand-primary"
                                     />
                                     <Label
                                         htmlFor="invite_another"
-                                        className="cursor-pointer font-body-sm text-body-sm text-[#c8c5d0]"
+                                        className="cursor-pointer font-body-sm text-body-sm text-muted-foreground"
                                     >
                                         Invite another after sending
                                     </Label>
@@ -235,18 +228,18 @@ function InviteUser({ roles }: { roles: Role[] }) {
                         </div>
 
                         {/* Modal Footer */}
-                        <div className="p-8 bg-[#0e0e12]/50 border-t border-white/5 flex justify-end gap-4">
+                        <div className="p-8 bg-muted/50 border-t border-border flex justify-end gap-4">
                             <Button
                                 variant="outline"
                                 asChild
-                                className="px-6 py-3 font-label-md text-label-md text-[#928f9a] hover:text-[#e4e1e7] hover:bg-[#2a292e] border-white/10 rounded-xl"
+                                className="px-6 py-3 font-label-md text-label-md text-muted-foreground hover:text-card-foreground hover:bg-muted border-border rounded-xl"
                             >
                                 <Link href={usersIndex.url()}>Cancel</Link>
                             </Button>
                             <Button
                                 type="submit"
                                 disabled={processing}
-                                className="bg-[#c3c0ff] text-[#161349] px-8 py-3 font-label-md text-label-md rounded-xl font-bold hover:bg-[#a9a4ff] active:scale-95 transition-all shadow-lg shadow-[#c3c0ff]/20"
+                                className="bg-brand-primary text-brand-surface px-8 py-3 font-label-md text-label-md rounded-xl font-bold hover:bg-brand-inverse-primary active:scale-95 transition-all shadow-lg shadow-brand-primary/20"
                             >
                                 {processing && <Spinner className="mr-2 size-4" />}
                                 Send Invite

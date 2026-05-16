@@ -62,13 +62,13 @@ function CreditUsageBar({ consumed, total }: { consumed: number; total: number }
         <div className="space-y-2">
             {/* Progress bar */}
             <div className="flex items-center gap-3">
-                <div className="flex-1 h-3 bg-[#2a292e] rounded-full overflow-hidden">
+                <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-gradient-to-r from-[#ff6b6b] to-[#ff8585] rounded-full"
+                        className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full"
                         style={{ width: `${consumedPercentage}%` }}
                     />
                 </div>
-                <span className="font-label-md text-label-md text-[#ff6b6b] font-bold">
+                <span className="font-label-md text-label-md text-red-500 font-bold">
                     {consumedPercentage}%
                 </span>
             </div>
@@ -76,12 +76,12 @@ function CreditUsageBar({ consumed, total }: { consumed: number; total: number }
             {/* Stats row */}
             <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-[#ff6b6b]" />
-                    <span className="text-[#928f9a]">Used: <span className="text-[#ff6b6b] font-medium">{consumed.toLocaleString()}</span></span>
+                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                    <span className="text-muted-foreground">Used: <span className="text-red-500 font-medium">{consumed.toLocaleString()}</span></span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-[#4fdbc8]" />
-                    <span className="text-[#928f9a]">Left: <span className="text-[#4fdbc8] font-medium">{remaining.toLocaleString()}</span></span>
+                    <div className="w-2 h-2 rounded-full bg-brand-secondary" />
+                    <span className="text-muted-foreground">Left: <span className="text-brand-secondary font-medium">{remaining.toLocaleString()}</span></span>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@ function Index({ credits, packages, transactions }: Props) {
             <div className="space-y-6">
                 {/* Warning Banner */}
                 {isLowCredit && (
-                    <div className="bg-[#93000a] text-[#ffdad6] px-6 py-4 rounded-xl flex items-center justify-between border border-[#ffb4ab]/20">
+                    <div className="bg-destructive text-destructive-foreground px-6 py-4 rounded-xl flex items-center justify-between border border-destructive/20">
                         <div className="flex items-center gap-3">
                             <AlertTriangle className="size-5" />
                             <div>
@@ -115,7 +115,7 @@ function Index({ credits, packages, transactions }: Props) {
                                 </p>
                             </div>
                         </div>
-                        <button className="bg-[#ffdad6] text-[#93000a] px-4 py-2 rounded-lg font-bold text-label-sm hover:opacity-90 transition-opacity">
+                        <button className="bg-destructive-foreground text-destructive px-4 py-2 rounded-lg font-bold text-label-sm hover:opacity-90 transition-opacity">
                             RECHARGE NOW
                         </button>
                     </div>
@@ -124,23 +124,16 @@ function Index({ credits, packages, transactions }: Props) {
                 {/* Dashboard Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                     {/* Current Balance Card - Compact */}
-                    <div
-                        className="md:col-span-5 rounded-xl p-4"
-                        style={{
-                            background: 'rgba(32, 31, 35, 0.8)',
-                            backdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(255, 255, 255, 0.05)',
-                        }}
-                    >
+                    <div className="md:col-span-5 rounded-xl p-4 bg-card border border-border">
                         <div className="flex items-center justify-between mb-3">
                             <div>
-                                <p className="text-xs text-[#928f9a] uppercase tracking-wider">Balance</p>
-                                <h2 className="text-2xl font-bold text-[#e2dfff]">
+                                <p className="text-xs text-muted-foreground uppercase tracking-wider">Balance</p>
+                                <h2 className="text-2xl font-bold text-card-foreground">
                                     {credits.toLocaleString()} <span className="text-base font-normal opacity-60">Credits</span>
                                 </h2>
                             </div>
-                            <div className="bg-[#2a292e] p-2 rounded-full">
-                                <Wallet className="size-4 text-[#c3c0ff]" />
+                            <div className="bg-secondary p-2 rounded-full">
+                                <Wallet className="size-4 text-brand-primary" />
                             </div>
                         </div>
 
@@ -149,29 +142,29 @@ function Index({ credits, packages, transactions }: Props) {
 
                     {/* Credit Packages - Original Cards */}
                     <div className="md:col-span-7 space-y-4">
-                        <p className="font-label-md text-label-md text-[#928f9a] uppercase tracking-widest">
+                        <p className="font-label-md text-label-md text-muted-foreground uppercase tracking-widest">
                             Available Plans
                         </p>
                         <div className="grid gap-4">
                             {packages.map((pkg) => (
                                 <div
                                     key={pkg.id}
-                                    className="flex items-center justify-between bg-[#1f1f23] rounded-xl p-5 border border-white/5 hover:border-[#c3c0ff]/30 transition-colors"
+                                    className="flex items-center justify-between bg-card rounded-xl p-5 border border-border hover:border-brand-primary/30 transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-lg bg-[#c3c0ff]/10 flex items-center justify-center">
-                                            <Wallet className="size-6 text-[#c3c0ff]" />
+                                        <div className="w-12 h-12 rounded-lg bg-brand-primary/10 flex items-center justify-center">
+                                            <Wallet className="size-6 text-brand-primary" />
                                         </div>
                                         <div>
-                                            <h3 className="font-label-md text-label-md text-[#e4e1e7]">{pkg.name}</h3>
+                                            <h3 className="font-label-md text-label-md text-card-foreground">{pkg.name}</h3>
                                             {pkg.description && (
-                                                <p className="font-body-sm text-body-sm text-[#928f9a]">{pkg.description}</p>
+                                                <p className="font-body-sm text-body-sm text-muted-foreground">{pkg.description}</p>
                                             )}
                                             {pkg.features && pkg.features.length > 0 && (
                                                 <ul className="mt-1 flex gap-3">
                                                     {pkg.features.slice(0, 2).map((feature, i) => (
-                                                        <li key={i} className="flex items-center gap-1 text-xs text-[#928f9a]">
-                                                            <Check className="size-3 text-[#4fdbc8]" />
+                                                        <li key={i} className="flex items-center gap-1 text-xs text-muted-foreground">
+                                                            <Check className="size-3 text-brand-secondary" />
                                                             {feature}
                                                         </li>
                                                     ))}
@@ -181,16 +174,16 @@ function Index({ credits, packages, transactions }: Props) {
                                     </div>
                                     <div className="flex items-center gap-6">
                                         <div className="text-right">
-                                            <p className="font-headline-md text-headline-md text-[#e4e1e7]">
+                                            <p className="font-headline-md text-headline-md text-card-foreground">
                                                 {formatPrice(pkg.price_cents, pkg.currency)}
                                             </p>
-                                            <p className="font-body-sm text-body-sm text-[#c3c0ff]">
+                                            <p className="font-body-sm text-body-sm text-brand-primary">
                                                 {pkg.credits.toLocaleString()} credits
                                             </p>
                                         </div>
                                         <Button
                                             onClick={() => handleBuy(pkg.id)}
-                                            className="bg-[#c3c0ff] text-[#161349] hover:bg-[#a9a4ff] font-bold px-6"
+                                            className="bg-brand-primary text-brand-surface hover:bg-brand-inverse-primary font-bold px-6"
                                         >
                                             Purchase
                                         </Button>
@@ -199,8 +192,8 @@ function Index({ credits, packages, transactions }: Props) {
                             ))}
                         </div>
                         {packages.length === 0 && (
-                            <div className="rounded-xl border border-dashed border-[#928f9a]/30 p-6 text-center bg-[#1f1f23]">
-                                <p className="font-body-sm text-body-sm text-[#928f9a]">
+                            <div className="rounded-xl border border-dashed border-border p-6 text-center bg-card">
+                                <p className="font-body-sm text-body-sm text-muted-foreground">
                                     No credit packages available at the moment.
                                 </p>
                             </div>
@@ -209,14 +202,14 @@ function Index({ credits, packages, transactions }: Props) {
                 </div>
 
                 {/* Transaction History */}
-                <div className="bg-[#1f1f23] rounded-xl overflow-hidden border border-white/5">
-                    <div className="p-6 flex justify-between items-center bg-white/5">
-                        <h3 className="font-headline-md text-headline-md text-[#e4e1e7]">Transaction History</h3>
+                <div className="bg-card rounded-xl overflow-hidden border border-border">
+                    <div className="p-6 flex justify-between items-center bg-muted/50">
+                        <h3 className="font-headline-md text-headline-md text-card-foreground">Transaction History</h3>
                         <div className="flex gap-2">
-                            <button className="p-2 text-[#928f9a] hover:text-[#e4e1e7] transition-colors">
+                            <button className="p-2 text-muted-foreground hover:text-card-foreground transition-colors">
                                 <Filter className="size-5" />
                             </button>
-                            <button className="p-2 text-[#928f9a] hover:text-[#e4e1e7] transition-colors">
+                            <button className="p-2 text-muted-foreground hover:text-card-foreground transition-colors">
                                 <Download className="size-5" />
                             </button>
                         </div>
@@ -224,44 +217,44 @@ function Index({ credits, packages, transactions }: Props) {
 
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-white/[0.02] border-b border-white/5">
+                            <thead className="bg-muted/30 border-b border-border">
                                 <tr>
-                                    <th className="p-6 font-label-md text-label-md text-[#928f9a]">Date</th>
-                                    <th className="p-6 font-label-md text-label-md text-[#928f9a]">Description</th>
-                                    <th className="p-6 font-label-md text-label-md text-[#928f9a]">Amount</th>
-                                    <th className="p-6 font-label-md text-label-md text-[#928f9a]">Status</th>
-                                    <th className="p-6 font-label-md text-label-md text-[#928f9a] text-right">Action</th>
+                                    <th className="p-6 font-label-md text-label-md text-muted-foreground">Date</th>
+                                    <th className="p-6 font-label-md text-label-md text-muted-foreground">Description</th>
+                                    <th className="p-6 font-label-md text-label-md text-muted-foreground">Amount</th>
+                                    <th className="p-6 font-label-md text-label-md text-muted-foreground">Status</th>
+                                    <th className="p-6 font-label-md text-label-md text-muted-foreground text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/5">
+                            <tbody className="divide-y divide-border">
                                 {transactions.length === 0 ? (
                                     <tr>
                                         <td colSpan={5} className="p-8 text-center">
-                                            <p className="font-body-md text-body-md text-[#928f9a]">
+                                            <p className="font-body-md text-body-md text-muted-foreground">
                                                 No transactions yet. Purchase credits to get started.
                                             </p>
                                         </td>
                                     </tr>
                                 ) : (
                                     transactions.map((transaction) => (
-                                    <tr key={transaction.id} className="hover:bg-white/[0.02] transition-colors">
-                                        <td className="p-6 font-body-md text-body-md text-[#e4e1e7]">{transaction.date}</td>
+                                    <tr key={transaction.id} className="hover:bg-muted/30 transition-colors">
+                                        <td className="p-6 font-body-md text-body-md text-card-foreground">{transaction.date}</td>
                                         <td className="p-6">
                                             <div className="flex items-center gap-3">
                                                 <div
                                                     className={`w-8 h-8 rounded flex items-center justify-center ${
                                                         transaction.type === 'credit'
-                                                            ? 'bg-[#c3c0ff]/10'
-                                                            : 'bg-[#ffb4ab]/10'
+                                                            ? 'bg-brand-primary/10'
+                                                            : 'bg-destructive/10'
                                                     }`}
                                                 >
                                                     {transaction.type === 'credit' ? (
-                                                        <Plus className={`size-4 text-[#c3c0ff]`} />
+                                                        <Plus className={`size-4 text-brand-primary`} />
                                                     ) : (
-                                                        <ArrowRight className={`size-4 text-[#ffb4ab] rotate-45`} />
+                                                        <ArrowRight className={`size-4 text-destructive rotate-45`} />
                                                     )}
                                                 </div>
-                                                <span className="font-body-md text-body-md text-[#e4e1e7]">
+                                                <span className="font-body-md text-body-md text-card-foreground">
                                                     {transaction.description}
                                                 </span>
                                             </div>
@@ -269,21 +262,21 @@ function Index({ credits, packages, transactions }: Props) {
                                         <td
                                             className={`p-6 font-body-md text-body-md font-bold ${
                                                 transaction.type === 'credit'
-                                                    ? 'text-[#4fdbc8]'
-                                                    : 'text-[#ffb4ab]'
+                                                    ? 'text-brand-secondary'
+                                                    : 'text-destructive'
                                             }`}
                                         >
                                             {transaction.type === 'credit' ? '+' : ''}
                                             ${Math.abs(transaction.amount).toFixed(2)}
                                         </td>
                                         <td className="p-6">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-label-sm bg-[#4fdbc8]/10 text-[#4fdbc8]">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-label-sm bg-brand-secondary/10 text-brand-secondary">
                                                 <Check className="size-3 mr-1" />
                                                 Completed
                                             </span>
                                         </td>
                                         <td className="p-6 text-right">
-                                            <button className="text-[#928f9a] hover:text-[#c3c0ff] transition-colors">
+                                            <button className="text-muted-foreground hover:text-brand-primary transition-colors">
                                                 <Receipt className="size-5" />
                                             </button>
                                         </td>
@@ -295,19 +288,19 @@ function Index({ credits, packages, transactions }: Props) {
                     </div>
 
                     {/* Pagination */}
-                    <div className="p-6 flex items-center justify-between border-t border-white/5">
-                        <span className="font-body-sm text-body-sm text-[#928f9a]">
+                    <div className="p-6 flex items-center justify-between border-t border-border">
+                        <span className="font-body-sm text-body-sm text-muted-foreground">
                             Showing 1 to {transactions.length} of {transactions.length} transactions
                         </span>
                         <div className="flex gap-2">
                             <button
-                                className="px-4 py-2 rounded-lg bg-[#2a292e] text-[#928f9a] hover:text-[#e4e1e7] disabled:opacity-50 flex items-center gap-1"
+                                className="px-4 py-2 rounded-lg bg-muted text-muted-foreground hover:text-card-foreground disabled:opacity-50 flex items-center gap-1"
                                 disabled
                             >
                                 <ChevronLeft className="size-4" />
                                 Previous
                             </button>
-                            <button className="px-4 py-2 rounded-lg bg-[#c3c0ff]/10 text-[#c3c0ff] hover:bg-[#c3c0ff]/20 flex items-center gap-1">
+                            <button className="px-4 py-2 rounded-lg bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 flex items-center gap-1">
                                 Next
                                 <ChevronRight className="size-4" />
                             </button>
