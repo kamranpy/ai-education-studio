@@ -92,27 +92,27 @@ function StatusBadge({ status }: { status: string }) {
     switch (status) {
         case 'grading':
             return (
-                <Badge className="gap-1 bg-[#dec56f]/20 text-[#fbe188] border-[#fbe188]/30">
+                <Badge className="gap-1 bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/30">
                     <Sparkles className="size-3 animate-pulse" />
                     AI Grading
                 </Badge>
             );
         case 'needs_review':
             return (
-                <Badge className="bg-[#ffb4ab]/20 text-[#ffb4ab] border-[#ffb4ab]/30">
+                <Badge className="bg-destructive/20 text-destructive border-destructive/30">
                     <AlertTriangle className="mr-1 size-3" />
                     Needs Review
                 </Badge>
             );
         case 'graded':
             return (
-                <Badge className="bg-[#03b4a2]/20 text-[#4fdbc8] border-[#4fdbc8]/30">
+                <Badge className="bg-brand-secondary/20 text-brand-secondary border-brand-secondary/30">
                     <CheckCircle2 className="mr-1 size-3" />
                     Graded
                 </Badge>
             );
         default:
-            return <Badge className="bg-[#918fa1]/20 text-[#918fa1]">{status}</Badge>;
+            return <Badge className="bg-muted text-muted-foreground">{status}</Badge>;
     }
 }
 
@@ -162,29 +162,29 @@ function AttemptsShow({ exam, attempt }: Props) {
         <>
             {/* Header */}
             <div className="mb-8">
-                <nav className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#918fa1] mb-3">
-                    <Link href={examsShow.url(exam.id)} className="hover:text-[#c3c0ff] transition-colors">
+                <nav className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                    <Link href={examsShow.url(exam.id)} className="hover:text-brand-primary transition-colors">
                         {exam.title}
                     </Link>
-                    <span className="text-[#c3c0ff]">/</span>
-                    <Link href={attemptsIndex.url({ exam: exam.id })} className="hover:text-[#c3c0ff] transition-colors">
+                    <span className="text-brand-primary">/</span>
+                    <Link href={attemptsIndex.url({ exam: exam.id })} className="hover:text-brand-primary transition-colors">
                         Attempts
                     </Link>
-                    <span className="text-[#c3c0ff]">/</span>
-                    <span className="text-[#c3c0ff]">Review</span>
+                    <span className="text-brand-primary">/</span>
+                    <span className="text-brand-primary">Review</span>
                 </nav>
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div className="flex items-start gap-4">
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#c3c0ff]/20 to-[#4fdbc8]/20 flex items-center justify-center">
-                            <User className="size-7 text-[#c3c0ff]" />
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-brand-primary/20 to-brand-secondary/20 flex items-center justify-center">
+                            <User className="size-7 text-brand-primary" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-semibold text-[#e5e2e1]">{attempt.user.name}</h1>
-                            <p className="text-[#918fa1]">{attempt.user.email}</p>
+                            <h1 className="text-2xl font-semibold text-card-foreground">{attempt.user.name}</h1>
+                            <p className="text-muted-foreground">{attempt.user.email}</p>
                             <div className="flex items-center gap-3 mt-2">
                                 <StatusBadge status={attempt.status} />
                                 {attempt.submitted_at && (
-                                    <span className="text-sm text-[#918fa1] flex items-center gap-1">
+                                    <span className="text-sm text-muted-foreground flex items-center gap-1">
                                         <Clock className="size-3" />
                                         {new Date(attempt.submitted_at).toLocaleString()}
                                     </span>
@@ -192,22 +192,14 @@ function AttemptsShow({ exam, attempt }: Props) {
                             </div>
                         </div>
                     </div>
-                    <div
-                        className="rounded-xl px-6 py-4 text-center"
-                        style={{
-                            background: passed
-                                ? 'rgba(3, 180, 162, 0.15)'
-                                : 'rgba(255, 180, 171, 0.15)',
-                            border: `1px solid ${passed ? 'rgba(79, 219, 200, 0.3)' : 'rgba(255, 180, 171, 0.3)'}`,
-                        }}
-                    >
-                        <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: passed ? '#4fdbc8' : '#ffb4ab' }}>
+                    <div className={`rounded-xl px-6 py-4 text-center border ${passed ? 'bg-brand-secondary/10 border-brand-secondary/30' : 'bg-destructive/10 border-destructive/30'}`}>
+                        <p className={`text-xs font-semibold uppercase tracking-wider mb-1 ${passed ? 'text-brand-secondary' : 'text-destructive'}`}>
                             {passed ? 'PASSED' : 'FAILED'}
                         </p>
-                        <p className="text-3xl font-bold" style={{ color: passed ? '#4fdbc8' : '#ffb4ab' }}>
+                        <p className={`text-3xl font-bold ${passed ? 'text-brand-secondary' : 'text-destructive'}`}>
                             {attempt.final_score.toFixed(1)}%
                         </p>
-                        <p className="text-xs text-[#918fa1] mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                             Passing: {exam.passing_score}%
                         </p>
                     </div>
@@ -237,7 +229,7 @@ function AttemptsShow({ exam, attempt }: Props) {
             <div className="mt-8 flex justify-center">
                 <Button
                     asChild
-                    className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                    className="bg-transparent border border-border text-muted-foreground hover:text-card-foreground hover:bg-muted"
                 >
                     <Link href={attemptsIndex.url({ exam: exam.id })}>
                         <ArrowLeft className="mr-2 size-4" />
@@ -279,27 +271,20 @@ function AnswerCard({
     const isCorrect = answer.answer_data?.is_correct as boolean | undefined;
 
     return (
-        <div
-            className="rounded-xl overflow-hidden"
-            style={{
-                background: 'rgba(26, 26, 26, 0.6)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(146, 143, 154, 0.25)',
-            }}
-        >
+        <div className="rounded-xl overflow-hidden bg-card border border-border">
             {/* Answer Header */}
-            <div className="px-6 py-4 border-b border-[#918fa1]/20">
+            <div className="px-6 py-4 border-b border-border">
                 <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
-                        <span className="flex items-center gap-2 text-[#918fa1] mt-1">
+                        <span className="flex items-center gap-2 text-muted-foreground mt-1">
                             {questionTypeIcon(answer.question.type)}
                         </span>
                         <div>
                             <div className="flex items-center gap-2 mb-1">
-                                <span className="text-sm font-medium text-[#918fa1]">Q{index + 1}</span>
+                                <span className="text-sm font-medium text-muted-foreground">Q{index + 1}</span>
                                 <StatusBadge status={answer.status} />
                             </div>
-                            <p className="text-[#e5e2e1] font-medium">{answer.question.text}</p>
+                            <p className="text-card-foreground font-medium">{answer.question.text}</p>
                         </div>
                     </div>
                     <div className="text-right">
@@ -309,10 +294,10 @@ function AnswerCard({
 
                             return (
                                 <>
-                                    <p className="text-2xl font-bold" style={{ color: percentage >= passingScore ? '#4fdbc8' : '#ffb4ab' }}>
+                                    <p className={`text-2xl font-bold ${percentage >= passingScore ? 'text-brand-secondary' : 'text-destructive'}`}>
                                         {percentage.toFixed(1)}%
                                     </p>
-                                    <p className="text-xs text-[#918fa1]">of {answer.question.points} points</p>
+                                    <p className="text-xs text-muted-foreground">of {answer.question.points} points</p>
                                 </>
                             );
                         })()}
@@ -324,19 +309,19 @@ function AnswerCard({
             <div className="px-6 py-4">
                 {/* Student Answer */}
                 <div className="mb-4">
-                    <h4 className="text-xs font-semibold text-[#918fa1] uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-2">
                         <User className="size-3" />
                         Student Answer
                     </h4>
                     {answer.question.type === 'written_answer' ? (
-                        <div className="bg-[#201f1f] rounded-lg p-4 border border-[#918fa1]/20">
-                            <p className="text-[#e5e2e1] whitespace-pre-wrap">{answerText || 'No answer provided'}</p>
+                        <div className="bg-muted rounded-lg p-4 border border-border">
+                            <p className="text-card-foreground whitespace-pre-wrap">{answerText || 'No answer provided'}</p>
                         </div>
                     ) : (
                         <div className={`flex items-center gap-2 p-3 rounded-lg border ${
                             isCorrect
-                                ? 'bg-[#03b4a2]/10 border-[#4fdbc8]/30 text-[#4fdbc8]'
-                                : 'bg-[#93000a]/10 border-[#ffb4ab]/30 text-[#ffb4ab]'
+                                ? 'bg-brand-secondary/10 border-brand-secondary/30 text-brand-secondary'
+                                : 'bg-destructive/10 border-destructive/30 text-destructive'
                         }`}>
                             {isCorrect ? <CheckCircle2 className="size-4" /> : <XCircle className="size-4" />}
                             <span className="font-medium">
@@ -349,18 +334,18 @@ function AnswerCard({
                 {/* AI Evaluation (for written answers) */}
                 {answer.question.type === 'written_answer' && answer.ai_explanation && (
                     <div className="mb-4">
-                        <h4 className="text-xs font-semibold text-[#c3c0ff] uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <h4 className="text-xs font-semibold text-brand-primary uppercase tracking-wider mb-2 flex items-center gap-2">
                             <Sparkles className="size-3" />
                             AI Evaluation
                         </h4>
-                        <div className="bg-[#201f1f]/50 rounded-lg p-4 border border-[#c3c0ff]/20">
-                            <p className="text-sm text-[#c7c4d8] mb-3">{answer.ai_explanation}</p>
+                        <div className="bg-muted/50 rounded-lg p-4 border border-brand-primary/20">
+                            <p className="text-sm text-muted-foreground mb-3">{answer.ai_explanation}</p>
                             {answer.ai_axes && Object.keys(answer.ai_axes).length > 0 && (
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                                     {Object.entries(answer.ai_axes).map(([axis, score]) => (
-                                        <div key={axis} className="bg-[#0e0e0e] rounded-lg p-2 text-center">
-                                            <p className="text-xs text-[#918fa1] capitalize">{axis.replace('_', ' ')}</p>
-                                            <p className="text-sm font-semibold" style={{ color: score >= 0.7 ? '#4fdbc8' : score >= 0.4 ? '#fbe188' : '#ffb4ab' }}>
+                                        <div key={axis} className="bg-muted rounded-lg p-2 text-center">
+                                            <p className="text-xs text-muted-foreground capitalize">{axis.replace('_', ' ')}</p>
+                                            <p className={`text-sm font-semibold ${score >= 0.7 ? 'text-brand-secondary' : score >= 0.4 ? 'text-amber-500' : 'text-destructive'}`}>
                                                 {Math.round(score * 100)}%
                                             </p>
                                         </div>
@@ -376,23 +361,23 @@ function AnswerCard({
                     <div className="mb-4">
                         <button
                             onClick={() => setShowDetails(!showDetails)}
-                            className="text-xs font-semibold text-[#918fa1] uppercase tracking-wider mb-2 hover:text-[#c3c0ff] transition-colors"
+                            className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 hover:text-brand-primary transition-colors"
                         >
                             {showDetails ? '▼' : '▶'} Grading Guidelines
                         </button>
                         {showDetails && (
-                            <div className="bg-[#201f1f] rounded-lg p-4 border border-[#918fa1]/20">
-                                <p className="text-sm text-[#c7c4d8] whitespace-pre-wrap">{answer.question.grading_guidelines}</p>
+                            <div className="bg-muted rounded-lg p-4 border border-border">
+                                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{answer.question.grading_guidelines}</p>
                             </div>
                         )}
                     </div>
                 )}
 
                 {/* Override Section */}
-                <div className="border-t border-[#918fa1]/20 pt-4">
+                <div className="border-t border-border pt-4">
                     {answer.overrides.length > 0 && (
                         <div className="mb-4">
-                            <h4 className="text-xs font-semibold text-[#918fa1] uppercase tracking-wider mb-2">
+                            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                                 Override History
                             </h4>
                             <div className="space-y-2">
@@ -405,12 +390,12 @@ function AnswerCard({
 
                                     return (
                                         <div key={override.id} className="flex items-center gap-3 text-sm">
-                                            <span className="text-[#918fa1]">{override.actor.name}</span>
-                                            <span className="text-[#c7c4d8]">
+                                            <span className="text-muted-foreground">{override.actor.name}</span>
+                                            <span className="text-card-foreground">
                                                 {fromPercentage !== null ? fromPercentage.toFixed(1) : '—'}% → {toPercentage.toFixed(1)}%
                                             </span>
                                             {override.comment && (
-                                                <span className="text-[#918fa1] italic">"{override.comment}"</span>
+                                                <span className="text-muted-foreground italic">"{override.comment}"</span>
                                             )}
                                         </div>
                                     );
@@ -422,7 +407,7 @@ function AnswerCard({
                     {isEditing ? (
                         <div className="space-y-3">
                             <div>
-                                <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                     Override Score (%)
                                 </Label>
                                 <Input
@@ -431,11 +416,11 @@ function AnswerCard({
                                     max={100}
                                     value={editData.override_score}
                                     onChange={(e) => setEditData({ ...editData, override_score: parseFloat(e.target.value) || 0 })}
-                                    className="w-32 bg-[#201f1f] border-[#918fa1]/30 text-[#e5e2e1] focus:border-[#c3c0ff]"
+                                    className="w-32 bg-muted border-border text-card-foreground focus:border-brand-primary"
                                 />
                             </div>
                             <div>
-                                <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wider">
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                     Comment (Optional)
                                 </Label>
                                 <Textarea
@@ -443,21 +428,21 @@ function AnswerCard({
                                     onChange={(e) => setEditData({ ...editData, override_comment: e.target.value })}
                                     placeholder="Reason for override..."
                                     rows={2}
-                                    className="!bg-[#201f1f] border-[#918fa1]/30 text-[#e5e2e1] placeholder:text-[#918fa1]/50 focus:border-[#c3c0ff] focus:!bg-[#201f1f]"
+                                    className="bg-muted border-border text-card-foreground placeholder:text-muted-foreground/50 focus:border-brand-primary focus:bg-muted"
                                 />
                             </div>
                             <div className="flex gap-2">
                                 <Button
                                     onClick={onSave}
                                     disabled={processing}
-                                    className="bg-[#c3c0ff] text-[#161349] hover:opacity-90"
+                                    className="bg-brand-primary text-brand-surface hover:opacity-90"
                                 >
                                     <Save className="mr-2 size-4" />
                                     {processing ? 'Saving...' : 'Save Override'}
                                 </Button>
                                 <Button
                                     onClick={onCancel}
-                                    className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                                    className="bg-transparent border border-border text-muted-foreground hover:text-card-foreground hover:bg-muted"
                                 >
                                     Cancel
                                 </Button>
@@ -466,7 +451,7 @@ function AnswerCard({
                     ) : (
                         <Button
                             onClick={onStartEdit}
-                            className="bg-transparent border border-[#c3c0ff]/40 text-[#c3c0ff] hover:bg-[#c3c0ff]/10"
+                            className="bg-transparent border border-brand-primary/40 text-brand-primary hover:bg-brand-primary/10"
                         >
                             <Edit3 className="mr-2 size-4" />
                             Override Score

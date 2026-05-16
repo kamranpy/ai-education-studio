@@ -37,10 +37,26 @@ class BillingController extends Controller
             $currentPackageId = $match?->id;
         }
 
+        // Fetch recent transactions
+        $transactions = Transaction::where('institute_id', $institute->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(fn ($t) => [
+                'id' => $t->id,
+                'date' => $t->created_at->format('M d, Y'),
+                'description' => $t->notes ?? ($t->credits_added > 0 ? 'Credit Purchase' : 'Credit Usage'),
+                'amount' => $t->amount_cents / 100,
+                'credits' => $t->credits_added,
+                'type' => $t->credits_added > 0 ? 'credit' : 'debit',
+                'status' => $t->status,
+            ]);
+
         return Inertia::render('Admin/Billing/Index', [
             'credits' => $institute->credits,
             'packages' => $packages,
             'current_package_id' => $currentPackageId,
+            'transactions' => $transactions,
         ]);
     }
 

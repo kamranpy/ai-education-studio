@@ -121,13 +121,13 @@ function questionTypeLabel(type: string) {
     }
 }
 
-function questionTypeColor(type: string) {
+function questionTypeColor(type: string): string {
     switch (type) {
         case 'mcq':
         case 'true_false':
-            return 'bg-[#03b4a2]/20 text-[#4fdbc8] border-[#4fdbc8]/30';
+            return 'bg-brand-secondary/20 text-brand-secondary border-brand-secondary/30';
         case 'written_answer':
-            return 'bg-[#dec56f]/20 text-[#fbe188] border-[#fbe188]/30';
+            return 'bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/30';
         default:
             return 'bg-muted text-muted-foreground';
     }
@@ -326,15 +326,15 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                     {/* Header */}
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-2xl font-semibold text-[#c3c0ff]">Exam Builder</h3>
-                            <p className="text-sm text-[#c7c4d8]">
+                            <h3 className="text-2xl font-semibold text-brand-primary">Exam Builder</h3>
+                            <p className="text-sm text-muted-foreground">
                                 {isEditing ? `Editing: ${exam.title}` : 'Constructing assessment with Aegis AI Grading Engine'}
                             </p>
                         </div>
                         {!isLocked && (
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button className="bg-[#c3c0ff] text-[#131313] hover:opacity-90 flex items-center gap-2">
+                                    <Button className="bg-brand-primary text-brand-surface hover:opacity-90 flex items-center gap-2">
                                         <Plus className="size-4" />
                                         Add Question
                                         <ChevronDown className="size-4" />
@@ -360,11 +360,11 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
 
                     {/* Locked Alert */}
                     {isLocked && (
-                        <div className="rounded-xl border border-[#ffb4ab]/30 bg-[#93000a]/20 p-4 flex items-start gap-3">
-                            <Lock className="size-5 text-[#ffb4ab] shrink-0 mt-0.5" />
+                        <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 flex items-start gap-3">
+                            <Lock className="size-5 text-destructive shrink-0 mt-0.5" />
                             <div>
-                                <h4 className="font-medium text-[#ffb4ab]">Exam Locked</h4>
-                                <p className="text-sm text-[#c7c4d8]">
+                                <h4 className="font-medium text-destructive">Exam Locked</h4>
+                                <p className="text-sm text-muted-foreground">
                                     This exam has student attempts and cannot be modified. You can still view questions and grading guidelines.
                                 </p>
                             </div>
@@ -380,7 +380,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                             <button
                                 onClick={() => addQuestion('mcq')}
                                 disabled={isLocked}
-                                className="w-full py-16 border-2 border-dashed border-[#918fa1]/30 rounded-xl text-[#c7c4d8] hover:border-[#c3c0ff] hover:text-[#c3c0ff] transition-all flex flex-col items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full py-16 border-2 border-dashed border-border rounded-xl text-muted-foreground hover:border-brand-primary hover:text-brand-primary transition-all flex flex-col items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <Plus className="size-10" />
                                 <span className="text-xs font-semibold uppercase tracking-widest">Drop a new component here</span>
@@ -390,17 +390,12 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                 {data.questions.map((question, index) => (
                                     <div
                                         key={index}
-                                        className="rounded-xl p-5 flex gap-3 group"
-                                        style={{
-                                            background: 'rgba(26, 26, 26, 0.6)',
-                                            backdropFilter: 'blur(12px)',
-                                            border: '1px solid rgba(146, 143, 154, 0.25)',
-                                        }}
+                                        className="rounded-xl p-5 flex gap-3 group bg-card border border-border"
                                     >
                                         {/* Drag Handle & Number */}
-                                        <div className="flex flex-col items-center gap-1 text-[#c7c4d8]">
+                                        <div className="flex flex-col items-center gap-1 text-muted-foreground">
                                             <button
-                                                className="hover:text-[#c3c0ff] transition-colors cursor-grab active:cursor-grabbing disabled:opacity-30"
+                                                className="hover:text-brand-primary transition-colors cursor-grab active:cursor-grabbing disabled:opacity-30"
                                                 disabled={isLocked}
                                             >
                                                 <GripVertical className="size-5" />
@@ -418,7 +413,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                                 {!isLocked && (
                                                     <button
                                                         onClick={() => confirmDeleteQuestion(index)}
-                                                        className="text-[#918fa1] hover:text-[#ffb4ab] transition-colors opacity-0 group-hover:opacity-100"
+                                                        className="text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
                                                     >
                                                         <Trash2 className="size-4" />
                                                     </button>
@@ -432,7 +427,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                                 onChange={(e) => updateQuestion(index, 'text', e.target.value)}
                                                 placeholder="Enter question text..."
                                                 disabled={isLocked}
-                                                className="w-full bg-transparent border-b border-[#918fa1]/30 focus:border-[#c3c0ff] focus:outline-none py-1 text-lg text-[#e5e2e1] placeholder:text-[#918fa1]/50 disabled:opacity-50"
+                                                className="w-full bg-transparent border-b border-border focus:border-brand-primary focus:outline-none py-1 text-lg text-card-foreground placeholder:text-muted-foreground/50 disabled:opacity-50"
                                             />
 
                                             {/* MCQ/TrueFalse Choices */}
@@ -441,7 +436,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                                     {question.choices.map((choice, choiceIndex) => (
                                                         <div
                                                             key={choiceIndex}
-                                                            className="flex items-center gap-2 bg-[#201f1f] rounded-lg px-4 py-3 border border-[#918fa1]/20"
+                                                            className="flex items-center gap-2 bg-muted rounded-lg px-4 py-3 border border-border"
                                                         >
                                                             <input
                                                                 type="radio"
@@ -449,7 +444,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                                                 checked={choice.is_correct}
                                                                 onChange={() => setCorrectChoice(index, choiceIndex)}
                                                                 disabled={isLocked}
-                                                                className="accent-[#c3c0ff]"
+                                                                className="accent-brand-primary"
                                                             />
                                                             <input
                                                                 type="text"
@@ -457,7 +452,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                                                 onChange={(e) => updateChoice(index, choiceIndex, 'text', e.target.value)}
                                                                 placeholder={`Option ${String.fromCharCode(65 + choiceIndex)}`}
                                                                 disabled={isLocked || question.type === 'true_false'}
-                                                                className="bg-transparent w-full border-none focus:ring-0 text-sm text-[#e5e2e1] placeholder:text-[#918fa1]/50 disabled:opacity-50"
+                                                                className="bg-transparent w-full border-none focus:ring-0 text-sm text-card-foreground placeholder:text-muted-foreground/50 disabled:opacity-50"
                                                             />
                                                             {question.type === 'mcq' && !isLocked && question.choices.length > 2 && (
                                                                 <button
@@ -484,7 +479,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                             {/* Written Answer Guidelines */}
                                             {question.type === 'written_answer' && (
                                                 <div className="space-y-1 pt-2">
-                                                    <label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide flex items-center gap-2">
+                                                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-2">
                                                         <Sparkles className="size-3" />
                                                         AI Grading Guidelines
                                                     </label>
@@ -494,7 +489,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                                         placeholder="Define expected key points for AI grading..."
                                                         rows={3}
                                                         disabled={isLocked}
-                                                        className="w-full bg-[#1c1b1b] border border-[#918fa1]/30 rounded-lg p-3 text-sm text-[#e5e2e1] focus:outline-none focus:border-[#c3c0ff] transition-all placeholder:text-[#918fa1]/50 disabled:opacity-50"
+                                                        className="w-full bg-muted border border-border rounded-lg p-3 text-sm text-card-foreground focus:outline-none focus:border-brand-primary transition-all placeholder:text-muted-foreground/50 disabled:opacity-50"
                                                     />
                                                 </div>
                                             )}
@@ -502,14 +497,14 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                             {/* Points & Move Controls */}
                                             <div className="flex items-center gap-4 pt-2">
                                                 <div className="flex items-center gap-2">
-                                                    <Label className="text-xs text-[#918fa1] uppercase">Points</Label>
+                                                    <Label className="text-xs text-muted-foreground uppercase">Points</Label>
                                                     <Input
                                                         type="number"
                                                         min={1}
                                                         value={question.points}
                                                         onChange={(e) => updateQuestion(index, 'points', parseInt(e.target.value) || 1)}
                                                         disabled={isLocked}
-                                                        className="w-20 h-8 bg-[#201f1f] border-[#918fa1]/30 text-sm text-[#e5e2e1] focus:border-[#c3c0ff] disabled:opacity-50"
+                                                        className="w-20 h-8 bg-muted border-border text-sm text-card-foreground focus:border-brand-primary disabled:opacity-50"
                                                     />
                                                 </div>
                                                 <div className="flex items-center gap-1 ml-auto">
@@ -570,22 +565,14 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                 {/* Right Column: Settings (40%) */}
                 <div className="col-span-12 lg:col-span-5 xl:col-span-4 lg:sticky lg:top-[88px] space-y-6">
                     {/* Exam Settings Card */}
-                    <div
-                        className="rounded-2xl p-6 space-y-6"
-                        style={{
-                            background: 'rgba(26, 26, 26, 0.6)',
-                            backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(195, 192, 255, 0.2)',
-                            boxShadow: '0 0 40px rgba(195, 192, 255, 0.05)',
-                        }}
-                    >
+                    <div className="rounded-2xl p-6 space-y-6 bg-card border border-border shadow-lg">
                         {/* Settings Header */}
                         <div className="flex items-start justify-between">
                             <div>
-                                <h4 className="text-xl font-semibold text-[#e5e2e1]">Exam Settings</h4>
+                                <h4 className="text-xl font-semibold text-card-foreground">Exam Settings</h4>
                                 <div className="flex items-center gap-2 mt-1">
                                     <div className="status-pulse" />
-                                    <span className="text-xs font-semibold text-[#4fdbc8] uppercase tracking-wider">
+                                    <span className="text-xs font-semibold text-brand-secondary uppercase tracking-wider">
                                         {data.status === 'published' ? 'Published Live' : 'Drafting Live'}
                                     </span>
                                 </div>
@@ -595,7 +582,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                         {/* Form Fields */}
                         <div className="space-y-4">
                             <div className="space-y-1">
-                                <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                     Exam Title
                                 </Label>
                                 <Input
@@ -603,13 +590,13 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                     onChange={(e) => setData('title', e.target.value)}
                                     placeholder="e.g. Advanced Deep Learning Midterm"
                                     disabled={isLocked}
-                                    className="bg-[#201f1f] border-[#918fa1]/30 text-[#e5e2e1] focus:border-[#c3c0ff] focus:ring-1 focus:ring-[#c3c0ff] placeholder:text-[#918fa1]/50 disabled:opacity-50"
+                                    className="bg-muted border-border text-card-foreground focus:border-brand-primary focus:ring-1 focus:ring-brand-primary placeholder:text-muted-foreground/50 disabled:opacity-50"
                                 />
                                 <InputError message={errors.title} />
                             </div>
 
                             <div className="space-y-1">
-                                <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                     Description
                                 </Label>
                                 <textarea
@@ -618,14 +605,14 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                     placeholder="Describe the exam content and objectives..."
                                     rows={2}
                                     disabled={isLocked}
-                                    className="w-full bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 py-2 text-sm text-[#e5e2e1] focus:outline-none focus:border-[#c3c0ff] focus:ring-1 focus:ring-[#c3c0ff] placeholder:text-[#918fa1]/50 disabled:opacity-50"
+                                    className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm text-card-foreground focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary placeholder:text-muted-foreground/50 disabled:opacity-50"
                                 />
                                 <InputError message={errors.description} />
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                 <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                         Class/Subject
                                     </Label>
                                     <Input
@@ -633,15 +620,15 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                         onChange={(e) => setData('class_name', e.target.value)}
                                         placeholder="e.g. CS501-DL"
                                         disabled={isLocked}
-                                        className="bg-[#201f1f] border-[#918fa1]/30 text-sm text-[#e5e2e1] focus:border-[#c3c0ff] placeholder:text-[#918fa1]/50 disabled:opacity-50 h-10"
+                                        className="bg-muted border-border text-sm text-card-foreground focus:border-brand-primary placeholder:text-muted-foreground/50 disabled:opacity-50 h-10"
                                     />
                                     <InputError message={errors.class_name} />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                         Passing Score
                                     </Label>
-                                    <div className="flex items-center gap-2 bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 h-10">
+                                    <div className="flex items-center gap-2 bg-muted border border-border rounded-lg px-3 h-10">
                                         <Input
                                             type="number"
                                             min={0}
@@ -649,18 +636,18 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                             value={data.passing_score}
                                             onChange={(e) => setData('passing_score', parseInt(e.target.value) || 0)}
                                             disabled={isLocked}
-                                            className="bg-transparent border-none focus:ring-0 text-sm text-[#e5e2e1] p-0 disabled:opacity-50"
+                                            className="bg-transparent border-none focus:ring-0 text-sm text-card-foreground p-0 disabled:opacity-50"
                                         />
-                                        <span className="text-[#918fa1] text-sm">%</span>
+                                        <span className="text-muted-foreground text-sm">%</span>
                                     </div>
                                     <InputError message={errors.passing_score} />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                                    <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                         Time Limit
                                     </Label>
-                                    <div className="flex items-center gap-2 bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 h-10">
-                                        <Clock className="size-4 text-[#918fa1]" />
+                                    <div className="flex items-center gap-2 bg-muted border border-border rounded-lg px-3 h-10">
+                                        <Clock className="size-4 text-muted-foreground" />
                                         <Input
                                             type="number"
                                             min={1}
@@ -668,27 +655,27 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                             onChange={(e) => setData('time_limit_minutes', e.target.value ? parseInt(e.target.value) : null)}
                                             placeholder="Optional"
                                             disabled={isLocked}
-                                            className="bg-transparent border-none focus:ring-0 text-sm text-[#e5e2e1] p-0 disabled:opacity-50"
+                                            className="bg-transparent border-none focus:ring-0 text-sm text-card-foreground p-0 disabled:opacity-50"
                                         />
-                                        <span className="text-[#918fa1] text-xs uppercase">mins</span>
+                                        <span className="text-muted-foreground text-xs uppercase">mins</span>
                                     </div>
                                     <InputError message={errors.time_limit_minutes} />
                                 </div>
                             </div>
 
                             {/* Evaluation Strategy Toggle */}
-                            <div className="space-y-2 pt-2 border-t border-[#918fa1]/20">
-                                <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                            <div className="space-y-2 pt-2 border-t border-border">
+                                <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                     Grading Strategy
                                 </Label>
-                                <div className="flex p-1 bg-[#0e0e0e] rounded-xl gap-1">
+                                <div className="flex p-1 bg-muted rounded-xl gap-1">
                                     <button
                                         onClick={() => setData('evaluation_strategy', 'instant')}
                                         disabled={isLocked}
                                         className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-all ${
                                             data.evaluation_strategy === 'instant'
-                                                ? 'bg-[#2a2a2a] text-[#e5e2e1] border border-[#918fa1]/30'
-                                                : 'text-[#918fa1] hover:text-[#e5e2e1]'
+                                                ? 'bg-card text-card-foreground border border-border'
+                                                : 'text-muted-foreground hover:text-card-foreground'
                                         } disabled:opacity-50`}
                                     >
                                         <Sparkles className="size-3" />
@@ -699,8 +686,8 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                         disabled={isLocked}
                                         className={`flex-1 py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-all ${
                                             data.evaluation_strategy === 'manual'
-                                                ? 'bg-[#2a2a2a] text-[#e5e2e1] border border-[#918fa1]/30'
-                                                : 'text-[#918fa1] hover:text-[#e5e2e1]'
+                                                ? 'bg-card text-card-foreground border border-border'
+                                                : 'text-muted-foreground hover:text-card-foreground'
                                         } disabled:opacity-50`}
                                     >
                                         <PenLine className="size-3" />
@@ -711,12 +698,12 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-col gap-3 pt-4 border-t border-[#918fa1]/20">
+                        <div className="flex flex-col gap-3 pt-4 border-t border-border">
                             {!isLocked && (
                                 <Button
                                     onClick={() => handleSubmit('published')}
                                     disabled={processing || data.questions.length === 0}
-                                    className="w-full bg-[#c3c0ff] text-[#161349] hover:bg-[#a9a4ff] font-semibold text-lg py-5 rounded-xl shadow-lg shadow-[#c3c0ff]/20 disabled:opacity-50 transition-colors"
+                                    className="w-full bg-brand-primary text-brand-surface hover:bg-brand-inverse-primary font-semibold text-lg py-5 rounded-xl shadow-lg shadow-brand-primary/20 disabled:opacity-50 transition-colors"
                                 >
                                     {processing ? (
                                         <>
@@ -730,45 +717,31 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                             )}
                             {!isLocked && (
                                 <Button
-                                    type="button"
-                                    disabled={processing}
                                     onClick={() => handleSubmit('draft')}
-                                    className="w-full bg-transparent border border-[#c3c0ff]/40 text-[#c3c0ff] hover:bg-[#c3c0ff]/10 py-5 rounded-xl font-medium disabled:opacity-50"
+                                    disabled={processing}
+                                    variant="outline"
+                                    className="w-full border-border text-brand-primary hover:bg-brand-primary/10 hover:text-card-foreground font-semibold py-5 rounded-xl transition-colors"
                                 >
-                                    {processing ? (
-                                        <>
-                                            <Loader2 className="mr-2 size-4 animate-spin" />
-                                            Saving...
-                                        </>
-                                    ) : (
-                                        'Save as Draft'
-                                    )}
+                                    Save as Draft
                                 </Button>
                             )}
-                            <Button
-                                asChild
-                                className="w-full bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]"
+                            <Link
+                                href={examsIndex.url()}
+                                className="w-full text-center py-3 text-sm text-muted-foreground hover:text-card-foreground transition-colors"
                             >
-                                <Link href={examsIndex.url()}>Cancel</Link>
-                            </Button>
+                                Cancel
+                            </Link>
                         </div>
                     </div>
 
                     {/* Stats Card */}
-                    <div
-                        className="rounded-xl p-4 flex items-center gap-4"
-                        style={{
-                            background: 'rgba(26, 26, 26, 0.6)',
-                            backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(146, 143, 154, 0.25)',
-                        }}
-                    >
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#4fdbc8]/20 to-[#c3c0ff]/20 flex items-center justify-center">
-                            <ListChecks className="size-6 text-[#4fdbc8]" />
+                    <div className="rounded-xl p-4 flex items-center gap-4 bg-card border border-border">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-secondary/20 to-brand-primary/20 flex items-center justify-center">
+                            <ListChecks className="size-6 text-brand-secondary" />
                         </div>
                         <div>
-                            <p className="text-xs font-semibold text-[#c3c0ff] uppercase tracking-wide">Questions</p>
-                            <p className="text-lg font-semibold text-[#e5e2e1]">{data.questions.length}</p>
+                            <p className="text-xs font-semibold text-brand-primary uppercase tracking-wide">Questions</p>
+                            <p className="text-lg font-semibold text-card-foreground">{data.questions.length}</p>
                         </div>
                     </div>
                 </div>
@@ -776,22 +749,22 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
 
             {/* Delete Confirmation Dialog */}
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <DialogContent className="bg-[#1c1b1b] border-[#918fa1]/30 text-[#e5e2e1]">
+                <DialogContent className="bg-card border-border text-card-foreground">
                     <DialogHeader>
                         <DialogTitle>Delete Question</DialogTitle>
-                        <DialogDescription className="text-[#918fa1]">
+                        <DialogDescription className="text-muted-foreground">
                             Are you sure you want to delete this question? This action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button className="bg-transparent border border-[#918fa1]/30 text-[#918fa1] hover:text-[#e5e2e1] hover:bg-[#2a2a2a]">
+                            <Button className="bg-transparent border border-border text-muted-foreground hover:text-card-foreground hover:bg-muted">
                                 Cancel
                             </Button>
                         </DialogClose>
                         <Button
                             onClick={executeDelete}
-                            className="bg-[#93000a] text-[#ffdad6] hover:bg-[#93000a]/80"
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/80"
                         >
                             Delete
                         </Button>

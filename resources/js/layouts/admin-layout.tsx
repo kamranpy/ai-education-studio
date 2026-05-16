@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { index as examsIndex } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
 import { index as billingIndex } from '@/actions/App/Http/Controllers/Institute/BillingController';
+import { ThemeDropdown } from '@/components/theme-dropdown';
 import { logout } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { edit as profileEdit } from '@/routes/profile';
@@ -356,9 +357,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 }
             `}</style>
 
-            {/* Force dark mode — admin portal is dark-only by design */}
             <div
-                className="dark min-h-screen"
+                className="min-h-screen"
                 style={{ backgroundColor: 'var(--portal-bg)', fontFamily: 'Inter, sans-serif' }}
             >
                 {/* Desktop sidebar */}
@@ -438,7 +438,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                             </nav>
                         </div>
 
-                        {/* Right: notifications + user */}
+                        {/* Right: notifications + theme + user */}
                         <div className="flex items-center gap-2">
                             {/* Notification bell with red dot */}
                             <div className="relative">
@@ -465,6 +465,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                                         border: '1.5px solid var(--portal-topbar-bg)',
                                     }}
                                 />
+                            </div>
+
+                            {/* Theme Switcher */}
+                            <div className="pl-1">
+                                <ThemeDropdown />
                             </div>
 
                             {/* User avatar + name */}

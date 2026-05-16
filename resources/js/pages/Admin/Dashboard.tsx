@@ -586,11 +586,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr
-                                        style={{
-                                            background: 'rgba(42, 41, 45, 0.5)',
-                                        }}
-                                    >
+                                    <tr className="bg-muted/50">
                                         {[
                                             'Exam Name',
                                             'Status',
@@ -601,48 +597,23 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                         ].map((col) => (
                                             <th
                                                 key={col}
-                                                className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider"
-                                                style={{
-                                                    color: 'var(--portal-text-muted)',
-                                                }}
+                                                className="px-6 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
                                             >
                                                 {col}
                                             </th>
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody
-                                    style={{
-                                        borderTop: '1px solid rgba(70, 69, 85, 0.15)',
-                                    }}
-                                >
+                                <tbody className="border-t border-border">
                                     {recentExams.map((exam) => (
                                         <tr
                                             key={exam.id}
-                                            className="transition-colors"
-                                            style={{
-                                                borderBottom:
-                                                    '1px solid rgba(70, 69, 85, 0.1)',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                (
-                                                    e.currentTarget as HTMLElement
-                                                ).style.background =
-                                                    'rgba(53, 52, 56, 0.3)';
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                (
-                                                    e.currentTarget as HTMLElement
-                                                ).style.background = 'transparent';
-                                            }}
+                                            className="transition-colors border-b border-border hover:bg-muted/30"
                                         >
                                             <td className="px-6 py-4">
                                                 <Link
                                                     href={examsShow.url(exam.id)}
-                                                    className="text-sm font-medium transition-opacity hover:opacity-70"
-                                                    style={{
-                                                        color: 'var(--portal-text-primary)',
-                                                    }}
+                                                    className="text-sm font-medium text-card-foreground transition-opacity hover:opacity-70"
                                                 >
                                                     {exam.title}
                                                 </Link>
@@ -650,20 +621,10 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                             <td className="px-6 py-4">
                                                 <StatusBadge status={exam.status} />
                                             </td>
-                                            <td
-                                                className="px-6 py-4 text-sm"
-                                                style={{
-                                                    color: 'var(--portal-text-primary)',
-                                                }}
-                                            >
+                                            <td className="px-6 py-4 text-sm text-card-foreground">
                                                 {exam.students_count}
                                             </td>
-                                            <td
-                                                className="px-6 py-4 text-sm"
-                                                style={{
-                                                    color: 'var(--portal-text-primary)',
-                                                }}
-                                            >
+                                            <td className="px-6 py-4 text-sm text-card-foreground">
                                                 {exam.avg_score != null
                                                     ? `${exam.avg_score.toFixed(0)}%`
                                                     : '—'}
