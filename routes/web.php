@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ExamAttemptAdminController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExamController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\UserInviteController;
@@ -59,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {
-        Route::inertia('dashboard', 'Admin/Dashboard')->name('admin.dashboard');
+        Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
         Route::get('users', [UserController::class, 'index'])->name('admin.users.index');
         Route::get('users/invite', [UserInviteController::class, 'create'])->name('admin.users.invite');

@@ -1,13 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import {
-    AlertTriangle,
-    ChevronLeft,
-    ChevronRight,
-    FileText,
-    MoreHorizontal,
-    Search,
-} from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
+
 import {
     index as examsIndex,
     create as examsCreate,
@@ -17,7 +11,6 @@ import {
     unpublish as examsUnpublish,
 } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { index as billingIndex } from '@/actions/App/Http/Controllers/Institute/BillingController';
-import { ExamStatusBadge } from '@/components/exam/exam-status-badge';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -27,7 +20,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import {
     DropdownMenu,
@@ -35,7 +27,6 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
 import {
     Select,
     SelectContent,
@@ -43,15 +34,21 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import AdminLayout from '@/layouts/admin-layout';
+
+// ── Pulse animation for ACTIVE status ────────────────────────────────────────
+const pulseStyle = `
+@keyframes statusPulse {
+    0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(79,219,200,0.7); }
+    70%  { transform: scale(1);    box-shadow: 0 0 0 6px rgba(79,219,200,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(79,219,200,0); }
+}
+.status-pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background-color: var(--brand-secondary);
+    animation: statusPulse 2s infinite;
+}
+`;
 
 type ExamRecord = {
     id: number;
@@ -79,6 +76,229 @@ type Filters = {
     search?: string;
     status?: string;
 };
+
+// ── Status badge ──────────────────────────────────────────────────────────────
+
+function StatusBadge({ status }: { status: string }) {
+    const s = status.toLowerCase();
+
+    if (s === 'published') {
+        return (
+            <div
+                className="flex items-center gap-2 px-3 py-1 rounded-lg"
+                style={{ background: 'rgba(79,219,200,0.1)' }}
+            >
+                <span className="status-pulse" />
+                <span
+                    className="text-xs font-bold tracking-widest uppercase"
+                    style={{ color: 'var(--brand-secondary)' }}
+                >
+                    ACTIVE
+                </span>
+            </div>
+        );
+    }
+
+    if (s === 'locked') {
+        return (
+            <div
+                className="flex items-center gap-2 px-3 py-1 rounded-lg"
+                style={{ background: 'rgba(255,180,171,0.2)' }}
+            >
+                <span
+                    className="text-xs font-bold tracking-widest uppercase"
+                    style={{ color: 'var(--brand-error)' }}
+                >
+                    COMPLETED
+                </span>
+            </div>
+        );
+    }
+
+    // draft / scheduled / fallback
+    return (
+        <div
+            className="flex items-center gap-2 px-3 py-1 rounded-lg"
+            style={{ background: 'rgba(53,52,62,0.6)' }}
+        >
+            <span
+                className="text-xs font-bold tracking-widest uppercase"
+                style={{ color: 'var(--portal-text-muted)' }}
+            >
+                {s === 'draft' ? 'DRAFT' : status.toUpperCase()}
+            </span>
+        </div>
+    );
+}
+
+// ── Subject tag pill ──────────────────────────────────────────────────────────
+
+function SubjectTag({ label }: { label: string }) {
+    return (
+        <span
+            className="inline-block px-2 py-0.5 rounded-full text-xs font-semibold tracking-wider uppercase"
+            style={{
+                color: 'var(--brand-primary-text)',
+                border: '1px solid rgba(195,192,255,0.3)',
+                background: 'rgba(195,192,255,0.05)',
+            }}
+        >
+            {label}
+        </span>
+    );
+}
+
+// ── Exam card ─────────────────────────────────────────────────────────────────
+
+function ExamCard({
+    exam,
+    onPublish,
+    onUnpublish,
+}: {
+    exam: ExamRecord;
+    onPublish: (exam: ExamRecord) => void;
+    onUnpublish: (exam: ExamRecord) => void;
+}) {
+    const subjectLabel = exam.subject_name ?? exam.class_name ?? 'Exam';
+    const dateLabel = exam.created_at
+        ? new Date(exam.created_at).toLocaleDateString('en-US', {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+          })
+        : '—';
+
+    return (
+        <div
+            className="glass-card p-8 rounded-2xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(195,192,255,0.15)] relative overflow-hidden"
+        >
+            {/* Card header */}
+            <div className="flex justify-between items-start mb-4">
+                <div className="space-y-1 flex-1 min-w-0 pr-4">
+                    <SubjectTag label={subjectLabel} />
+                    <h3
+                        className="text-xl font-semibold leading-tight"
+                        style={{ color: 'var(--portal-text-primary)' }}
+                    >
+                        <Link
+                            href={examsShow.url(exam.id)}
+                            className="hover:underline"
+                        >
+                            {exam.title}
+                        </Link>
+                    </h3>
+                </div>
+                <StatusBadge status={exam.status} />
+            </div>
+
+            {/* Stats grid */}
+            <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="space-y-1">
+                    <p
+                        className="text-xs font-semibold tracking-wider uppercase"
+                        style={{ color: 'var(--portal-text-muted)' }}
+                    >
+                        Questions
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <span
+                            className="material-symbols-outlined text-[20px]"
+                            style={{ color: 'var(--brand-primary-text)' }}
+                        >
+                            quiz
+                        </span>
+                        <span
+                            className="text-xl font-medium"
+                            style={{ color: 'var(--portal-text-primary)' }}
+                        >
+                            {exam.questions_count}
+                        </span>
+                    </div>
+                </div>
+                <div className="space-y-1">
+                    <p
+                        className="text-xs font-semibold tracking-wider uppercase"
+                        style={{ color: 'var(--portal-text-muted)' }}
+                    >
+                        Created
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <span
+                            className="material-symbols-outlined text-[20px]"
+                            style={{ color: 'var(--brand-primary-text)' }}
+                        >
+                            event
+                        </span>
+                        <span
+                            className="text-xl font-medium"
+                            style={{ color: 'var(--portal-text-primary)' }}
+                        >
+                            {dateLabel}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Card footer */}
+            <div
+                className="flex gap-3 pt-6"
+                style={{ borderTop: '1px solid rgba(146,143,154,0.1)' }}
+            >
+                <Link
+                    href={examsShow.url(exam.id)}
+                    className="flex-1 py-2 rounded-lg text-center text-sm font-bold transition-opacity hover:opacity-90"
+                    style={{
+                        background: 'var(--brand-primary)',
+                        color: 'var(--brand-primary-text)',
+                    }}
+                >
+                    View
+                </Link>
+                <Link
+                    href={examsEdit.url(exam.id)}
+                    className="px-4 py-2 rounded-lg text-sm font-bold transition-colors hover:opacity-80"
+                    style={{
+                        border: '1px solid rgba(146,143,154,0.3)',
+                        color: 'var(--portal-text-secondary)',
+                    }}
+                >
+                    Edit
+                </Link>
+                <ExamCardActions
+                    exam={exam}
+                    onPublish={onPublish}
+                    onUnpublish={onUnpublish}
+                />
+            </div>
+        </div>
+    );
+}
+
+// ── Pagination helpers ────────────────────────────────────────────────────────
+
+function buildPageNumbers(current: number, last: number): (number | '...')[] {
+    if (last <= 7) {
+        return Array.from({ length: last }, (_, i) => i + 1);
+    }
+
+    const pages: (number | '...')[] = [1];
+
+    if (current > 3) {
+pages.push('...');
+}
+
+    for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) {
+        pages.push(p);
+    }
+
+    if (current < last - 2) {
+pages.push('...');
+}
+
+    pages.push(last);
+
+    return pages;
+}
 
 function ExamsIndex({
     exams,
@@ -126,32 +346,82 @@ function ExamsIndex({
         router.post(examsUnpublish.url(exam.id));
     }
 
+    function goToPage(page: number) {
+        router.get(
+            examsIndex.url({ query: { search: filters.search, status: filters.status, page } }),
+            {},
+            { preserveState: true, replace: true },
+        );
+    }
+
+    const pageNumbers = buildPageNumbers(exams.current_page, exams.last_page);
+    const showingFrom = exams.total === 0 ? 0 : (exams.current_page - 1) * exams.per_page + 1;
+    const showingTo = Math.min(exams.current_page * exams.per_page, exams.total);
+
     return (
         <>
             <Head title="Exams" />
+            {/* Inject pulse keyframes */}
+            <style>{pulseStyle}</style>
 
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
-                        Exams
-                    </h1>
-                    <Button asChild>
-                        <Link href={examsCreate.url()}>+ New Exam</Link>
-                    </Button>
+            <div className="p-6 space-y-6">
+                {/* Page header */}
+                <div className="flex justify-between items-end">
+                    <div>
+                        <h1
+                            className="text-2xl font-semibold"
+                            style={{ color: 'var(--portal-text-primary)' }}
+                        >
+                            Exams
+                        </h1>
+                        <p
+                            className="mt-1 text-sm"
+                            style={{ color: 'var(--portal-text-secondary)' }}
+                        >
+                            Manage and monitor academic performance via AI-proctored sessions.
+                        </p>
+                    </div>
+                    <Link
+                        href={examsCreate.url()}
+                        className="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all hover:opacity-90 active:scale-95 shadow-lg"
+                        style={{
+                            background: 'var(--brand-primary)',
+                            color: 'var(--brand-primary-text)',
+                        }}
+                    >
+                        <span className="material-symbols-outlined text-[18px]">add</span>
+                        Create Exam
+                    </Link>
                 </div>
 
+                {/* Zero-credits warning */}
                 {credits <= 0 && (
-                    <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950">
-                        <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-600 dark:text-amber-400" />
+                    <div
+                        className="glass-card rounded-xl p-4 flex items-start gap-3"
+                        style={{ borderColor: 'rgba(255,182,149,0.3)' }}
+                    >
+                        <span
+                            className="material-symbols-outlined mt-0.5 shrink-0"
+                            style={{ color: 'var(--brand-tertiary)' }}
+                        >
+                            warning
+                        </span>
                         <div>
-                            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                            <p
+                                className="text-sm font-semibold"
+                                style={{ color: 'var(--brand-tertiary)' }}
+                            >
                                 Your institute has 0 exam credits remaining.
                             </p>
-                            <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">
+                            <p
+                                className="mt-1 text-sm"
+                                style={{ color: 'var(--portal-text-secondary)' }}
+                            >
                                 Students will not be able to start new exams until you purchase a credit package.{' '}
                                 <Link
                                     href={billingIndex.url()}
-                                    className="font-medium underline hover:no-underline"
+                                    className="font-semibold underline hover:no-underline"
+                                    style={{ color: 'var(--brand-tertiary)' }}
                                 >
                                     Go to Billing →
                                 </Link>
@@ -160,154 +430,234 @@ function ExamsIndex({
                     </div>
                 )}
 
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <div className="relative flex-1">
-                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                            placeholder="Search exams..."
-                            value={search}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            className="pl-9"
-                        />
+                {/* Filter bar */}
+                <div className="glass-card rounded-xl p-4 flex flex-wrap items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <span
+                            className="text-xs font-semibold tracking-wider uppercase"
+                            style={{ color: 'var(--portal-text-muted)' }}
+                        >
+                            Status:
+                        </span>
+                        <Select
+                            value={filters.status ?? 'all'}
+                            onValueChange={handleFilter}
+                        >
+                            <SelectTrigger
+                                className="h-8 text-xs border-0 rounded-lg px-3"
+                                style={{
+                                    background: 'var(--portal-input-bg)',
+                                    color: 'var(--portal-text-primary)',
+                                    border: '1px solid var(--portal-input-border)',
+                                }}
+                            >
+                                <SelectValue placeholder="All Statuses" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Statuses</SelectItem>
+                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="published">Published</SelectItem>
+                                <SelectItem value="locked">Locked</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
-                    <Select
-                        value={filters.status ?? 'all'}
-                        onValueChange={handleFilter}
-                    >
-                        <SelectTrigger className="w-40">
-                            <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="draft">Draft</SelectItem>
-                            <SelectItem value="published">
-                                Published
-                            </SelectItem>
-                            <SelectItem value="locked">Locked</SelectItem>
-                        </SelectContent>
-                    </Select>
+
+                    <div className="flex items-center gap-2">
+                        <span
+                            className="text-xs font-semibold tracking-wider uppercase"
+                            style={{ color: 'var(--portal-text-muted)' }}
+                        >
+                            Search:
+                        </span>
+                        <div className="relative">
+                            <span
+                                className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px]"
+                                style={{ color: 'var(--portal-text-muted)' }}
+                            >
+                                search
+                            </span>
+                            <input
+                                type="text"
+                                placeholder="Search exams..."
+                                value={search}
+                                onChange={(e) => handleSearch(e.target.value)}
+                                className="h-8 pl-8 pr-3 rounded-lg text-xs outline-none transition-all"
+                                style={{
+                                    background: 'var(--portal-input-bg)',
+                                    border: '1px solid var(--portal-input-border)',
+                                    color: 'var(--portal-text-primary)',
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 ml-auto">
+                        <button
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors"
+                            style={{ color: 'var(--portal-text-muted)' }}
+                        >
+                            <span className="material-symbols-outlined text-[16px]">filter_list</span>
+                            More Filters
+                        </button>
+                        <div
+                            className="h-5 w-px"
+                            style={{ background: 'var(--portal-divider)' }}
+                        />
+                        <button
+                            className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors"
+                            style={{ color: 'var(--portal-text-muted)' }}
+                        >
+                            <span className="material-symbols-outlined text-[16px]">sort</span>
+                            Latest First
+                        </button>
+                    </div>
                 </div>
 
+                {/* Exam cards grid / empty state */}
                 {exams.data.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
-                        <FileText className="mb-4 size-12 text-muted-foreground" />
-                        <h2 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">
+                    <div
+                        className="rounded-2xl flex flex-col items-center justify-center p-16 transition-all duration-300"
+                        style={{
+                            border: '2px dashed rgba(146,143,154,0.2)',
+                        }}
+                    >
+                        <div
+                            className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
+                            style={{ background: 'rgba(53,52,62,0.6)' }}
+                        >
+                            <span
+                                className="material-symbols-outlined text-4xl"
+                                style={{
+                                    color: 'var(--brand-primary-text)',
+                                    fontVariationSettings: "'wght' 100",
+                                }}
+                            >
+                                post_add
+                            </span>
+                        </div>
+                        <h2
+                            className="text-xl font-semibold mb-2"
+                            style={{ color: 'var(--portal-text-primary)' }}
+                        >
                             No exams yet
                         </h2>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            Create your first exam to start assessing students.
+                        <p
+                            className="text-sm text-center max-w-xs mb-6"
+                            style={{ color: 'var(--portal-text-secondary)' }}
+                        >
+                            Start building your next assessment or import from a template.
                         </p>
-                        <Button asChild className="mt-4">
-                            <Link href={examsCreate.url()}>Create Exam</Link>
-                        </Button>
+                        <Link
+                            href={examsCreate.url()}
+                            className="px-6 py-2 rounded-lg text-sm font-bold transition-colors hover:opacity-80"
+                            style={{
+                                border: '1px solid var(--brand-primary)',
+                                color: 'var(--brand-primary-text)',
+                            }}
+                        >
+                            Quick Create
+                        </Link>
                     </div>
                 ) : (
                     <>
-                        <div className="rounded-lg border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead scope="col">
-                                            Exam Name
-                                        </TableHead>
-                                        <TableHead scope="col">
-                                            Class
-                                        </TableHead>
-                                        <TableHead scope="col">
-                                            Subject
-                                        </TableHead>
-                                        <TableHead scope="col">
-                                            Questions
-                                        </TableHead>
-                                        <TableHead scope="col">
-                                            Status
-                                        </TableHead>
-                                        <TableHead scope="col">
-                                            <span className="sr-only">
-                                                Actions
-                                            </span>
-                                        </TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {exams.data.map((exam) => (
-                                        <TableRow key={exam.id}>
-                                            <TableCell className="font-medium">
-                                                <Link
-                                                    href={examsShow.url(
-                                                        exam.id,
-                                                    )}
-                                                    className="hover:underline"
-                                                >
-                                                    {exam.title}
-                                                </Link>
-                                            </TableCell>
-                                            <TableCell>
-                                                {exam.class_name || '-'}
-                                            </TableCell>
-                                            <TableCell>
-                                                {exam.subject_name || '-'}
-                                            </TableCell>
-                                            <TableCell>
-                                                {exam.questions_count}
-                                            </TableCell>
-                                            <TableCell>
-                                                <ExamStatusBadge
-                                                    status={exam.status}
-                                                />
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <ExamRowActions
-                                                    exam={exam}
-                                                    onPublish={handlePublish}
-                                                    onUnpublish={
-                                                        handleUnpublish
-                                                    }
-                                                />
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                            {exams.data.map((exam) => (
+                                <ExamCard
+                                    key={exam.id}
+                                    exam={exam}
+                                    onPublish={handlePublish}
+                                    onUnpublish={handleUnpublish}
+                                />
+                            ))}
                         </div>
 
+                        {/* Pagination */}
                         {exams.last_page > 1 && (
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="text-muted-foreground">
+                            <div
+                                className="flex items-center justify-between pt-6"
+                                style={{ borderTop: '1px solid rgba(146,143,154,0.1)' }}
+                            >
+                                <p
+                                    className="text-xs font-semibold"
+                                    style={{ color: 'var(--portal-text-muted)' }}
+                                >
                                     Showing{' '}
-                                    {(exams.current_page - 1) *
-                                        exams.per_page +
-                                        1}
-                                    –
-                                    {Math.min(
-                                        exams.current_page * exams.per_page,
-                                        exams.total,
-                                    )}{' '}
-                                    of {exams.total}
-                                </span>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
+                                    <span style={{ color: 'var(--portal-text-primary)', fontWeight: 700 }}>
+                                        {showingFrom}–{showingTo}
+                                    </span>{' '}
+                                    of{' '}
+                                    <span style={{ color: 'var(--portal-text-primary)', fontWeight: 700 }}>
+                                        {exams.total}
+                                    </span>{' '}
+                                    exams
+                                </p>
+
+                                <div className="flex items-center gap-2">
+                                    {/* Prev */}
+                                    <button
                                         disabled={!exams.prev_page_url}
                                         onClick={() =>
                                             exams.prev_page_url &&
                                             router.get(exams.prev_page_url)
                                         }
+                                        className="w-10 h-10 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30"
+                                        style={{
+                                            border: '1px solid rgba(146,143,154,0.3)',
+                                            color: 'var(--portal-text-muted)',
+                                        }}
                                     >
-                                        <ChevronLeft className="size-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
+                                        <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                                    </button>
+
+                                    {/* Page numbers */}
+                                    <div className="flex items-center gap-1">
+                                        {pageNumbers.map((p, i) =>
+                                            p === '...' ? (
+                                                <span
+                                                    key={`ellipsis-${i}`}
+                                                    className="px-2 text-sm"
+                                                    style={{ color: 'var(--portal-text-muted)' }}
+                                                >
+                                                    ...
+                                                </span>
+                                            ) : (
+                                                <button
+                                                    key={p}
+                                                    onClick={() => goToPage(p as number)}
+                                                    className="w-10 h-10 flex items-center justify-center rounded-lg text-sm transition-colors"
+                                                    style={
+                                                        p === exams.current_page
+                                                            ? {
+                                                                  background: 'var(--brand-primary)',
+                                                                  color: 'var(--brand-primary-text)',
+                                                                  fontWeight: 700,
+                                                              }
+                                                            : {
+                                                                  color: 'var(--portal-text-muted)',
+                                                              }
+                                                    }
+                                                >
+                                                    {p}
+                                                </button>
+                                            ),
+                                        )}
+                                    </div>
+
+                                    {/* Next */}
+                                    <button
                                         disabled={!exams.next_page_url}
                                         onClick={() =>
                                             exams.next_page_url &&
                                             router.get(exams.next_page_url)
                                         }
+                                        className="w-10 h-10 flex items-center justify-center rounded-lg transition-colors disabled:opacity-30"
+                                        style={{
+                                            border: '1px solid rgba(146,143,154,0.3)',
+                                            color: 'var(--portal-text-muted)',
+                                        }}
                                     >
-                                        <ChevronRight className="size-4" />
-                                    </Button>
+                                        <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                                    </button>
                                 </div>
                             </div>
                         )}
@@ -318,7 +668,7 @@ function ExamsIndex({
     );
 }
 
-function ExamRowActions({
+function ExamCardActions({
     exam,
     onPublish,
     onUnpublish,
@@ -339,12 +689,12 @@ function ExamRowActions({
 
     function executeConfirm() {
         if (confirmAction === 'publish') {
-onPublish(exam);
-}
+            onPublish(exam);
+        }
 
         if (confirmAction === 'unpublish') {
-onUnpublish(exam);
-}
+            onUnpublish(exam);
+        }
 
         setConfirmOpen(false);
     }
@@ -352,8 +702,7 @@ onUnpublish(exam);
     const confirmMessages = {
         publish: {
             title: 'Publish Exam',
-            description:
-                'Publish this exam? Students will be able to see it.',
+            description: 'Publish this exam? Students will be able to see it.',
         },
         unpublish: {
             title: 'Unpublish Exam',
@@ -366,31 +715,24 @@ onUnpublish(exam);
         <>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm">
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="px-2"
+                        style={{ color: 'var(--portal-text-muted)' }}
+                    >
                         <MoreHorizontal className="size-4" />
-                        <span className="sr-only">Actions</span>
+                        <span className="sr-only">More actions</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                        <Link href={examsShow.url(exam.id)}>View</Link>
-                    </DropdownMenuItem>
-
                     {exam.status === 'draft' && (
-                        <>
-                            <DropdownMenuItem asChild>
-                                <Link href={examsEdit.url(exam.id)}>
-                                    Edit
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                                onClick={() => openConfirm('publish')}
-                            >
-                                Publish
-                            </DropdownMenuItem>
-                        </>
+                        <DropdownMenuItem
+                            onClick={() => openConfirm('publish')}
+                        >
+                            Publish
+                        </DropdownMenuItem>
                     )}
-
                     {exam.status === 'published' && (
                         <DropdownMenuItem
                             onClick={() => openConfirm('unpublish')}

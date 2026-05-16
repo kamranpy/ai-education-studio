@@ -254,11 +254,16 @@
     border-color: var(--portal-card-border-hover);
 }
 
-/* Glass card utility */
+/* Glass card utility — theme-aware */
 .glass-card {
-    background: rgba(26, 26, 26, 0.6);
+    background: var(--portal-card-bg);
     backdrop-filter: blur(12px);
-    border: 1px solid #2a2a2a;
+    border: 1px solid var(--portal-card-border);
+}
+
+.dark .glass-card {
+    background: rgba(26, 26, 26, 0.6);
+    border-color: rgba(70, 69, 85, 0.5);
 }
 
 /* Gradient border utility (used on pricing highlight) */
