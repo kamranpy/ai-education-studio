@@ -1,6 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import {
     ChevronDown,
+    Clock,
     GripVertical,
     ListChecks,
     Loader2,
@@ -622,8 +623,8 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                 <InputError message={errors.description} />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-3">
-                                <div className="space-y-1">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div className="space-y-1.5">
                                     <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
                                         Class/Subject
                                     </Label>
@@ -632,15 +633,15 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                         onChange={(e) => setData('class_name', e.target.value)}
                                         placeholder="e.g. CS501-DL"
                                         disabled={isLocked}
-                                        className="bg-[#201f1f] border-[#918fa1]/30 text-sm text-[#e5e2e1] focus:border-[#c3c0ff] placeholder:text-[#918fa1]/50 disabled:opacity-50"
+                                        className="bg-[#201f1f] border-[#918fa1]/30 text-sm text-[#e5e2e1] focus:border-[#c3c0ff] placeholder:text-[#918fa1]/50 disabled:opacity-50 h-10"
                                     />
                                     <InputError message={errors.class_name} />
                                 </div>
-                                <div className="space-y-1">
+                                <div className="space-y-1.5">
                                     <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
                                         Passing Score
                                     </Label>
-                                    <div className="flex items-center gap-2 bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 py-2">
+                                    <div className="flex items-center gap-2 bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 h-10">
                                         <Input
                                             type="number"
                                             min={0}
@@ -654,26 +655,25 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                     </div>
                                     <InputError message={errors.passing_score} />
                                 </div>
-                            </div>
-
-                            <div className="space-y-1">
-                                <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
-                                    Time Limit
-                                </Label>
-                                <div className="flex items-center gap-2 bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 py-2">
-                                    <Loader2 className="size-4 text-[#918fa1]" />
-                                    <Input
-                                        type="number"
-                                        min={1}
-                                        value={data.time_limit_minutes ?? ''}
-                                        onChange={(e) => setData('time_limit_minutes', e.target.value ? parseInt(e.target.value) : null)}
-                                        placeholder="Optional"
-                                        disabled={isLocked}
-                                        className="bg-transparent border-none focus:ring-0 text-sm text-[#e5e2e1] p-0 disabled:opacity-50"
-                                    />
-                                    <span className="text-[#918fa1] text-xs uppercase">mins</span>
+                                <div className="space-y-1.5">
+                                    <Label className="text-xs font-semibold text-[#918fa1] uppercase tracking-wide">
+                                        Time Limit
+                                    </Label>
+                                    <div className="flex items-center gap-2 bg-[#201f1f] border border-[#918fa1]/30 rounded-lg px-3 h-10">
+                                        <Clock className="size-4 text-[#918fa1]" />
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            value={data.time_limit_minutes ?? ''}
+                                            onChange={(e) => setData('time_limit_minutes', e.target.value ? parseInt(e.target.value) : null)}
+                                            placeholder="Optional"
+                                            disabled={isLocked}
+                                            className="bg-transparent border-none focus:ring-0 text-sm text-[#e5e2e1] p-0 disabled:opacity-50"
+                                        />
+                                        <span className="text-[#918fa1] text-xs uppercase">mins</span>
+                                    </div>
+                                    <InputError message={errors.time_limit_minutes} />
                                 </div>
-                                <InputError message={errors.time_limit_minutes} />
                             </div>
 
                             {/* Evaluation Strategy Toggle */}
@@ -716,7 +716,7 @@ function ExamBuilder({ exam }: { exam?: Exam }) {
                                 <Button
                                     onClick={() => handleSubmit('published')}
                                     disabled={processing || data.questions.length === 0}
-                                    className="w-full bg-[#c3c0ff] text-[#161349] hover:opacity-90 font-semibold text-lg py-5 rounded-xl shadow-lg shadow-[#c3c0ff]/20 disabled:opacity-50"
+                                    className="w-full bg-[#c3c0ff] text-[#161349] hover:bg-[#a9a4ff] font-semibold text-lg py-5 rounded-xl shadow-lg shadow-[#c3c0ff]/20 disabled:opacity-50 transition-colors"
                                 >
                                     {processing ? (
                                         <>
