@@ -11,10 +11,8 @@ import {
     Receipt,
     Wallet,
 } from 'lucide-react';
-import { useState } from 'react';
 import { checkout } from '@/actions/App/Http/Controllers/Institute/BillingController';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import AdminLayout from '@/layouts/admin-layout';
 
 interface CreditPackage {
@@ -78,12 +76,6 @@ const MOCK_TRANSACTIONS: Transaction[] = [
     },
 ];
 
-const TOP_UP_OPTIONS = [
-    { amount: 10, credits: 1000, popular: false },
-    { amount: 45, credits: 5000, popular: true },
-    { amount: 80, credits: 10000, popular: false },
-];
-
 function formatPrice(cents: number, currency: string): string {
     if (cents === 0) {
         return 'Free';
@@ -95,11 +87,12 @@ function formatPrice(cents: number, currency: string): string {
     }).format(cents / 100);
 }
 
-// Circular Progress Component
-function CircularProgress({ percentage, size = 96 }: { percentage: number; size?: number }) {
+// Circular Progress Component - Shows CONSUMED percentage
+function CircularProgress({ consumed, total, size = 96 }: { consumed: number; total: number; size?: number }) {
     const radius = 40;
     const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (percentage / 100) * circumference;
+    const consumedPercentage = total > 0 ? Math.round((consumed / total) * 100) : 0;
+    const strokeDashoffset = circumference - (consumedPercentage / 100) * circumference;
 
     return (
         <div className="relative" style={{ width: size, height: size }}>
@@ -114,7 +107,7 @@ function CircularProgress({ percentage, size = 96 }: { percentage: number; size?
                     strokeWidth={8}
                 />
                 <circle
-                    className="text-[#4fdbc8] transition-all duration-500"
+                    className="text-[#ffb4ab] transition-all duration-500"
                     cx={size / 2}
                     cy={size / 2}
                     fill="transparent"
@@ -127,15 +120,13 @@ function CircularProgress({ percentage, size = 96 }: { percentage: number; size?
                 />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-label-md text-label-md text-[#4fdbc8]">{percentage}%</span>
+                <span className="font-label-md text-label-md text-[#ffb4ab]">{consumedPercentage}%</span>
             </div>
         </div>
     );
 }
 
 function Index({ credits, packages }: Props) {
-    const [customAmount, setCustomAmount] = useState('');
-
     // Calculate percentage (assume 3000 is max for demo)
     const maxCredits = 3000;
     const percentage = Math.round((credits / maxCredits) * 100);
@@ -143,24 +134,6 @@ function Index({ credits, packages }: Props) {
 
     const handleBuy = (packageId: number) => {
         router.post(checkout.url(), { package_id: packageId });
-    };
-
-    const handleTopUp = (option: typeof TOP_UP_OPTIONS[0]) => {
-        // Find matching package or use custom flow
-        const matchingPackage = packages.find((p) => p.credits === option.credits);
-
-        if (matchingPackage) {
-            handleBuy(matchingPackage.id);
-        }
-    };
-
-    const handleCustomBuy = () => {
-        const amount = parseInt(customAmount);
-
-        if (amount > 0) {
-            // Handle custom amount purchase
-            router.post(checkout.url(), { custom_amount: amount * 100 });
-        }
     };
 
     return (
@@ -212,70 +185,72 @@ function Index({ credits, packages }: Props) {
                         </div>
 
                         <div className="flex items-center gap-6 mt-6">
-                            <CircularProgress percentage={percentage} />
+                            <CircularProgress consumed={maxCredits - credits} total={maxCredits} />
                             <div>
-                                <p className="font-body-md text-body-md text-[#e4e1e7]">Available Quota</p>
-                                <p className="font-body-sm text-body-sm text-[#928f9a]">Remaining for current billing cycle</p>
+                                <p className="font-body-md text-body-md text-[#e4e1e7]">Credits Consumed</p>
+                                <p className="font-body-sm text-body-sm text-[#928f9a]">of {maxCredits.toLocaleString()} monthly quota</p>
                             </div>
                         </div>
                     </div>
 
-                    {/* Top-up Credits Card */}
-                    <div className="md:col-span-7 bg-[#1f1f23] rounded-xl p-6 border border-white/5">
-                        <p className="font-label-md text-label-md text-[#928f9a] uppercase tracking-widest mb-6">
-                            Top-up Credits
+                    {/* Credit Packages - Original Cards */}
+                    <div className="md:col-span-7 space-y-4">
+                        <p className="font-label-md text-label-md text-[#928f9a] uppercase tracking-widest">
+                            Available Plans
                         </p>
-                        <div className="space-y-6">
-                            {/* Preset Options */}
-                            <div className="grid grid-cols-3 gap-4">
-                                {TOP_UP_OPTIONS.map((option) => (
-                                    <button
-                                        key={option.amount}
-                                        onClick={() => handleTopUp(option)}
-                                        className={`flex flex-col items-center justify-center p-4 rounded-xl transition-all active:scale-95 ${
-                                            option.popular
-                                                ? 'bg-[#c3c0ff]/10 border border-[#c3c0ff]/20 hover:shadow-[0_0_15px_rgba(195,192,255,0.3)]'
-                                                : 'bg-[#2a292e] border border-[#928f9a]/30 hover:border-[#c3c0ff]'
-                                        }`}
-                                    >
-                                        <span className={`font-headline-md text-headline-md ${option.popular ? 'text-[#c3c0ff]' : 'text-[#c3c0ff]'}`}>
-                                            ${option.amount}
-                                        </span>
-                                        <span className="font-label-sm text-label-sm text-[#928f9a]">
-                                            {option.credits.toLocaleString()} Credits
-                                        </span>
-                                        {option.popular && (
-                                            <span className="mt-2 text-xs bg-[#4fdbc8]/20 text-[#4fdbc8] px-2 py-0.5 rounded-full">
-                                                Best Value
-                                            </span>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Custom Amount */}
-                            <div className="space-y-2">
-                                <label className="font-label-md text-label-md text-[#928f9a]">Custom Amount</label>
-                                <div className="relative flex items-center">
-                                    <span className="absolute left-4 text-[#928f9a]">$</span>
-                                    <Input
-                                        type="number"
-                                        min="1"
-                                        value={customAmount}
-                                        onChange={(e) => setCustomAmount(e.target.value)}
-                                        placeholder="Enter amount"
-                                        className="w-full bg-[#131317] border border-[#928f9a]/30 rounded-xl py-3 pl-8 pr-24 text-[#e4e1e7] placeholder:text-[#928f9a]/50 focus:border-[#c3c0ff] focus:ring-1 focus:ring-[#c3c0ff]"
-                                    />
-                                    <Button
-                                        onClick={handleCustomBuy}
-                                        disabled={!customAmount || parseInt(customAmount) <= 0}
-                                        className="absolute right-2 bg-[#c3c0ff] text-[#161349] font-bold text-label-md px-6 py-2 rounded-lg hover:bg-[#a9a4ff] disabled:opacity-50"
-                                    >
-                                        Buy
-                                    </Button>
+                        <div className="grid gap-4">
+                            {packages.map((pkg) => (
+                                <div
+                                    key={pkg.id}
+                                    className="flex items-center justify-between bg-[#1f1f23] rounded-xl p-5 border border-white/5 hover:border-[#c3c0ff]/30 transition-colors"
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-lg bg-[#c3c0ff]/10 flex items-center justify-center">
+                                            <Wallet className="size-6 text-[#c3c0ff]" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-label-md text-label-md text-[#e4e1e7]">{pkg.name}</h3>
+                                            {pkg.description && (
+                                                <p className="font-body-sm text-body-sm text-[#928f9a]">{pkg.description}</p>
+                                            )}
+                                            {pkg.features && pkg.features.length > 0 && (
+                                                <ul className="mt-1 flex gap-3">
+                                                    {pkg.features.slice(0, 2).map((feature, i) => (
+                                                        <li key={i} className="flex items-center gap-1 text-xs text-[#928f9a]">
+                                                            <Check className="size-3 text-[#4fdbc8]" />
+                                                            {feature}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-6">
+                                        <div className="text-right">
+                                            <p className="font-headline-md text-headline-md text-[#e4e1e7]">
+                                                {formatPrice(pkg.price_cents, pkg.currency)}
+                                            </p>
+                                            <p className="font-body-sm text-body-sm text-[#c3c0ff]">
+                                                {pkg.credits.toLocaleString()} credits
+                                            </p>
+                                        </div>
+                                        <Button
+                                            onClick={() => handleBuy(pkg.id)}
+                                            className="bg-[#c3c0ff] text-[#161349] hover:bg-[#a9a4ff] font-bold px-6"
+                                        >
+                                            Purchase
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
+                        {packages.length === 0 && (
+                            <div className="rounded-xl border border-dashed border-[#928f9a]/30 p-6 text-center bg-[#1f1f23]">
+                                <p className="font-body-sm text-body-sm text-[#928f9a]">
+                                    No credit packages available at the moment.
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -376,50 +351,6 @@ function Index({ credits, packages }: Props) {
                     </div>
                 </div>
 
-                {/* Available Packages (Original functionality preserved) */}
-                {packages.length > 0 && (
-                    <div className="pt-6 border-t border-white/5">
-                        <h3 className="font-headline-md text-headline-md text-[#e4e1e7] mb-4">Credit Packages</h3>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {packages.map((pkg) => (
-                                <div
-                                    key={pkg.id}
-                                    className="flex flex-col rounded-xl border border-white/5 bg-[#1f1f23] p-5 transition-shadow hover:shadow-md"
-                                >
-                                    <div className="flex items-start justify-between gap-2">
-                                        <h3 className="font-label-md text-label-md text-[#e4e1e7]">{pkg.name}</h3>
-                                    </div>
-                                    {pkg.description && (
-                                        <p className="mt-1 font-body-sm text-body-sm text-[#928f9a]">{pkg.description}</p>
-                                    )}
-                                    <div className="mt-3 flex items-baseline gap-1">
-                                        <span className="font-headline-md text-headline-md text-[#e4e1e7]">
-                                            {formatPrice(pkg.price_cents, pkg.currency)}
-                                        </span>
-                                    </div>
-                                    <div className="mt-2 flex items-center gap-2 text-[#c3c0ff]">
-                                        <Wallet className="size-4" />
-                                        <span className="font-body-sm text-body-sm">{pkg.credits.toLocaleString()} credits</span>
-                                    </div>
-                                    <Button
-                                        onClick={() => handleBuy(pkg.id)}
-                                        className="mt-4 w-full bg-[#c3c0ff] text-[#161349] hover:bg-[#a9a4ff] font-bold"
-                                    >
-                                        Purchase
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {packages.length === 0 && (
-                    <div className="rounded-xl border border-dashed border-[#928f9a]/30 p-8 text-center bg-[#1f1f23]">
-                        <p className="font-body-sm text-body-sm text-[#928f9a]">
-                            No credit packages available at the moment. Please contact your system administrator.
-                        </p>
-                    </div>
-                )}
             </div>
         </>
     );
