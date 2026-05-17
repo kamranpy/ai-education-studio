@@ -33,10 +33,14 @@ yarn-error.log
 /.opencode
 /.trae
 
-# ── GSD baseline (auto-generated) ──
+# ── GSD / AI tooling ──
 .gsd
 .gsd-id
 .bg-shell/
+.agent/
+.planning/
+.windsurf/
+.cursor/
 Thumbs.db
 *.swp
 *.swo
