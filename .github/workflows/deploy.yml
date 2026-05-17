@@ -82,9 +82,6 @@ jobs:
       - name: 🔗 Create storage link
         run: php artisan storage:link --force
 
-      - name: 🗄️ Run database migrations
-        run: php artisan migrate --force
-
       - name: ⚡ Cache Laravel config, routes & views
         run: |
           php artisan config:cache
