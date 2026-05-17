@@ -28,8 +28,6 @@ jobs:
 
       - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: 📦 Install PHP dependencies
         run: composer install --no-dev --optimize-autoloader
@@ -93,7 +91,7 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
-      - name: �📂 Sync files via FTP
+      - name: �� Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.jazbastudio.com
