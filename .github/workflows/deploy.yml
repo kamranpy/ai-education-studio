@@ -88,14 +88,18 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
-      - name: �� Sync files via FTP
+      - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.jazbastudio.com
+          server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          security: loose
           local-dir: ./
           server-dir: /public_html/
+          timeout: 60000
           exclude: |
             **/.git*
             **/.git*/**
