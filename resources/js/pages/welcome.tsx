@@ -1,4 +1,17 @@
 ﻿import { Head, Link } from '@inertiajs/react';
+import {
+    BarChart,
+    CheckCircle,
+    Domain,
+    DoneOutline,
+    FormatQuote,
+    GppMaybe,
+    KeyboardArrowDown,
+    Quiz,
+    Stars,
+    Timer,
+} from '@material-symbols-svg/react';
+import type { ComponentType, SVGProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { login, register } from '@/routes';
 
@@ -102,10 +115,10 @@ return;
                                     key={id}
                                     href={`#${id}`}
                                     ref={(el) => {
- navRefs.current[id] = el; 
+ navRefs.current[id] = el;
 }}
                                     onClick={(e) => {
- e.preventDefault(); handleNavClick(id); 
+ e.preventDefault(); handleNavClick(id);
 }}
                                     className="relative pb-1 text-base font-medium transition-colors duration-200"
                                     style={{
@@ -135,7 +148,7 @@ return;
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(79,70,229,0.15),transparent_50%)]" />
                     <div className="max-w-[1280px] mx-auto relative z-10 flex flex-col items-center text-center">
                         <div className="inline-flex items-center gap-2 px-4 py-1 bg-[#c3c0ff]/10 border border-[#c3c0ff]/20 rounded-full mb-10">
-                            <span className="material-symbols-outlined text-[#c3c0ff] text-sm">auto_awesome</span>
+                            <Stars className="text-[#c3c0ff] size-4" />
                             <span className="text-[#c3c0ff] text-sm font-medium">AI-Powered Exam Platform for Institutes</span>
                         </div>
                         <h1 className="font-bold text-5xl md:text-6xl max-w-[900px] mb-6 text-[#e5e2e1] leading-tight tracking-tight">
@@ -154,7 +167,7 @@ return;
                             </Link>
                             <a href="#" className="bg-[#131313] border border-[#464555] hover:border-[#c3c0ff]/50 text-[#e5e2e1] px-10 py-4 rounded-xl font-bold active:scale-95 transition-all text-lg"
                                 onClick={(e) => {
- e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); 
+ e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
 }}
                             >
                                 See How It Works
@@ -163,7 +176,7 @@ return;
 
                         {/* Dashboard Mockup */}
                         <div className="w-full max-w-[1100px] mt-4 relative">
-                            <div className="glass-card rounded-xl p-2 shadow-2xl">
+                            <div className="bg-[#1c1b1b] border border-[#464555]/30 rounded-xl p-2 shadow-2xl">
                                 <div className="bg-[#0e0e0e] rounded-lg border border-[#464555]/30 overflow-hidden">
                                     {/* Window chrome */}
                                     <div className="flex items-center justify-between px-5 py-3 border-b border-[#464555]/30 bg-[#131313]">
@@ -310,20 +323,20 @@ return;
                         </p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[
-                            { icon: 'auto_awesome', color: '#c3c0ff', bg: 'rgba(195,192,255,0.1)', title: 'AI Grading', desc: 'Auto-grade subjective answers with semantic understanding that matches human examiners.' },
-                            { icon: 'domain', color: '#4fdbc8', bg: 'rgba(79,219,200,0.1)', title: 'Multi-Tenant', desc: 'Isolated environments for departments, campuses, or sub-organizations with central control.' },
-                            { icon: 'quiz', color: '#d0bcff', bg: 'rgba(208,188,255,0.1)', title: 'Flexible Questions', desc: 'Support for coding, math, video-response, and adaptive multiple-choice questions.' },
-                            { icon: 'timer', color: '#c3c0ff', bg: 'rgba(195,192,255,0.1)', title: 'Real-Time Timer', desc: 'Dynamic time allocation and auto-submission protocols for synchronous exams.' },
-                            { icon: 'gpp_maybe', color: '#ffb4ab', bg: 'rgba(255,180,171,0.1)', title: 'Anti-Cheat Tracking', desc: 'AI-powered face tracking, tab-lock, and behavior analysis to ensure exam integrity.' },
-                            { icon: 'bar_chart', color: '#4fdbc8', bg: 'rgba(79,219,200,0.1)', title: 'Result Analytics', desc: 'Deep insights into student performance, question difficulty, and cohort trends.' },
-                        ].map((f) => (
-                            <div key={f.title} className="glass-card p-10 rounded-xl flex flex-col items-start gap-6 hover:border-[#918fa1] transition-all group">
+                        {([
+                            { Icon: Stars, color: '#c3c0ff', bg: 'rgba(195,192,255,0.1)', title: 'AI Grading', desc: 'Auto-grade subjective answers with semantic understanding that matches human examiners.' },
+                            { Icon: Domain, color: '#4fdbc8', bg: 'rgba(79,219,200,0.1)', title: 'Multi-Tenant', desc: 'Isolated environments for departments, campuses, or sub-organizations with central control.' },
+                            { Icon: Quiz, color: '#d0bcff', bg: 'rgba(208,188,255,0.1)', title: 'Flexible Questions', desc: 'Support for coding, math, video-response, and adaptive multiple-choice questions.' },
+                            { Icon: Timer, color: '#c3c0ff', bg: 'rgba(195,192,255,0.1)', title: 'Real-Time Timer', desc: 'Dynamic time allocation and auto-submission protocols for synchronous exams.' },
+                            { Icon: GppMaybe, color: '#ffb4ab', bg: 'rgba(255,180,171,0.1)', title: 'Anti-Cheat Tracking', desc: 'AI-powered face tracking, tab-lock, and behavior analysis to ensure exam integrity.' },
+                            { Icon: BarChart, color: '#4fdbc8', bg: 'rgba(79,219,200,0.1)', title: 'Result Analytics', desc: 'Deep insights into student performance, question difficulty, and cohort trends.' },
+                        ] as Array<{ Icon: ComponentType<SVGProps<SVGSVGElement>>; color: string; bg: string; title: string; desc: string }>).map((f) => (
+                            <div key={f.title} className="bg-[#1c1b1b] border border-[#464555]/30 p-10 rounded-xl flex flex-col items-start gap-6 hover:border-[#918fa1] transition-all group">
                                 <div
                                     className="w-12 h-12 rounded-lg flex items-center justify-center group-hover:opacity-80 transition-opacity"
                                     style={{ background: f.bg }}
                                 >
-                                    <span className="material-symbols-outlined" style={{ color: f.color }}>{f.icon}</span>
+                                    <f.Icon className="size-6" style={{ color: f.color }} />
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-xl mb-2 text-[#e5e2e1]">{f.title}</h3>
@@ -385,7 +398,7 @@ return;
                                 <ul className="space-y-4 text-[#c7c4d8] text-base">
                                     {s.items.map((item) => (
                                         <li key={item} className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[#4fdbc8] text-sm">check_circle</span>
+                                            <CheckCircle className="text-[#4fdbc8] size-4 shrink-0" />
                                             {item}
                                         </li>
                                     ))}
@@ -404,7 +417,7 @@ return;
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto">
                             {/* Free */}
-                            <div className="glass-card p-10 rounded-xl flex flex-col h-full">
+                            <div className="bg-[#1c1b1b] border border-[#464555]/30 p-10 rounded-xl flex flex-col h-full">
                                 <div className="mb-10">
                                     <span className="text-[#c7c4d8] text-sm font-medium uppercase">Free</span>
                                     <div className="text-5xl font-bold text-[#e5e2e1] mt-2">
@@ -414,7 +427,7 @@ return;
                                 <ul className="space-y-4 mb-16 flex-grow text-[#c7c4d8] text-base">
                                     {['50 Free Credits /mo', 'Basic Proctoring', 'MCQ Support'].map((f) => (
                                         <li key={f} className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[#c3c0ff] text-sm">done</span>
+                                            <DoneOutline className="text-[#c3c0ff] size-4 shrink-0" />
                                             {f}
                                         </li>
                                     ))}
@@ -438,7 +451,7 @@ return;
                                 <ul className="space-y-4 mb-16 flex-grow text-[#c7c4d8] text-base">
                                     {['500 Credits Included', 'AI-Assisted Grading', 'Subjective Questions', 'Detailed Analytics'].map((f) => (
                                         <li key={f} className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[#c3c0ff] text-sm">done</span>
+                                            <DoneOutline className="text-[#c3c0ff] size-4 shrink-0" />
                                             {f}
                                         </li>
                                     ))}
@@ -449,7 +462,7 @@ return;
                             </div>
 
                             {/* Pro */}
-                            <div className="glass-card p-10 rounded-xl flex flex-col h-full">
+                            <div className="bg-[#1c1b1b] border border-[#464555]/30 p-10 rounded-xl flex flex-col h-full">
                                 <div className="mb-10">
                                     <span className="text-[#c7c4d8] text-sm font-medium uppercase">Pro</span>
                                     <div className="text-5xl font-bold text-[#e5e2e1] mt-2">
@@ -459,7 +472,7 @@ return;
                                 <ul className="space-y-4 mb-16 flex-grow text-[#c7c4d8] text-base">
                                     {['2500 Credits Included', '24/7 Priority Support', 'Custom Integrations', 'White-label Branding'].map((f) => (
                                         <li key={f} className="flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[#c3c0ff] text-sm">done</span>
+                                            <DoneOutline className="text-[#c3c0ff] size-4 shrink-0" />
                                             {f}
                                         </li>
                                     ))}
@@ -503,9 +516,7 @@ return;
                             },
                         ].map((t) => (
                             <div key={t.name} className="p-10 rounded-xl bg-[#2a2a2a] relative flex flex-col justify-between min-h-[220px]">
-                                <span className="material-symbols-outlined text-[#c3c0ff] text-5xl absolute top-4 right-4 opacity-10">
-                                    format_quote
-                                </span>
+                                <FormatQuote className="text-[#c3c0ff] size-12 absolute top-4 right-4 opacity-10" />
                                 <p className="text-[#e5e2e1] text-base mb-8 italic relative z-10 leading-relaxed">{t.quote}</p>
                                 <div className="flex items-center gap-4">
                                     <div
@@ -543,7 +554,7 @@ return;
                                 className="p-6 bg-[#201f1f] rounded-lg border border-[#464555]/30 flex justify-between items-center cursor-pointer hover:bg-[#353534]/50 transition-all"
                             >
                                 <span className="font-semibold text-xl text-[#e5e2e1]">{q}</span>
-                                <span className="material-symbols-outlined text-[#c7c4d8]">expand_more</span>
+                                <KeyboardArrowDown className="text-[#c7c4d8] size-6 shrink-0" />
                             </div>
                         ))}
                     </div>
@@ -565,7 +576,7 @@ return;
                             <a
                                 href="#how-it-works"
                                 onClick={(e) => {
- e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }); 
+ e.preventDefault(); document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
 }}
                                 className="bg-[#4f46e5]/20 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-xl font-bold hover:bg-[#4f46e5]/30 transition-all"
                             >
@@ -610,7 +621,7 @@ return;
                         </div>
                     </div>
                     <div className="max-w-[1280px] mx-auto px-6 mt-16 pt-6 border-t border-[#464555]/10 text-center text-[#c7c4d8] text-base">
-                        © 2024 AI Education Studio. All rights reserved.
+                        © {new Date().getFullYear()} AI Education Studio. All rights reserved.
                     </div>
                 </footer>
             </div>

@@ -1,5 +1,16 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import {
+    Add,
+    ArrowForward,
+    Description,
+    Group,
+    MoreVert,
+    PersonAdd,
+    Star,
+    Toll,
+    TrendingUp,
+} from '@material-symbols-svg/react';
+import {
     create as examsCreate,
     index as examsIndex,
     show as examsShow,
@@ -139,16 +150,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                 (e.currentTarget as HTMLElement).style.background = 'transparent';
                             }}
                         >
-                            <span
-                                className="material-symbols-outlined"
-                                style={{
-                                    fontSize: '18px',
-                                    fontVariationSettings:
-                                        "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                }}
-                            >
-                                person_add
-                            </span>
+                            <PersonAdd className="size-4" />
                             Invite Student
                         </Link>
 
@@ -168,16 +170,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                 (e.currentTarget as HTMLElement).style.opacity = '1';
                             }}
                         >
-                            <span
-                                className="material-symbols-outlined"
-                                style={{
-                                    fontSize: '18px',
-                                    fontVariationSettings:
-                                        "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                }}
-                            >
-                                add
-                            </span>
+                            <Add className="size-4" />
                             Create Exam
                         </Link>
                     </div>
@@ -192,28 +185,13 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                 className="w-10 h-10 rounded-lg flex items-center justify-center"
                                 style={{ background: 'rgba(195, 192, 255, 0.1)' }}
                             >
-                                <span
-                                    className="material-symbols-outlined"
-                                    style={{
-                                        color: 'var(--brand-primary-text)',
-                                        fontSize: '20px',
-                                        fontVariationSettings:
-                                            "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                    }}
-                                >
-                                    description
-                                </span>
+                                <Description className="size-5" style={{ color: 'var(--brand-primary-text)' }} />
                             </div>
                             <span
                                 className="flex items-center gap-1 text-xs font-bold"
                                 style={{ color: 'var(--brand-secondary)' }}
                             >
-                                <span
-                                    className="material-symbols-outlined"
-                                    style={{ fontSize: '14px' }}
-                                >
-                                    trending_up
-                                </span>
+                                <TrendingUp className="size-3.5" />
                                 +12%
                             </span>
                         </div>
@@ -240,17 +218,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                 className="w-10 h-10 rounded-lg flex items-center justify-center"
                                 style={{ background: 'rgba(79, 219, 200, 0.1)' }}
                             >
-                                <span
-                                    className="material-symbols-outlined"
-                                    style={{
-                                        color: 'var(--brand-secondary)',
-                                        fontSize: '20px',
-                                        fontVariationSettings:
-                                            "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                    }}
-                                >
-                                    group
-                                </span>
+                                <Group className="size-5" style={{ color: 'var(--brand-secondary)' }} />
                             </div>
                             {/* Animated pulse dot */}
                             <span
@@ -288,17 +256,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                 className="w-10 h-10 rounded-lg flex items-center justify-center"
                                 style={{ background: 'rgba(255, 182, 149, 0.1)' }}
                             >
-                                <span
-                                    className="material-symbols-outlined"
-                                    style={{
-                                        color: 'var(--brand-tertiary)',
-                                        fontSize: '20px',
-                                        fontVariationSettings:
-                                            "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                    }}
-                                >
-                                    star
-                                </span>
+                                <Star className="size-5" style={{ color: 'var(--brand-tertiary)' }} />
                             </div>
                             <span
                                 className="text-xs font-bold"
@@ -330,17 +288,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                 className="w-10 h-10 rounded-lg flex items-center justify-center"
                                 style={{ background: 'rgba(255, 180, 171, 0.1)' }}
                             >
-                                <span
-                                    className="material-symbols-outlined"
-                                    style={{
-                                        color: 'var(--brand-error)',
-                                        fontSize: '20px',
-                                        fontVariationSettings:
-                                            "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                    }}
-                                >
-                                    toll
-                                </span>
+                                <Toll className="size-5" style={{ color: 'var(--brand-error)' }} />
                             </div>
                             <span
                                 className="text-xs font-semibold"
@@ -560,12 +508,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                             style={{ color: 'var(--brand-primary-text)' }}
                         >
                             View All Reports
-                            <span
-                                className="material-symbols-outlined"
-                                style={{ fontSize: '16px' }}
-                            >
-                                arrow_forward
-                            </span>
+                            <ArrowForward className="size-4" />
                         </Link>
                     </div>
 
@@ -574,12 +517,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                             className="flex flex-col items-center justify-center py-16 gap-3"
                             style={{ color: 'var(--portal-text-muted)' }}
                         >
-                            <span
-                                className="material-symbols-outlined"
-                                style={{ fontSize: '48px', opacity: 0.4 }}
-                            >
-                                description
-                            </span>
+                            <Description className="size-12 opacity-40" />
                             <p className="text-sm">No exams yet</p>
                         </div>
                     ) : (
@@ -659,16 +597,7 @@ function Dashboard({ stats, recentExams = [] }: DashboardProps) {
                                                             'var(--portal-text-muted)';
                                                     }}
                                                 >
-                                                    <span
-                                                        className="material-symbols-outlined"
-                                                        style={{
-                                                            fontSize: '20px',
-                                                            fontVariationSettings:
-                                                                "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                                        }}
-                                                    >
-                                                        more_vert
-                                                    </span>
+                                                    <MoreVert className="size-5" />
                                                 </button>
                                             </td>
                                         </tr>

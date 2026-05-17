@@ -1,4 +1,16 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
+import {
+    Add,
+    ChevronLeft,
+    ChevronRight,
+    Description,
+    Event,
+    FilterList,
+    Quiz,
+    Search,
+    Sort,
+    Warning,
+} from '@material-symbols-svg/react';
 import { MoreHorizontal } from 'lucide-react';
 import { useState } from 'react';
 
@@ -201,12 +213,7 @@ function ExamCard({
                         Questions
                     </p>
                     <div className="flex items-center gap-2">
-                        <span
-                            className="material-symbols-outlined text-[20px]"
-                            style={{ color: 'var(--brand-primary-text)' }}
-                        >
-                            quiz
-                        </span>
+                        <Quiz className="size-5" style={{ color: 'var(--brand-primary-text)' }} />
                         <span
                             className="text-xl font-medium"
                             style={{ color: 'var(--portal-text-primary)' }}
@@ -223,12 +230,7 @@ function ExamCard({
                         Created
                     </p>
                     <div className="flex items-center gap-2">
-                        <span
-                            className="material-symbols-outlined text-[20px]"
-                            style={{ color: 'var(--brand-primary-text)' }}
-                        >
-                            event
-                        </span>
+                        <Event className="size-5" style={{ color: 'var(--brand-primary-text)' }} />
                         <span
                             className="text-xl font-medium"
                             style={{ color: 'var(--portal-text-primary)' }}
@@ -389,7 +391,7 @@ function ExamsIndex({
                             color: 'var(--brand-primary-text)',
                         }}
                     >
-                        <span className="material-symbols-outlined text-[18px]">add</span>
+                        <Add className="size-4" />
                         Create Exam
                     </Link>
                 </div>
@@ -400,12 +402,7 @@ function ExamsIndex({
                         className="glass-card rounded-xl p-4 flex items-start gap-3"
                         style={{ borderColor: 'rgba(255,182,149,0.3)' }}
                     >
-                        <span
-                            className="material-symbols-outlined mt-0.5 shrink-0"
-                            style={{ color: 'var(--brand-tertiary)' }}
-                        >
-                            warning
-                        </span>
+                        <Warning className="mt-0.5 shrink-0 size-5" style={{ color: 'var(--brand-tertiary)' }} />
                         <div>
                             <p
                                 className="text-sm font-semibold"
@@ -470,12 +467,7 @@ function ExamsIndex({
                             Search:
                         </span>
                         <div className="relative">
-                            <span
-                                className="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-[16px]"
-                                style={{ color: 'var(--portal-text-muted)' }}
-                            >
-                                search
-                            </span>
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-4" style={{ color: 'var(--portal-text-muted)' }} />
                             <input
                                 type="text"
                                 placeholder="Search exams..."
@@ -496,7 +488,7 @@ function ExamsIndex({
                             className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors"
                             style={{ color: 'var(--portal-text-muted)' }}
                         >
-                            <span className="material-symbols-outlined text-[16px]">filter_list</span>
+                            <FilterList className="size-4" />
                             More Filters
                         </button>
                         <div
@@ -507,7 +499,7 @@ function ExamsIndex({
                             className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-colors"
                             style={{ color: 'var(--portal-text-muted)' }}
                         >
-                            <span className="material-symbols-outlined text-[16px]">sort</span>
+                            <Sort className="size-4" />
                             Latest First
                         </button>
                     </div>
@@ -525,15 +517,10 @@ function ExamsIndex({
                             className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
                             style={{ background: 'rgba(53,52,62,0.6)' }}
                         >
-                            <span
-                                className="material-symbols-outlined text-4xl"
-                                style={{
-                                    color: 'var(--brand-primary-text)',
-                                    fontVariationSettings: "'wght' 100",
-                                }}
-                            >
-                                post_add
-                            </span>
+                            <Description
+                                className="size-10"
+                                style={{ color: 'var(--brand-primary-text)' }}
+                            />
                         </div>
                         <h2
                             className="text-xl font-semibold mb-2"
@@ -606,7 +593,7 @@ function ExamsIndex({
                                             color: 'var(--portal-text-muted)',
                                         }}
                                     >
-                                        <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                                        <ChevronLeft className="size-5" />
                                     </button>
 
                                     {/* Page numbers */}
@@ -656,7 +643,7 @@ function ExamsIndex({
                                             color: 'var(--portal-text-muted)',
                                         }}
                                     >
-                                        <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                                        <ChevronRight className="size-5" />
                                     </button>
                                 </div>
                             </div>

@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import { CheckCircle, Stars } from '@material-symbols-svg/react';
 import { login, register } from '@/routes';
 
 interface AuthBrandSplitLayoutProps {
@@ -19,15 +20,7 @@ export default function AuthBrandSplitLayout({
                 {/* Top: logo + tagline */}
                 <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-16">
-                        <span
-                            className="material-symbols-outlined text-[#c3c0ff] text-[40px]"
-                            style={{
-                                fontVariationSettings:
-                                    "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                            }}
-                        >
-                            auto_awesome
-                        </span>
+                        <Stars className="text-[#c3c0ff] size-10" />
                         <h1 className="text-[#c3c0ff] font-semibold text-2xl tracking-tight">
                             AI Education Studio
                         </h1>
@@ -40,15 +33,7 @@ export default function AuthBrandSplitLayout({
 
                         <ul className="space-y-6">
                             <li className="flex items-start gap-4">
-                                <span
-                                    className="material-symbols-outlined text-[#4fdbc8] bg-[#4fdbc8]/10 p-1 rounded-full flex-shrink-0"
-                                    style={{
-                                        fontVariationSettings:
-                                            "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                                    }}
-                                >
-                                    check_circle
-                                </span>
+                                <CheckCircle className="text-[#4fdbc8] bg-[#4fdbc8]/10 p-1 rounded-full flex-shrink-0 size-6" />
                                 <div>
                                     <p className="font-semibold text-[#dad7ff] text-base">
                                         Smart Question Generation
@@ -60,15 +45,7 @@ export default function AuthBrandSplitLayout({
                                 </div>
                             </li>
                             <li className="flex items-start gap-4">
-                                <span
-                                    className="material-symbols-outlined text-[#4fdbc8] bg-[#4fdbc8]/10 p-1 rounded-full flex-shrink-0"
-                                    style={{
-                                        fontVariationSettings:
-                                            "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                                    }}
-                                >
-                                    check_circle
-                                </span>
+                                <CheckCircle className="text-[#4fdbc8] bg-[#4fdbc8]/10 p-1 rounded-full flex-shrink-0 size-6" />
                                 <div>
                                     <p className="font-semibold text-[#dad7ff] text-base">
                                         Automated Grading
@@ -81,15 +58,7 @@ export default function AuthBrandSplitLayout({
                                 </div>
                             </li>
                             <li className="flex items-start gap-4">
-                                <span
-                                    className="material-symbols-outlined text-[#4fdbc8] bg-[#4fdbc8]/10 p-1 rounded-full flex-shrink-0"
-                                    style={{
-                                        fontVariationSettings:
-                                            "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-                                    }}
-                                >
-                                    check_circle
-                                </span>
+                                <CheckCircle className="text-[#4fdbc8] bg-[#4fdbc8]/10 p-1 rounded-full flex-shrink-0 size-6" />
                                 <div>
                                     <p className="font-semibold text-[#dad7ff] text-base">
                                         Insightful Analytics
@@ -116,9 +85,7 @@ export default function AuthBrandSplitLayout({
             <section className="w-full lg:w-1/2 bg-[#0e0e0e] flex flex-col overflow-y-auto">
                 {/* Mobile top bar */}
                 <div className="lg:hidden flex items-center h-16 px-6 border-b border-[#464555]/20">
-                    <span className="material-symbols-outlined text-[#c3c0ff] mr-2">
-                        auto_awesome
-                    </span>
+                    <Stars className="text-[#c3c0ff] mr-2 size-5" />
                     <span className="text-[#c3c0ff] font-semibold text-xl tracking-tight">
                         AI Education Studio
                     </span>

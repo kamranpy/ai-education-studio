@@ -2,7 +2,6 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     AccountCircle,
     BarChart,
-    ChevronRight,
     Close,
     Group,
     Logout,
@@ -127,7 +126,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const sidebarContent = (
         <>
             {/* Brand header */}
-            <div className="px-3 pb-5 mb-2 border-b border-(--portal-card-border)">
+            <div className="px-4 pb-0 mb-6">
                 <div className="flex items-center gap-3 mb-3">
                     {/* School icon in rounded square */}
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15">
@@ -160,38 +159,38 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                             key={item.href}
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
-                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-xs font-medium tracking-wide ${
+                            className={`flex items-center gap-3 px-4 py-3 rounded-r-full transition-all duration-200 ${
                                 isActive
-                                    ? 'bg-(--portal-nav-active-bg) text-(--portal-nav-active-text) border-r-2 border-(--portal-nav-active-border) font-bold'
+                                    ? 'bg-(--portal-nav-active-bg) text-(--portal-nav-active-text) border-l-4 border-(--portal-nav-active-border)'
                                     : 'text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)'
                             }`}
                         >
                             <Icon className="size-5" />
-                            <span>{item.title}</span>
+                            <span className="text-xs font-medium tracking-wider uppercase">{item.title}</span>
                         </Link>
                     );
                 })}
             </nav>
 
             {/* Footer */}
-            <div className="px-2 pt-3 mt-auto space-y-1 border-t border-(--portal-card-border)">
+            <div className="px-2 mt-auto space-y-1">
                 <Link
                     href={profileEdit.url()}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-xs font-medium tracking-wide text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)"
+                    className="flex items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200 text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)"
                 >
                     <AccountCircle className="size-5" />
-                    <span>Profile</span>
+                    <span className="text-xs font-medium tracking-wider uppercase">Profile</span>
                 </Link>
 
                 <Link
                     href={logout()}
                     method="post"
                     as="button"
-                    className="flex w-full items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-xs font-medium tracking-wide text-brand-error hover:bg-red-500/10"
+                    className="flex w-full items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200 text-brand-error hover:bg-red-500/10"
                 >
                     <Logout className="size-5" />
-                    <span>Logout</span>
+                    <span className="text-xs font-medium tracking-wider uppercase">Logout</span>
                 </Link>
             </div>
         </>
@@ -201,7 +200,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <>
             <div className="min-h-screen bg-(--portal-bg) font-sans">
                 {/* Desktop sidebar */}
-                <aside className="hidden md:flex fixed left-0 top-0 h-screen w-[280px] flex-col py-6 z-50 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border)">
+                <aside className="hidden md:flex fixed left-0 top-0 h-screen w-[280px] flex-col py-8 z-50 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border)">
                     {sidebarContent}
                 </aside>
 
@@ -215,7 +214,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
                 {/* Mobile drawer */}
                 <aside
-                    className={`md:hidden fixed left-0 top-0 h-screen w-[280px] flex flex-col py-6 z-50 transition-transform duration-300 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border) ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                    className={`md:hidden fixed left-0 top-0 h-screen w-[280px] flex flex-col py-8 z-50 transition-transform duration-300 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border) ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
                 >
                     {sidebarContent}
                 </aside>
@@ -235,13 +234,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                             </button>
 
                             {/* Breadcrumb */}
-                            <nav className="flex items-center gap-1">
-                                <span className="text-sm text-(--portal-text-muted)">Admin</span>
-                                <ChevronRight className="size-4 text-(--portal-text-muted)" />
+                            <div className="flex items-center gap-2">
+                                <span className="hidden md:block text-sm text-(--portal-text-muted)">Admin /</span>
                                 <span className="text-sm font-semibold text-(--portal-text-primary)">
                                     {breadcrumbLabel}
                                 </span>
-                            </nav>
+                            </div>
                         </div>
 
                         {/* Right: theme + notifications + user */}
