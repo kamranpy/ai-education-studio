@@ -1,54 +1,110 @@
+name: 🚀 Deploy Laravel-Inertia to CPANEL
+
 on:
   push:
     branches:
       - dev
 
-name: 🚀 Deploy AI Education Studio to cPanel
-
 jobs:
   web-deploy:
-    name: 🎉 Build & Deploy
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
 
     steps:
       - name: 🚚 Get latest code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 📦 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, xml, zip, bcmath, intl, pdo_mysql
+          extensions: mbstring, xml, zip, bcmath, intl, pdo_mysql, tokenizer, ctype, fileinfo
           coverage: none
 
       - name: 📦 Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 23
-          cache: 'npm'
+          node-version: 22
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: 📦 Install PHP dependencies
         run: composer install --no-dev --optimize-autoloader
 
-      - name: 📦 Install NPM dependencies
-        run: npm ci
+      - name: 📦 Install Node dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: 🏗️ Build frontend assets
-        run: npm run build
+        run: pnpm run build
 
-      - name: 🔧 Prepare storage & permissions
+      - name:  Create production .env file
+        run: |
+          echo 'APP_NAME="AI Education Studio"' > .env
+          echo 'APP_ENV=production' >> .env
+          echo 'APP_KEY=${{ secrets.APP_KEY }}' >> .env
+          echo 'APP_DEBUG=false' >> .env
+          echo 'APP_URL=https://aie-studio.jazbastudio.com' >> .env
+          echo 'APP_LOCALE=en' >> .env
+          echo 'APP_FALLBACK_LOCALE=en' >> .env
+          echo '' >> .env
+          echo 'LOG_CHANNEL=stack' >> .env
+          echo 'LOG_STACK=single' >> .env
+          echo 'LOG_LEVEL=error' >> .env
+          echo '' >> .env
+          echo 'DB_CONNECTION=mysql' >> .env
+          echo 'DB_HOST=${{ secrets.DB_HOST }}' >> .env
+          echo 'DB_PORT=3306' >> .env
+          echo 'DB_DATABASE=${{ secrets.DB_DATABASE }}' >> .env
+          echo 'DB_USERNAME=${{ secrets.DB_USERNAME }}' >> .env
+          echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' >> .env
+          echo '' >> .env
+          echo 'SESSION_DRIVER=database' >> .env
+          echo 'SESSION_LIFETIME=120' >> .env
+          echo 'SESSION_ENCRYPT=false' >> .env
+          echo '' >> .env
+          echo 'CACHE_STORE=database' >> .env
+          echo 'QUEUE_CONNECTION=database' >> .env
+          echo 'FILESYSTEM_DISK=local' >> .env
+          echo '' >> .env
+          echo 'STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}' >> .env
+          echo 'STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}' >> .env
+          echo '' >> .env
+          echo 'VITE_APP_NAME="AI Education Studio"' >> .env
+
+      - name: � Directory permissions
         run: |
           chmod -R 755 storage bootstrap/cache
           mkdir -p public/build
           touch storage/logs/laravel.log
           chmod -R 777 storage/logs
 
-      - name: 📂 Sync files to server via SSH
-        uses: appleboy/scp-action@v0.1.7
+      - name: 🔗 Create storage link
+        run: php artisan storage:link --force
+
+      - name: 🗄️ Run database migrations
+        run: php artisan migrate --force
+
+      - name: ⚡ Cache Laravel config, routes & views
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      - name: �📂 Sync files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          port: ${{ secrets.SSH_PORT }}
-          source: ".,!.git,!node_modules,!.env,!tests,!.github"
-          target: ${{ secrets.SSH_TARGET_DIR }}
+          server: ftp.jazbastudio.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.planning/**
+            **/.github/**
