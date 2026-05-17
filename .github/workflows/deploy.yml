@@ -1,0 +1,57 @@
+on:
+  push:
+    branches:
+      - dev
+
+name: 🚀 Deploy AI Education Studio to cPanel
+
+jobs:
+  web-deploy:
+    name: 🎉 Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v3
+
+      - name: 📦 Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, zip, bcmath, intl, pdo_mysql
+          coverage: none
+
+      - name: 📦 Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 23
+          cache: 'npm'
+
+      - name: 📦 Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: 📦 Install NPM dependencies
+        run: npm ci
+
+      - name: 🏗️ Build frontend assets
+        run: npm run build
+
+      - name: 🔧 Prepare storage & permissions
+        run: |
+          chmod -R 755 storage bootstrap/cache
+          mkdir -p public/build
+          touch storage/logs/laravel.log
+          chmod -R 777 storage/logs
+
+      - name: � Sync files to server
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: ftp.jazbastudio.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
