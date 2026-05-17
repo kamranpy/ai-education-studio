@@ -103,6 +103,14 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+            **/vendor/**
             **/tests/**
             **/.planning/**
             **/.github/**
+            **/.windsurf/**
+            **/.cursor/**
+            **/.agent/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
