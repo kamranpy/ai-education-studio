@@ -43,13 +43,17 @@ jobs:
           touch storage/logs/laravel.log
           chmod -R 777 storage/logs
 
-      - name: � Sync files to server
+      - name: 📂 Sync files to server
         uses: SamKirkland/FTP-Deploy-Action@4.3.3
         with:
           server: ftp.jazbastudio.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          security: loose
           server-dir: /public_html/
+          timeout: 60000
           exclude: |
             **/.git*
             **/.git*/**
