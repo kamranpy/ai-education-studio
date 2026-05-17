@@ -1,4 +1,18 @@
 import { Link, usePage } from '@inertiajs/react';
+import {
+    AccountCircle,
+    BarChart,
+    ChevronRight,
+    Close,
+    Group,
+    Logout,
+    Menu,
+    Notifications,
+    Payments,
+    Quiz,
+    School,
+    Settings,
+} from '@material-symbols-svg/react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { index as examsIndex } from '@/actions/App/Http/Controllers/Admin/ExamController';
@@ -9,64 +23,6 @@ import { logout } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { edit as profileEdit } from '@/routes/profile';
 import type { User } from '@/types/auth';
-
-// ── Icons ────────────────────────────────────────────────────────────────────
-
-function MenuIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-        >
-            <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-        </svg>
-    );
-}
-
-function CloseIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-        >
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-        </svg>
-    );
-}
-
-function BellIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-        >
-            <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-        </svg>
-    );
-}
-
-function ChevronRightIcon() {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-        >
-            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-        </svg>
-    );
-}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -83,14 +39,7 @@ function UserAvatar({ user }: { user: User }) {
     const initials = getInitials(user.name);
 
     return (
-        <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
-            style={{
-                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
-                border: '2px solid rgba(195, 192, 255, 0.2)',
-                color: '#fff',
-            }}
-        >
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold shrink-0 text-white bg-linear-to-br from-indigo-500 to-violet-600 ring-2 ring-white/20">
             {initials}
         </div>
     );
@@ -101,7 +50,7 @@ function UserAvatar({ user }: { user: User }) {
 type NavItem = {
     title: string;
     href: string;
-    icon: string; // Material Symbols icon name
+    icon: (props: { className?: string }) => ReactNode;
     matchPrefix: string;
 };
 
@@ -144,31 +93,31 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {
             title: 'Dashboard',
             href: adminDashboard.url(),
-            icon: 'dashboard',
+            icon: BarChart,
             matchPrefix: '/admin/dashboard',
         },
         {
             title: 'Exams',
             href: examsIndex.url(),
-            icon: 'quiz',
+            icon: Quiz,
             matchPrefix: '/admin/exams',
         },
         {
             title: 'Users',
             href: usersIndex.url(),
-            icon: 'group',
+            icon: Group,
             matchPrefix: '/admin/users',
         },
         {
             title: 'Billing',
             href: billingIndex.url(),
-            icon: 'payments',
+            icon: Payments,
             matchPrefix: '/institute/billing',
         },
         {
             title: 'Settings',
             href: profileEdit.url(),
-            icon: 'settings',
+            icon: Settings,
             matchPrefix: '/settings',
         },
     ];
@@ -178,57 +127,22 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const sidebarContent = (
         <>
             {/* Brand header */}
-            <div className="px-3 pb-5 mb-2" style={{ borderBottom: '1px solid var(--portal-card-border)' }}>
+            <div className="px-3 pb-5 mb-2 border-b border-(--portal-card-border)">
                 <div className="flex items-center gap-3 mb-3">
                     {/* School icon in rounded square */}
-                    <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: 'rgba(195, 192, 255, 0.15)' }}
-                    >
-                        <span
-                            className="material-symbols-outlined"
-                            style={{
-                                color: 'var(--brand-primary-text)',
-                                fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20",
-                                fontSize: '22px',
-                            }}
-                        >
-                            school
-                        </span>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15">
+                        <School className="size-5 text-brand-primary-text" />
                     </div>
-                    <h1
-                        className="text-sm font-bold tracking-tight leading-tight"
-                        style={{ color: 'var(--brand-primary-text)' }}
-                    >
+                    <h1 className="text-sm font-bold tracking-tight leading-tight text-brand-primary-text">
                         AI Education Studio
                     </h1>
                 </div>
 
                 {/* Institute badge */}
                 {instituteName?.name && (
-                    <div
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
-                        style={{
-                            background: 'rgba(79, 219, 200, 0.08)',
-                            border: '1px solid rgba(79, 219, 200, 0.25)',
-                        }}
-                    >
-                        <span
-                            className="institute-pulse-dot"
-                            style={{
-                                width: '8px',
-                                height: '8px',
-                                borderRadius: '50%',
-                                backgroundColor: 'var(--brand-secondary)',
-                                display: 'inline-block',
-                                flexShrink: 0,
-                                animation: 'institutePulse 2s infinite',
-                            }}
-                        />
-                        <span
-                            className="text-xs font-semibold truncate max-w-[160px]"
-                            style={{ color: 'var(--brand-secondary)' }}
-                        >
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-secondary/8 border border-brand-secondary/25">
+                        <span className="w-2 h-2 rounded-full bg-brand-secondary shrink-0 animate-pulse" />
+                        <span className="text-xs font-semibold truncate max-w-[160px] text-brand-secondary">
                             {instituteName.name}
                         </span>
                     </div>
@@ -239,108 +153,45 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <nav className="flex-1 px-2 space-y-1">
                 {navItems.map((item) => {
                     const isActive = url.startsWith(item.matchPrefix);
+                    const Icon = item.icon;
 
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
                             onClick={() => setMobileOpen(false)}
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200"
-                            style={
+                            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-xs font-medium tracking-wide ${
                                 isActive
-                                    ? {
-                                          background: 'var(--portal-nav-active-bg)',
-                                          color: 'var(--portal-nav-active-text)',
-                                          borderRight: '2px solid var(--portal-nav-active-border)',
-                                          fontWeight: 700,
-                                      }
-                                    : {
-                                          color: 'var(--portal-nav-text)',
-                                      }
-                            }
-                            onMouseEnter={(e) => {
-                                if (!isActive) {
-                                    (e.currentTarget as HTMLElement).style.background =
-                                        'var(--portal-nav-hover-bg)';
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActive) {
-                                    (e.currentTarget as HTMLElement).style.background =
-                                        'transparent';
-                                }
-                            }}
+                                    ? 'bg-(--portal-nav-active-bg) text-(--portal-nav-active-text) border-r-2 border-(--portal-nav-active-border) font-bold'
+                                    : 'text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)'
+                            }`}
                         >
-                            <span
-                                className="material-symbols-outlined"
-                                style={{
-                                    fontSize: '20px',
-                                    fontVariationSettings:
-                                        "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                                }}
-                            >
-                                {item.icon}
-                            </span>
-                            <span className="text-xs font-medium tracking-wide">{item.title}</span>
+                            <Icon className="size-5" />
+                            <span>{item.title}</span>
                         </Link>
                     );
                 })}
             </nav>
 
             {/* Footer */}
-            <div
-                className="px-2 pt-3 mt-auto space-y-1"
-                style={{ borderTop: '1px solid var(--portal-card-border)' }}
-            >
+            <div className="px-2 pt-3 mt-auto space-y-1 border-t border-(--portal-card-border)">
                 <Link
                     href={profileEdit.url()}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200"
-                    style={{ color: 'var(--portal-nav-text)' }}
-                    onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.background =
-                            'var(--portal-nav-hover-bg)';
-                    }}
-                    onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLElement).style.background = 'transparent';
-                    }}
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-xs font-medium tracking-wide text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)"
                 >
-                    <span
-                        className="material-symbols-outlined"
-                        style={{
-                            fontSize: '20px',
-                            fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                        }}
-                    >
-                        account_circle
-                    </span>
-                    <span className="text-xs font-medium tracking-wide">Profile</span>
+                    <AccountCircle className="size-5" />
+                    <span>Profile</span>
                 </Link>
 
                 <Link
                     href={logout()}
                     method="post"
                     as="button"
-                    className="flex w-full items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200"
-                    style={{ color: 'var(--brand-error)' }}
-                    onMouseEnter={(e) => {
-                        (e.currentTarget as HTMLElement).style.background =
-                            'rgba(255, 180, 171, 0.08)';
-                    }}
-                    onMouseLeave={(e) => {
-                        (e.currentTarget as HTMLElement).style.background = 'transparent';
-                    }}
+                    className="flex w-full items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 text-xs font-medium tracking-wide text-brand-error hover:bg-red-500/10"
                 >
-                    <span
-                        className="material-symbols-outlined"
-                        style={{
-                            fontSize: '20px',
-                            fontVariationSettings: "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20",
-                        }}
-                    >
-                        logout
-                    </span>
-                    <span className="text-xs font-medium tracking-wide">Logout</span>
+                    <Logout className="size-5" />
+                    <span>Logout</span>
                 </Link>
             </div>
         </>
@@ -348,49 +199,23 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
     return (
         <>
-            {/* Pulse animation for institute badge */}
-            <style>{`
-                @keyframes institutePulse {
-                    0%   { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(79, 219, 200, 0.7); }
-                    70%  { transform: scale(1);    box-shadow: 0 0 0 6px rgba(79, 219, 200, 0); }
-                    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(79, 219, 200, 0); }
-                }
-            `}</style>
-
-            <div
-                className="min-h-screen"
-                style={{ backgroundColor: 'var(--portal-bg)', fontFamily: 'Inter, sans-serif' }}
-            >
+            <div className="min-h-screen bg-(--portal-bg) font-sans">
                 {/* Desktop sidebar */}
-                <aside
-                    className="hidden md:flex fixed left-0 top-0 h-screen flex-col py-6 z-50"
-                    style={{
-                        width: '280px',
-                        backgroundColor: 'var(--portal-sidebar-bg)',
-                        borderRight: '1px solid var(--portal-card-border)',
-                    }}
-                >
+                <aside className="hidden md:flex fixed left-0 top-0 h-screen w-[280px] flex-col py-6 z-50 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border)">
                     {sidebarContent}
                 </aside>
 
                 {/* Mobile overlay */}
                 {mobileOpen && (
                     <div
-                        className="md:hidden fixed inset-0 z-40"
+                        className="md:hidden fixed inset-0 z-40 bg-black/60"
                         onClick={() => setMobileOpen(false)}
-                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
                     />
                 )}
 
                 {/* Mobile drawer */}
                 <aside
-                    className="md:hidden fixed left-0 top-0 h-screen flex flex-col py-6 z-50 transition-transform duration-300"
-                    style={{
-                        width: '280px',
-                        backgroundColor: 'var(--portal-sidebar-bg)',
-                        borderRight: '1px solid var(--portal-card-border)',
-                        transform: mobileOpen ? 'translateX(0)' : 'translateX(-100%)',
-                    }}
+                    className={`md:hidden fixed left-0 top-0 h-screen w-[280px] flex flex-col py-6 z-50 transition-transform duration-300 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border) ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
                 >
                     {sidebarContent}
                 </aside>
@@ -398,95 +223,47 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 {/* Main content */}
                 <div className="md:ml-[280px] flex flex-col min-h-screen">
                     {/* Topbar */}
-                    <header
-                        className="sticky top-0 z-40 flex items-center justify-between h-16 px-6"
-                        style={{
-                            backgroundColor: 'var(--portal-topbar-bg)',
-                            backdropFilter: 'blur(20px)',
-                            WebkitBackdropFilter: 'blur(20px)',
-                            borderBottom: '1px solid var(--portal-card-border)',
-                        }}
-                    >
+                    <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-(--portal-topbar-bg) backdrop-blur-xl border-b border-(--portal-card-border)">
                         {/* Left: hamburger (mobile) + breadcrumb */}
                         <div className="flex items-center gap-3">
                             <button
-                                className="md:hidden p-2 rounded-full transition-colors"
-                                style={{ color: 'var(--portal-text-secondary)' }}
+                                className="md:hidden p-2 rounded-full transition-colors text-(--portal-text-secondary)"
                                 onClick={() => setMobileOpen((v) => !v)}
                                 aria-label="Toggle menu"
                             >
-                                {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+                                {mobileOpen ? <Close className="size-6" /> : <Menu className="size-6" />}
                             </button>
 
                             {/* Breadcrumb */}
                             <nav className="flex items-center gap-1">
-                                <span
-                                    className="text-sm"
-                                    style={{ color: 'var(--portal-text-muted)' }}
-                                >
-                                    Admin
-                                </span>
-                                <span style={{ color: 'var(--portal-text-muted)' }}>
-                                    <ChevronRightIcon />
-                                </span>
-                                <span
-                                    className="text-sm font-semibold"
-                                    style={{ color: 'var(--portal-text-primary)' }}
-                                >
+                                <span className="text-sm text-(--portal-text-muted)">Admin</span>
+                                <ChevronRight className="size-4 text-(--portal-text-muted)" />
+                                <span className="text-sm font-semibold text-(--portal-text-primary)">
                                     {breadcrumbLabel}
                                 </span>
                             </nav>
                         </div>
 
-                        {/* Right: notifications + theme + user */}
+                        {/* Right: theme + notifications + user */}
                         <div className="flex items-center gap-2">
-                            {/* Notification bell with red dot */}
-                            <div className="relative">
-                                <button
-                                    className="p-2 rounded-full transition-colors"
-                                    style={{ color: 'var(--portal-text-secondary)' }}
-                                    aria-label="Notifications"
-                                    onMouseEnter={(e) => {
-                                        (e.currentTarget as HTMLElement).style.color =
-                                            'var(--portal-text-primary)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        (e.currentTarget as HTMLElement).style.color =
-                                            'var(--portal-text-secondary)';
-                                    }}
-                                >
-                                    <BellIcon />
-                                </button>
-                                {/* Red dot badge */}
-                                <span
-                                    className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
-                                    style={{
-                                        backgroundColor: 'var(--brand-error)',
-                                        border: '1.5px solid var(--portal-topbar-bg)',
-                                    }}
-                                />
-                            </div>
+                            <ThemeDropdown />
 
-                            {/* Theme Switcher */}
-                            <div className="pl-1">
-                                <ThemeDropdown />
-                            </div>
+                            <button
+                                className="p-2 rounded-full transition-colors text-(--portal-text-secondary) hover:text-(--portal-text-primary)"
+                                aria-label="Notifications"
+                            >
+                                <Notifications className="size-5" />
+                            </button>
 
                             {/* User avatar + name */}
                             {user && (
                                 <div className="flex items-center gap-2 ml-1">
                                     <UserAvatar user={user} />
                                     <div className="hidden md:block">
-                                        <p
-                                            className="text-xs font-semibold leading-none"
-                                            style={{ color: 'var(--portal-text-primary)' }}
-                                        >
+                                        <p className="text-xs font-semibold leading-none text-(--portal-text-primary)">
                                             {user.name}
                                         </p>
-                                        <p
-                                            className="text-[10px] mt-0.5 uppercase tracking-wider"
-                                            style={{ color: 'var(--portal-text-muted)' }}
-                                        >
+                                        <p className="text-[10px] mt-0.5 uppercase tracking-wider text-(--portal-text-muted)">
                                             Admin
                                         </p>
                                     </div>
