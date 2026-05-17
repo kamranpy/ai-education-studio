@@ -94,9 +94,8 @@ jobs:
           server: ftp.jazbastudio.com
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
+          port: 990
           protocol: ftps
-          security: loose
           local-dir: ./
           server-dir: /public_html/
           timeout: 60000
