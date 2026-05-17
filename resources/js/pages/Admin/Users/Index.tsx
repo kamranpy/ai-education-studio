@@ -1,4 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
+import { Mail } from '@material-symbols-svg/react';
 import {
     ChevronLeft,
     ChevronRight,
@@ -188,7 +189,7 @@ function UsersIndex({
                                 <p className="font-label-md text-label-md text-brand-primary mb-2">Pending Invites</p>
                                 <h3 className="font-headline-md text-headline-md text-card-foreground">{pendingUsers}</h3>
                             </div>
-                            <span className="material-symbols-outlined text-brand-primary text-3xl">mail</span>
+                            <Mail className="size-7 text-brand-primary" />
                         </div>
                         <button className="w-full mt-4 py-2 bg-brand-primary/10 border border-brand-primary/30 text-brand-primary font-bold rounded-lg text-body-sm hover:bg-brand-primary/20 transition-colors">
                             Review Invites

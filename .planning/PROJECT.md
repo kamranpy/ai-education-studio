@@ -1,17 +1,27 @@
 # AI Education Studio
 
-## Current Milestone: v2.0 UI Revamp
+## Current State
 
-**Goal:** Replace the entire UI with a polished, brand-new design across all surfaces — homepage, auth pages, and all three role portals.
+**v2.0 UI Revamp — shipped 2026-05-17**
 
-**Target features:**
-- Public branded homepage
+Full UI redesign complete across all surfaces. The platform now has a polished, branded design on the public homepage, auth pages, and all three role portals (Student, Admin, Super Admin), with a unified layout shell and consistent design system.
+
+**Next Milestone:** v3.0 — Feature Expansion (analytics, question banks, exports, OAuth)
+
+<details>
+<summary>v2.0 Milestone Goal (archived)</summary>
+
+Replace the entire UI with a polished, brand-new design across all surfaces — homepage, auth pages, and all three role portals.
+
+**Shipped features:**
+- Public branded homepage with hero, features, pricing, testimonials, FAQ
 - Custom login, register, and all auth pages
 - Student portal — full redesign (layout + all pages)
 - Institute Admin portal — full redesign (layout + all pages)
 - Super Admin portal — full redesign (layout + all pages)
+- Unified layout shell (sidebar/navbar) across all portals
 
-**Workflow:** Design-first per phase — AI generates UI prompt → user generates HTML → AI implements into React/Inertia pages.
+</details>
 
 
 
@@ -45,7 +55,7 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 
 <!-- Next milestone scope. -->
 
-- [ ] Full UI revamp — homepage, auth pages, student/admin/super-admin portals (v2.0)
+- ✓ Full UI revamp — homepage, auth pages, student/admin/super-admin portals — v2.0
 - [ ] Detailed analytics dashboard for student performance trends
 - [ ] Question banks/pools for reusing questions across exams
 - [ ] Export exam results to CSV/PDF
@@ -64,7 +74,7 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 - **Target Audience:** Schools (K-12), Universities, Corporate training platforms.
 - **Market Strategy:** The platform will be sold as a script on a marketplace. The buyer will host it and charge institutes.
 - **Tech Stack:** Laravel 13 + React 19 + Inertia.js v3 + Tailwind CSS v4. PHP 8.3+.
-- **Current State:** v1.0 MVP shipped. Full exam lifecycle, AI grading, billing, and Super Admin panel are all operational.
+- **Current State:** v2.0 shipped. Full UI revamp complete — branded homepage, auth pages, and all three role portals redesigned with unified layout shell and consistent design system.
 
 ## Constraints
 
@@ -111,4 +121,4 @@ A reliable digital assessment platform with AI-assisted evaluation that focuses 
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-09 after v1.0 milestone*
+*Last updated: 2026-05-17 after v2.0 milestone*

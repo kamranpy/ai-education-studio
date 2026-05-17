@@ -1,39 +1,37 @@
 ---
 gsd_state_version: 1.0
-milestone: v2.0
-milestone_name: UI Revamp
-status: executing
-last_updated: "2026-05-16T16:28:09.983Z"
-last_activity: 2026-05-16 -- Phase 11 execution started
+milestone: v3.0
+milestone_name: Feature Expansion
+status: planning
+last_updated: "2026-05-17T11:10:00.000Z"
+last_activity: 2026-05-17 -- v2.0 milestone archived
 progress:
-  total_phases: 8
-  completed_phases: 4
-  total_plans: 5
-  completed_plans: 4
-  percent: 80
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 ## Previous Milestone
 
-**v1.0 MVP** — shipped 2026-05-09
+**v2.0 UI Revamp** — shipped 2026-05-17
 
-- 7 phases, 25 plans, 38 tasks
-- Archived: `.planning/milestones/v1.0-phases/`
-- See: `.planning/MILESTONES.md`
+- 9 phases, 9 plans
+- Archived: `.planning/milestones/v2.0-ROADMAP.md`
+- Requirements: `.planning/milestones/v2.0-REQUIREMENTS.md`
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-05-10)
+See: `.planning/PROJECT.md` (updated 2026-05-17)
 
 **Core value:** A reliable digital assessment platform with AI-assisted evaluation that focuses on conceptual understanding rather than exact wording.
-**Current focus:** Phase 11 — admin-exam-builder-attempt-views
+**Current focus:** Planning v3.0 — Feature Expansion
 
 ## Current Position
 
-Phase: 11 (admin-exam-builder-attempt-views) — EXECUTING
-Plan: 1 of 1
-Status: Executing Phase 11
-Last activity: 2026-05-16 -- Phase 11 execution started
+Milestone: v3.0 — not started
+Status: Awaiting /gsd-new-milestone
 
 ## Accumulated Context
 
@@ -53,6 +51,10 @@ Last activity: 2026-05-16 -- Phase 11 execution started
 - Design system established in Phase 7 carries through all subsequent phases
 - No new backend logic in v2.0 — UI-only changes
 
+### Roadmap Evolution
+
+- Phase 15 added: Reusable Layout Shell Components (Sidebar and Navbar) — 2026-05-17
+
 ### Active Blockers
 
 - None
@@ -62,12 +64,18 @@ Last activity: 2026-05-16 -- Phase 11 execution started
 - [x] Phase 7: Public Homepage & Auth Pages — 2026-05-11
 - [x] Phase 8: Student Layout, Dashboard & Exam List — 2026-05-11
 - [x] Phase 9: Student Exam Taking & Results — 2026-05-11
+- [x] Phase 10: Admin Layout, Dashboard & Exam List — 2026-05-16
+- [x] Phase 11: Admin Exam Builder & Attempt Views — 2026-05-17
+- [x] Phase 12: Admin Users & Billing — 2026-05-17
+- [x] Phase 13: Super Admin Layout, Dashboard & Institutes — 2026-05-17
+- [x] Phase 14: Super Admin Settings & Credit Packages — 2026-05-17
+- [x] Phase 15: Reusable Layout Shell Components — 2026-05-17
 
 ### Pending Todos
 
-- [ ] Execute Phase 10: Admin Layout, Dashboard & Exam List
+- [x] Phase 15 complete: Layout Shell Unification executed and verified
 
 ## Session Continuity
 
-**Last Action:** Phases 7, 8, 9 marked complete (2026-05-11)
-**Next Action:** Generate Phase 10 UI prompt for admin layout + dashboard
+**Last Action:** Phase 15 executed — layout shell unified across all 3 portals (2026-05-17)
+**Next Action:** /gsd-complete-milestone or begin next milestone

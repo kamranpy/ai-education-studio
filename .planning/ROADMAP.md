@@ -6,7 +6,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1–6 (shipped 2026-05-09)
-- 🚧 **v2.0 UI Revamp** — Phases 7–14 (in progress)
+- ✅ **v2.0 UI Revamp** — Phases 7–15 (shipped 2026-05-17)
 
 ## Phases
 
@@ -23,16 +23,22 @@
 
 </details>
 
-### � v2.0 UI Revamp (In Progress)
+<details>
+<summary>✅ v2.0 UI Revamp (Phases 7–15) — SHIPPED 2026-05-17</summary>
 
-- [x] Phase 7: Public Homepage & Auth Pages
-- [x] Phase 8: Student Layout, Dashboard & Exam List
-- [x] Phase 9: Student Exam Taking & Results
-- [x] Phase 10: Admin Layout, Dashboard & Exam List
-- [ ] Phase 11: Admin Exam Builder & Attempt Views
-- [ ] Phase 12: Admin Users & Billing
-- [ ] Phase 13: Super Admin Layout, Dashboard & Institutes
-- [ ] Phase 14: Super Admin Settings & Credit Packages
+- [x] Phase 7: Public Homepage & Auth Pages — completed 2026-05-11
+- [x] Phase 8: Student Layout, Dashboard & Exam List — completed 2026-05-11
+- [x] Phase 9: Student Exam Taking & Results — completed 2026-05-11
+- [x] Phase 10: Admin Layout, Dashboard & Exam List — completed 2026-05-16
+- [x] Phase 11: Admin Exam Builder & Attempt Views — completed 2026-05-17
+- [x] Phase 12: Admin Users & Billing — completed 2026-05-17
+- [x] Phase 13: Super Admin Layout, Dashboard & Institutes — completed 2026-05-17
+- [x] Phase 14: Super Admin Settings & Credit Packages — completed 2026-05-17
+- [x] Phase 15: Reusable Layout Shell Components — completed 2026-05-17
+
+Archived: `.planning/milestones/v2.0-ROADMAP.md`
+
+</details>
 
 ## Progress
 
@@ -49,10 +55,11 @@
 | 8. Student Layout, Dashboard & Exam List | v2.0 | 1/1 | Complete | 2026-05-11 |
 | 9. Student Exam Taking & Results | v2.0 | 1/1 | Complete | 2026-05-11 |
 | 10. Admin Layout, Dashboard & Exam List | v2.0 | 1/1 | Complete | 2026-05-16 |
-| 11. Admin Exam Builder & Attempt Views | v2.0 | 0/1 | Not started | — |
-| 12. Admin Users & Billing | v2.0 | 0/1 | Not started | — |
-| 13. Super Admin Layout, Dashboard & Institutes | v2.0 | 0/1 | Not started | — |
-| 14. Super Admin Settings & Credit Packages | v2.0 | 0/1 | Not started | — |
+| 11. Admin Exam Builder & Attempt Views | v2.0 | 1/1 | Complete | 2026-05-17 |
+| 12. Admin Users & Billing | v2.0 | 1/1 | Complete | 2026-05-17 |
+| 13. Super Admin Layout, Dashboard & Institutes | v2.0 | 1/1 | Complete | 2026-05-17 |
+| 14. Super Admin Settings & Credit Packages | v2.0 | 1/1 | Complete | 2026-05-17 |
+| 15. Reusable Layout Shell Components | v2.0 | 1/1 | Complete | 2026-05-17 |
 
 ## Phase Details
 
@@ -134,3 +141,14 @@
   2. Stripe billing settings page renders with new design
   3. Credit packages (index, create, edit) render with new design
 **UI Prompt**: Yes
+
+### Phase 15: Reusable Layout Shell Components (Sidebar & Navbar)
+**Goal**: Extract the Student portal sidebar and navbar into a single shared layout shell component and apply it consistently across the Student, Admin, and Super Admin portals
+**Depends on**: Phases 7–14 (all portals complete)
+**Requirements**: DS-04, DS-05
+**Success Criteria**:
+  1. A single reusable `PortalLayout` (or equivalent) component drives the sidebar and topbar for all three portals
+  2. Icons, styles, and behaviour exactly match the current Student portal implementation
+  3. Admin and Super Admin portals are refactored to use the shared component with zero visual regression
+  4. Responsive mobile behaviour (hamburger/drawer) is consistent across all portals
+**UI Prompt**: No — implementation-driven refactor using existing Student portal as the reference

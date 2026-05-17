@@ -1,221 +1,238 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
-    Bot,
-    Building2,
+    Close,
     CreditCard,
-    LayoutGrid,
-    LogOut,
+    Dashboard,
+    Logout,
     Menu,
-    Package,
+    Notifications,
     School,
     Settings,
-} from 'lucide-react';
+    SmartToy,
+} from '@material-symbols-svg/react';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { index as creditPackagesIndex } from '@/actions/App/Http/Controllers/SuperAdmin/CreditPackageController';
 import { index as institutesIndex } from '@/actions/App/Http/Controllers/SuperAdmin/InstituteController';
 import { index as billingIndex } from '@/actions/App/Http/Controllers/SuperAdmin/StripeSettingController';
 import { ThemeDropdown } from '@/components/theme-dropdown';
-import {
-    Sheet,
-    SheetContent,
-    SheetTrigger,
-} from '@/components/ui/sheet';
-import { UserInfo } from '@/components/user-info';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
 import type { User } from '@/types';
 
-const navItems = [
-    { title: 'Dashboard', href: '/super-admin/dashboard', icon: LayoutGrid },
-    { title: 'Institutes', href: institutesIndex.url(), icon: Building2 },
-    { title: 'LLM Provider', href: '/super-admin/llm', icon: Bot },
-    { title: 'Billing', href: billingIndex.url(), icon: CreditCard },
-    { title: 'Credit Packages', href: creditPackagesIndex.url(), icon: Package },
-];
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-interface NavItemProps {
-    item: typeof navItems[0];
-    active: boolean;
-    onClick?: () => void;
+function getInitials(name: string): string {
+    return name
+        .split(' ')
+        .map((part) => part[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
 }
 
-function NavItem({ item, active, onClick }: NavItemProps) {
+function UserAvatar({ user }: { user: User }) {
     return (
-        <Link
-            key={item.href}
-            href={item.href}
-            onClick={onClick}
-            className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
-                active
-                    ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300'
-                    : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50'
-            }`}
-        >
-            <item.icon className="size-5" />
-            {item.title}
-        </Link>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 text-white bg-linear-to-br from-indigo-500 to-violet-600 ring-2 ring-white/20">
+            {getInitials(user.name)}
+        </div>
     );
 }
 
-function SidebarContent({ onItemClick }: { onItemClick?: () => void }) {
-    const { url, props } = usePage<{
-        auth: { user: User } | null;
-    }>();
-    const user = props.auth?.user;
+// ── Nav config ────────────────────────────────────────────────────────────────
 
-    return (
-        <>
-            {/* Logo / Header */}
-            <div className="flex items-center gap-3 px-3 py-4 mb-4">
-                <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-600 shadow-sm">
-                    <School className="size-5 text-white" />
-                </div>
-                <div>
-                    <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-                        Admin Portal
-                    </h1>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Super User</p>
-                </div>
-            </div>
+type NavItem = {
+    title: string;
+    href: string;
+    icon: (props: { className?: string }) => ReactNode;
+    matchPrefix: string;
+};
 
-            {/* Navigation */}
-            <nav className="flex-1 space-y-1">
-                {navItems.map((item) => (
-                    <NavItem
-                        key={item.href}
-                        item={item}
-                        active={url.startsWith(item.href)}
-                        onClick={onItemClick}
-                    />
-                ))}
-            </nav>
-
-            {/* User footer */}
-            <div className="border-t border-slate-200 pt-4 dark:border-slate-700">
-                {user && (
-                    <div className="mb-3 px-1">
-                        <UserInfo user={user} showEmail />
-                    </div>
-                )}
-                <div className="space-y-1">
-                    <Link
-                        href={profileEdit()}
-                        onClick={onItemClick}
-                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-all hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800/50"
-                    >
-                        <Settings className="size-5" />
-                        Profile
-                    </Link>
-                    <Link
-                        href={logout()}
-                        method="post"
-                        as="button"
-                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-all hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-                    >
-                        <LogOut className="size-5" />
-                        Logout
-                    </Link>
-                </div>
-            </div>
-        </>
-    );
-}
+// ── Layout ────────────────────────────────────────────────────────────────────
 
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {
     const { url, props } = usePage();
     const user = props.auth?.user as User | undefined;
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-    // Get current page title from URL
+    const navItems: NavItem[] = [
+        { title: 'Dashboard', href: '/super-admin/dashboard', icon: Dashboard, matchPrefix: '/super-admin/dashboard' },
+        { title: 'Institutes', href: institutesIndex.url(), icon: School, matchPrefix: '/super-admin/institutes' },
+        { title: 'LLM Provider', href: '/super-admin/llm', icon: SmartToy, matchPrefix: '/super-admin/llm' },
+        { title: 'Billing', href: billingIndex.url(), icon: CreditCard, matchPrefix: '/super-admin/billing' },
+        { title: 'Credit Packages', href: creditPackagesIndex.url(), icon: CreditCard, matchPrefix: '/super-admin/credit-packages' },
+    ];
+
     const getPageTitle = () => {
         if (url.startsWith('/super-admin/dashboard')) {
             return 'Dashboard';
         }
+
         if (url.startsWith('/super-admin/institutes')) {
             return 'Institutes';
         }
+
         if (url.startsWith('/super-admin/llm')) {
             return 'LLM Provider';
         }
+
         if (url.startsWith('/super-admin/billing')) {
             return 'Billing';
         }
+
         if (url.startsWith('/super-admin/credit-packages')) {
             return 'Credit Packages';
         }
+
         return 'Super Admin';
     };
 
+    const sidebarContent = (
+        <>
+            {/* Brand header */}
+            <div className="px-4 pb-0 mb-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15">
+                        <School className="size-5 text-brand-primary-text" />
+                    </div>
+                    <div>
+                        <h1 className="text-sm font-bold tracking-tight leading-tight text-brand-primary-text">
+                            Admin Portal
+                        </h1>
+                        <p className="text-xs text-(--portal-text-muted)">Super User</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Nav items */}
+            <nav className="flex-1 px-2 space-y-1">
+                {navItems.map((item) => {
+                    const isActive = url.startsWith(item.matchPrefix);
+                    const Icon = item.icon;
+
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setMobileOpen(false)}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-r-full transition-all duration-200 ${
+                                isActive
+                                    ? 'bg-(--portal-nav-active-bg) text-(--portal-nav-active-text) border-l-4 border-(--portal-nav-active-border)'
+                                    : 'text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)'
+                            }`}
+                        >
+                            <Icon className="size-5" />
+                            <span className="text-xs font-medium tracking-wider uppercase">{item.title}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
+
+            {/* Footer */}
+            <div className="px-2 mt-auto space-y-1">
+                {user && (
+                    <div className="flex items-center gap-3 px-4 py-2.5 mb-1">
+                        <UserAvatar user={user} />
+                        <div className="min-w-0">
+                            <p className="text-xs font-semibold leading-none truncate text-(--portal-text-primary)">
+                                {user.name}
+                            </p>
+                            <p className="text-[10px] mt-0.5 uppercase tracking-wider text-(--portal-text-muted)">
+                                Super Admin
+                            </p>
+                        </div>
+                    </div>
+                )}
+                <Link
+                    href={profileEdit()}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200 text-(--portal-nav-text) hover:bg-(--portal-nav-hover-bg)"
+                >
+                    <Settings className="size-5" />
+                    <span className="text-xs font-medium tracking-wider uppercase">Profile</span>
+                </Link>
+                <Link
+                    href={logout()}
+                    method="post"
+                    as="button"
+                    className="flex w-full items-center gap-3 px-4 py-3 rounded-full transition-colors duration-200 text-brand-error hover:bg-red-500/10"
+                >
+                    <Logout className="size-5" />
+                    <span className="text-xs font-medium tracking-wider uppercase">Logout</span>
+                </Link>
+            </div>
+        </>
+    );
+
     return (
-        <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
-            {/* Desktop Sidebar */}
-            <aside className="fixed inset-y-0 left-0 hidden w-[280px] flex-col border-r border-slate-200 bg-white p-4 lg:flex dark:border-slate-800 dark:bg-slate-900">
-                <SidebarContent />
+        <div className="min-h-screen bg-(--portal-bg) font-sans">
+            {/* Desktop sidebar */}
+            <aside className="hidden md:flex fixed left-0 top-0 h-screen w-[280px] flex-col py-8 z-50 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border)">
+                {sidebarContent}
             </aside>
 
-            {/* Mobile Sidebar (Sheet) */}
-            <Sheet>
-                <SheetTrigger asChild>
-                    <button className="fixed left-4 top-4 z-50 flex size-10 items-center justify-center rounded-lg bg-white shadow-md lg:hidden dark:bg-slate-800">
-                        <Menu className="size-5 text-slate-700 dark:text-slate-300" />
-                    </button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-[280px] p-0">
-                    <div className="flex h-full flex-col p-4">
-                        <SidebarContent onItemClick={() => document.querySelector<HTMLButtonElement>('[data-state="open"]')?.click()} />
-                    </div>
-                </SheetContent>
-            </Sheet>
+            {/* Mobile overlay */}
+            {mobileOpen && (
+                <div
+                    className="md:hidden fixed inset-0 z-40 bg-black/60"
+                    onClick={() => setMobileOpen(false)}
+                />
+            )}
 
-            <main className="flex-1 lg:ml-[280px]">
-                {/* Top Navigation Bar */}
-                <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-slate-200 bg-white/80 px-4 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80 lg:px-8">
-                    <div className="flex items-center gap-4 lg:ml-0 ml-14">
-                        {/* Breadcrumb */}
-                        <div className="hidden items-center gap-2 text-sm text-slate-500 sm:flex dark:text-slate-400">
-                            <span>Admin</span>
-                            <span>/</span>
-                            <span className="font-medium text-indigo-600 dark:text-indigo-400">
-                                {getPageTitle()}
-                            </span>
-                        </div>
-                        {/* Mobile Title */}
-                        <h2 className="font-semibold text-slate-900 sm:hidden dark:text-slate-100">
-                            {getPageTitle()}
-                        </h2>
+            {/* Mobile drawer */}
+            <aside
+                className={`md:hidden fixed left-0 top-0 h-screen w-[280px] flex flex-col py-8 z-50 transition-transform duration-300 bg-(--portal-sidebar-bg) border-r border-(--portal-card-border) ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            >
+                {sidebarContent}
+            </aside>
+
+            {/* Main content */}
+            <div className="md:ml-[280px] flex flex-col min-h-screen">
+                {/* Topbar */}
+                <header className="sticky top-0 z-40 flex items-center justify-between h-16 px-6 bg-(--portal-topbar-bg) backdrop-blur-xl border-b border-(--portal-card-border)">
+                    {/* Left: hamburger (mobile) + breadcrumb */}
+                    <div className="flex items-center gap-3">
+                        <button
+                            className="md:hidden p-2 rounded-full transition-colors text-(--portal-text-secondary)"
+                            onClick={() => setMobileOpen((v) => !v)}
+                            aria-label="Toggle menu"
+                        >
+                            {mobileOpen ? <Close className="size-6" /> : <Menu className="size-6" />}
+                        </button>
+                        <nav className="flex items-center gap-1 text-sm">
+                            <span className="text-(--portal-text-muted)">Super Admin /</span>
+                            <span className="font-semibold text-(--portal-text-primary)">{getPageTitle()}</span>
+                        </nav>
                     </div>
 
+                    {/* Right: theme + bell + avatar */}
                     <div className="flex items-center gap-2">
-                        {/* Action Buttons */}
-                        <div className="flex items-center gap-1">
-                            <ThemeDropdown />
-                        </div>
-
-                        {/* User Avatar */}
+                        <ThemeDropdown />
+                        <button
+                            className="p-2 rounded-full transition-colors text-(--portal-text-secondary) hover:text-(--portal-text-primary)"
+                            aria-label="Notifications"
+                        >
+                            <Notifications className="size-5" />
+                        </button>
                         {user && (
-                            <div className="ml-2 flex items-center gap-3 border-l border-slate-200 pl-4 dark:border-slate-700">
-                                <div className="hidden text-right sm:block">
-                                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                            <div className="flex items-center gap-2 ml-1">
+                                <UserAvatar user={user} />
+                                <div className="hidden md:block">
+                                    <p className="text-xs font-semibold leading-none text-(--portal-text-primary)">
                                         {user.name}
                                     </p>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                                    <p className="text-[10px] mt-0.5 uppercase tracking-wider text-(--portal-text-muted)">
                                         Super Admin
                                     </p>
-                                </div>
-                                <div className="size-10 overflow-hidden rounded-full border-2 border-indigo-100 dark:border-indigo-900">
-                                    <img
-                                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=4f46e5&color=fff`}
-                                        alt={user.name}
-                                        className="size-full object-cover"
-                                    />
                                 </div>
                             </div>
                         )}
                     </div>
                 </header>
 
-                {/* Main Content */}
-                <div className="p-4 lg:p-8">{children}</div>
-            </main>
+                {/* Page content */}
+                <main className="flex-1 p-6">{children}</main>
+            </div>
         </div>
     );
 }

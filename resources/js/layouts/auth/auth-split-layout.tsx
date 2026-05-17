@@ -9,7 +9,7 @@ export default function AuthSplitLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="relative grid h-dvh flex-col items-center justify-center px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
+        <div className="relative grid h-dvh flex-col items-center justify-center bg-[#0e0e0e] px-8 sm:px-0 lg:max-w-none lg:grid-cols-2 lg:px-0">
             {/* Left Panel: Brand & Value Prop */}
             <div className="relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r overflow-hidden"
                 style={{ background: 'linear-gradient(135deg, #0f0069 0%, #1d00a5 50%, #4f46e5 100%)' }}

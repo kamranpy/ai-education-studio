@@ -11,8 +11,8 @@ import {
     Search,
 } from 'lucide-react';
 import { useState } from 'react';
-import { index as examsIndex, show as examsShow } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { show as attemptsShow } from '@/actions/App/Http/Controllers/Admin/ExamAttemptAdminController';
+import { index as examsIndex, show as examsShow } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -78,7 +78,9 @@ function ScoreBadge({ score, passingScore }: { score: number | null | undefined;
     if (score === null || score === undefined) {
         return <span className="text-muted-foreground">—</span>;
     }
+
     const passed = score >= passingScore;
+
     return (
         <span className={`font-semibold ${passed ? 'text-brand-secondary' : 'text-destructive'}`}>
             {score.toFixed(1)}%
@@ -275,6 +277,7 @@ function AttemptsIndex({ exam, attempts, filters }: Props) {
                                     </Button>
                                 );
                             }
+
                             if (idx === attempts.links.length - 1) {
                                 return (
                                     <Button
@@ -287,6 +290,7 @@ function AttemptsIndex({ exam, attempts, filters }: Props) {
                                     </Button>
                                 );
                             }
+
                             return (
                                 <Button
                                     key={idx}
