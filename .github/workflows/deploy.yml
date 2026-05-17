@@ -88,22 +88,21 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
-      - name: 📂 Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp.jazbastudio.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftps
-          security: loose
-          local-dir: ./
-          server-dir: /public_html/
-          timeout: 60000
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/tests/**
-            **/.planning/**
-            **/.github/**
+      - name: � Install lftp
+        run: sudo apt-get install -y lftp
+
+      - name: 📂 Sync files via SFTP
+        run: |
+          lftp -u "${{ secrets.FTP_USERNAME }}","${{ secrets.FTP_PASSWORD }}" sftp://jazbastudio.com <<EOF
+          set sftp:auto-confirm yes
+          set net:timeout 30
+          set net:max-retries 3
+          mirror --reverse --delete --verbose \
+            --exclude-glob .git* \
+            --exclude-glob node_modules/ \
+            --exclude-glob tests/ \
+            --exclude-glob .planning/ \
+            --exclude-glob .github/ \
+            ./ /public_html/
+          bye
+          EOF
