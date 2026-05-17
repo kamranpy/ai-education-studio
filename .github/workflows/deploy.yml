@@ -33,7 +33,7 @@ jobs:
         run: composer install --no-dev --optimize-autoloader
 
       - name: 📦 Install Node dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: 🏗️ Build frontend assets
         run: pnpm run build
