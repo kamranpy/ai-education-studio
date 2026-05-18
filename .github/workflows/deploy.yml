@@ -156,8 +156,8 @@ jobs:
               --server "jazbastudio.com" \
               --username "${{ secrets.FTP_USERNAME }}" \
               --password "${{ secrets.FTP_PASSWORD }}" \
-              --port 990 \
-              --protocol "ftps-legacy" \
+              --port 21 \
+              --protocol "ftps" \
               --security "loose" \
               --local-dir "./" \
               --server-dir "/public_html/" \
@@ -192,8 +192,8 @@ jobs:
               --server "jazbastudio.com" \
               --username "${{ secrets.FTP_USERNAME }}" \
               --password "${{ secrets.FTP_PASSWORD }}" \
-              --port 990 \
-              --protocol "ftps-legacy" \
+              --port 21 \
+              --protocol "ftps" \
               --security "loose" \
               --local-dir "./public/build/" \
               --server-dir "/public_html/public/build/" \
@@ -212,8 +212,8 @@ jobs:
               --server "jazbastudio.com" \
               --username "${{ secrets.FTP_USERNAME }}" \
               --password "${{ secrets.FTP_PASSWORD }}" \
-              --port 990 \
-              --protocol "ftps-legacy" \
+              --port 21 \
+              --protocol "ftps" \
               --security "loose" \
               --local-dir "./vendor/" \
               --server-dir "/public_html/vendor/" \
