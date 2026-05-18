@@ -123,6 +123,9 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y lftp
           lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p 21 jazbastudio.com <<EOF
+          set ssl:verify-certificate no
+          set ftp:ssl-allow yes
+          set ftp:ssl-force yes
           set ftp:passive-mode yes
           set net:max-retries 5
           set net:timeout 60
@@ -149,6 +152,9 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y lftp
           lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p 21 jazbastudio.com <<EOF
+          set ssl:verify-certificate no
+          set ftp:ssl-allow yes
+          set ftp:ssl-force yes
           set ftp:passive-mode yes
           set net:max-retries 5
           set net:timeout 60
@@ -175,6 +181,9 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y lftp
           lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p 21 jazbastudio.com <<EOF
+          set ssl:verify-certificate no
+          set ftp:ssl-allow yes
+          set ftp:ssl-force yes
           set ftp:passive-mode yes
           set net:max-retries 10
           set net:timeout 120
