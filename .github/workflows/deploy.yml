@@ -108,34 +108,9 @@ jobs:
             !storage/framework/views/**
           retention-days: 1
 
-  # Deploy Phase 1: Vendor (largest, most likely to fail)
-  deploy-vendor:
-    name: 📦 Deploy Vendor
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: 📥 Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: production-build
-
-      - name: 📂 Sync vendor via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: jazbastudio.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftps
-          security: loose
-          local-dir: ./vendor/
-          server-dir: /public_html/vendor/
-          timeout: 1800000
-          log-level: standard
-
-  # Deploy Phase 2: Core Application Files
+  # Deploy Phase 1: Core files (smaller, faster)
   deploy-core:
-    name: 🔧 Deploy Core
+    name: � Deploy Core
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -156,7 +131,7 @@ jobs:
           local-dir: ./
           server-dir: /public_html/
           timeout: 1800000
-          log-level: standard
+          log-level: verbose
           exclude: |
             **/.git*
             **/.git*/**
@@ -174,11 +149,11 @@ jobs:
             **/storage/framework/sessions/**
             **/storage/framework/views/**
 
-  # Deploy Phase 3: Public Assets (built frontend)
+  # Deploy Phase 2: Public Assets (built frontend)
   deploy-public:
     name: 🎨 Deploy Public Assets
     runs-on: ubuntu-latest
-    needs: build
+    needs: deploy-core
     steps:
       - name: 📥 Download build artifact
         uses: actions/download-artifact@v4
@@ -197,4 +172,29 @@ jobs:
           local-dir: ./public/build/
           server-dir: /public_html/public/build/
           timeout: 600000
-          log-level: standard
+          log-level: verbose
+
+  # Deploy Phase 3: Vendor (largest, most likely to fail - run last)
+  deploy-vendor:
+    name: 📦 Deploy Vendor
+    runs-on: ubuntu-latest
+    needs: deploy-public
+    steps:
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+
+      - name: 📂 Sync vendor via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: jazbastudio.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          security: loose
+          local-dir: ./vendor/
+          server-dir: /public_html/vendor/
+          timeout: 1800000
+          log-level: verbose
