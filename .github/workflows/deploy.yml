@@ -119,26 +119,35 @@ jobs:
         with:
           name: production-build
 
-      - name: 📂 Sync core files via FTP (lftp)
-        run: |
-          sudo apt-get update && sudo apt-get install -y lftp
-          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p 21 jazbastudio.com <<EOF
-          set ssl:verify-certificate no
-          set ftp:ssl-allow yes
-          set ftp:ssl-force yes
-          set ftp:passive-mode yes
-          set net:connection-limit 1
-          set net:max-retries 5
-          set net:timeout 60
-          set net:reconnect-interval-base 5
-          set net:reconnect-interval-max 15
-          set ftp:use-feat no
-          set ftp:use-utf8 no
-          lcd .
-          cd /public_html/
-          mirror -R -v --ignore-time -X .git* -X node_modules -X vendor -X public/build -X tests -X .planning -X .github -X .windsurf -X .cursor -X .agent -X AGENTS.md -X ARCHITECTURE.md -X CONVENTIONS.md -X ROADMAP.md -X PROJECT.md -X STACK.md -X "storage/logs/*" -X "storage/framework/cache/*" -X "storage/framework/sessions/*" -X "storage/framework/views/*" .
-          bye
-          EOF
+      - name: 📂 Sync core files via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: jazbastudio.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          security: loose
+          local-dir: ./
+          server-dir: /public_html/
+          timeout: 1800000
+          log-level: verbose
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/vendor/**
+            **/public/build/**
+            **/tests/**
+            **/.planning/**
+            **/.github/**
+            **/.windsurf/**
+            **/.cursor/**
+            **/.agent/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
 
   # Deploy Phase 2: Public Assets (built frontend)
   deploy-public:
@@ -151,26 +160,19 @@ jobs:
         with:
           name: production-build
 
-      - name: 📂 Sync public/build via FTP (lftp)
-        run: |
-          sudo apt-get update && sudo apt-get install -y lftp
-          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p 21 jazbastudio.com <<EOF
-          set ssl:verify-certificate no
-          set ftp:ssl-allow yes
-          set ftp:ssl-force yes
-          set ftp:passive-mode yes
-          set net:connection-limit 1
-          set net:max-retries 5
-          set net:timeout 60
-          set net:reconnect-interval-base 5
-          set net:reconnect-interval-max 15
-          set ftp:use-feat no
-          set ftp:use-utf8 no
-          lcd ./public/build/
-          cd /public_html/public/build/
-          mirror -R -v --ignore-time .
-          bye
-          EOF
+      - name: 📂 Sync public/build via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: jazbastudio.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          security: loose
+          local-dir: ./public/build/
+          server-dir: /public_html/public/build/
+          timeout: 600000
+          log-level: verbose
 
   # Deploy Phase 3: Vendor (largest, most likely to fail - run last)
   deploy-vendor:
@@ -183,23 +185,16 @@ jobs:
         with:
           name: production-build
 
-      - name: 📂 Sync vendor via FTP (lftp)
-        run: |
-          sudo apt-get update && sudo apt-get install -y lftp
-          lftp -u "${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }}" -p 21 jazbastudio.com <<EOF
-          set ssl:verify-certificate no
-          set ftp:ssl-allow yes
-          set ftp:ssl-force yes
-          set ftp:passive-mode yes
-          set net:connection-limit 1
-          set net:max-retries 10
-          set net:timeout 120
-          set net:reconnect-interval-base 5
-          set net:reconnect-interval-max 30
-          set ftp:use-feat no
-          set ftp:use-utf8 no
-          lcd ./vendor/
-          cd /public_html/vendor/
-          mirror -R -v --ignore-time .
-          bye
-          EOF
+      - name: 📂 Sync vendor via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: jazbastudio.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps
+          security: loose
+          local-dir: ./vendor/
+          server-dir: /public_html/vendor/
+          timeout: 1800000
+          log-level: verbose
