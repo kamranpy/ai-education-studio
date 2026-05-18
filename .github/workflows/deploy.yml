@@ -144,6 +144,12 @@ jobs:
             **/.windsurf/**
             **/.cursor/**
             **/.agent/**
+            AGENTS.md
+            ARCHITECTURE.md
+            CONVENTIONS.md
+            ROADMAP.md
+            PROJECT.md
+            STACK.md
             **/storage/logs/**
             **/storage/framework/cache/**
             **/storage/framework/sessions/**
