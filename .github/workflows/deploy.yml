@@ -1,97 +1,116 @@
-name: Deploy via FTP
+name: 🚀 Deploy Laravel-Inertia to CPANEL
 
 on:
   push:
     branches:
       - dev
-  workflow_dispatch:
-
-concurrency:
-  group: ftp-deploy-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Build & Deploy
+  web-deploy:
+    name: 🎉 Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
+      - name: 📦 Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, bcmath, intl, pdo, pdo_mysql, tokenizer, xml, ctype, json, fileinfo, openssl
+          extensions: mbstring, xml, zip, bcmath, intl, pdo_mysql, tokenizer, ctype, fileinfo
           coverage: none
-          tools: composer:v2
 
-      - name: Setup Node.js
+      - name: 📦 Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: 22
 
-      - name: Install PHP dependencies
-        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
 
-      - name: Install Node dependencies
-        run: npm ci
+      - name: 📦 Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader
 
-      - name: Build frontend assets
-        run: npm run build
+      - name: 📦 Install Node dependencies
+        run: pnpm install --no-frozen-lockfile
 
-      - name: Prepare deployment artifacts
+      - name: 🏗️ Build frontend assets
+        run: pnpm run build
+
+      - name:  Create production .env file
         run: |
-          # Ensure required runtime directories exist
-          mkdir -p storage/framework/cache/data
-          mkdir -p storage/framework/sessions
-          mkdir -p storage/framework/views
-          mkdir -p storage/logs
-          mkdir -p bootstrap/cache
+          echo 'APP_NAME="AI Education Studio"' > .env
+          echo 'APP_ENV=production' >> .env
+          echo 'APP_KEY=${{ secrets.APP_KEY }}' >> .env
+          echo 'APP_DEBUG=false' >> .env
+          echo 'APP_URL=https://aie-studio.jazbastudio.com' >> .env
+          echo 'APP_LOCALE=en' >> .env
+          echo 'APP_FALLBACK_LOCALE=en' >> .env
+          echo '' >> .env
+          echo 'LOG_CHANNEL=stack' >> .env
+          echo 'LOG_STACK=single' >> .env
+          echo 'LOG_LEVEL=error' >> .env
+          echo '' >> .env
+          echo 'DB_CONNECTION=mysql' >> .env
+          echo 'DB_HOST=${{ secrets.DB_HOST }}' >> .env
+          echo 'DB_PORT=3306' >> .env
+          echo 'DB_DATABASE=${{ secrets.DB_DATABASE }}' >> .env
+          echo 'DB_USERNAME=${{ secrets.DB_USERNAME }}' >> .env
+          echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' >> .env
+          echo '' >> .env
+          echo 'SESSION_DRIVER=database' >> .env
+          echo 'SESSION_LIFETIME=120' >> .env
+          echo 'SESSION_ENCRYPT=false' >> .env
+          echo '' >> .env
+          echo 'CACHE_STORE=database' >> .env
+          echo 'QUEUE_CONNECTION=database' >> .env
+          echo 'FILESYSTEM_DISK=local' >> .env
+          echo '' >> .env
+          echo 'STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}' >> .env
+          echo 'STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}' >> .env
+          echo '' >> .env
+          echo 'VITE_APP_NAME="AI Education Studio"' >> .env
 
-      - name: Deploy to FTP server
+      - name: � Directory permissions
+        run: |
+          chmod -R 755 storage bootstrap/cache
+          mkdir -p public/build
+          touch storage/logs/laravel.log
+          chmod -R 777 storage/logs
+
+      - name: 🔗 Create storage link
+        run: php artisan storage:link --force
+
+      - name: ⚡ Cache Laravel config, routes & views
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+      - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: jazbastudio.com
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          protocol: ftp
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           port: 21
+          protocol: ftp
           local-dir: ./
-          server-dir: public_html
-          dangerous-clean-slate: false
+          server-dir: /public_html/
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
-            **/.github/**
             **/node_modules/**
+            **/vendor/**
             **/tests/**
             **/.planning/**
-            **/.gemini/**
-            **/.kiro/**
-            **/.cursor/**
+            **/.github/**
             **/.windsurf/**
-            .editorconfig
-            .env
-            .env.example
-            .gitattributes
-            .gitignore
-            .npmrc
-            .prettierignore
-            .prettierrc
-            AGENTS.md
-            INTEGRATION_GUIDE.md
-            README.md
-            boost.json
-            components.json
-            eslint.config.js
-            package.json
-            package-lock.json
-            pnpm-lock.yaml
-            pnpm-workspace.yaml
-            phpunit.xml
-            pint.json
-            tsconfig.json
-            vite.config.ts
+            **/.cursor/**
+            **/.agent/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
