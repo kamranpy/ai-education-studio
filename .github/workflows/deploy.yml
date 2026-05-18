@@ -152,7 +152,7 @@ jobs:
           max_attempts: 5
           retry_wait_seconds: 30
           command: |
-            npx --yes @samkirkland/ftp-deploy@4.4.0 \
+            npx --yes @samkirkland/ftp-deploy@1.2.5 \
               --server "jazbastudio.com" \
               --username "${{ secrets.FTP_USERNAME }}" \
               --password "${{ secrets.FTP_PASSWORD }}" \
@@ -188,7 +188,7 @@ jobs:
           max_attempts: 5
           retry_wait_seconds: 30
           command: |
-            npx --yes @samkirkland/ftp-deploy@4.4.0 \
+            npx --yes @samkirkland/ftp-deploy@1.2.5 \
               --server "jazbastudio.com" \
               --username "${{ secrets.FTP_USERNAME }}" \
               --password "${{ secrets.FTP_PASSWORD }}" \
@@ -208,7 +208,7 @@ jobs:
           max_attempts: 8
           retry_wait_seconds: 60
           command: |
-            npx --yes @samkirkland/ftp-deploy@4.4.0 \
+            npx --yes @samkirkland/ftp-deploy@1.2.5 \
               --server "jazbastudio.com" \
               --username "${{ secrets.FTP_USERNAME }}" \
               --password "${{ secrets.FTP_PASSWORD }}" \
