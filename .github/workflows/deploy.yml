@@ -42,6 +42,11 @@ jobs:
           rm -f phpunit.xml pint.json components.json boost.json
           rm -f AGENTS.md README.md INTEGRATION_GUIDE.md
 
+      - name: Verify vendor exists
+        run: |
+          ls -la vendor/
+          ls -la vendor/laravel/framework/ | head -5
+
       # Here is the deployment action
       - name: Upload from public_html via FTP
         uses: airvzxf/ftp-deployment-action@latest
@@ -50,3 +55,13 @@ jobs:
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           delete: "false"
+          local_dir: "./"
+          remote_dir: "/"
+          options: "--verbose --use-cache --ignore-time --no-perms"
+
+      - name: Post-deploy cache clear
+        run: |
+          echo "Deployment complete. Remember to clear caches on server:"
+          echo "php artisan config:clear"
+          echo "php artisan route:clear"
+          echo "php artisan cache:clear"
