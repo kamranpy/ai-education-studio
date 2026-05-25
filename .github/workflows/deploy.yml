@@ -1,13 +1,11 @@
-name: 🚀 Deploy Laravel-Inertia to CPANEL
+name: CI -> Deploy to My website
 
 on:
   push:
-    branches:
-      - dev
+    branches: [ main, development ]
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -88,29 +86,15 @@ jobs:
           php artisan route:cache
           php artisan view:cache
 
-      - name: 📂 Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 📂 Upload via FTP
+        uses: airvzxf/ftp-deployment-action@latest
         with:
-          server: jazbastudio.com
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          local-dir: ./
-          server-dir: /public_html/
-          timeout: 120000
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/node_modules/**
-            **/vendor/**
-            **/tests/**
-            **/.planning/**
-            **/.github/**
-            **/.windsurf/**
-            **/.cursor/**
-            **/.agent/**
-            **/storage/logs/**
-            **/storage/framework/cache/**
-            **/storage/framework/sessions/**
-            **/storage/framework/views/**
+          server: ${{ secrets.FTP_SERVER }}
+          user: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          local_dir: "./"
+          remote_dir: "/public_html/"
+          delete: "false"
+          exclude: >
+            .git .github node_modules tests .planning .windsurf .cursor .agent
+            storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
