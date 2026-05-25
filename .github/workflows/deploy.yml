@@ -7,16 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Remove agentic and dev-only files before deploy
-        run: |
-          rm -rf .git .github
-          rm -rf .cursor .windsurf .agent .gemini .kiro .roo .copilot
-          rm -rf .planning node_modules tests
-          rm -f .env.example .gitignore .gitattributes .editorconfig
-          rm -f .prettierrc .prettierignore .npmrc
-          rm -f eslint.config.js vite.config.ts tsconfig.json
-          rm -f phpunit.xml pint.json components.json boost.json
-          rm -f AGENTS.md README.md INTEGRATION_GUIDE.md
 
       # Here is the deployment action
       - name: Upload from public_html via FTP
@@ -25,3 +15,4 @@ jobs:
           server: ftp.jazbastudio.com
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          delete: "false"
