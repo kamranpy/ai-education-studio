@@ -48,16 +48,27 @@ jobs:
           ls -la vendor/laravel/framework/ | head -5
 
       # Here is the deployment action
-      - name: Upload from public_html via FTP
-        uses: airvzxf/ftp-deployment-action@latest
+      - name: Upload via FTP (incremental)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.jazbastudio.com
-          user: ${{ secrets.FTP_USERNAME }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          delete: "false"
-          local_dir: "./"
-          remote_dir: "/"
-          options: "--verbose --use-cache --ignore-time --no-perms"
+          protocol: ftps
+          port: 21
+          local-dir: ./
+          server-dir: /
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/tests/**
+            **/.env*
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+          dry-run: false
 
       - name: Post-deploy cache clear
         run: |
