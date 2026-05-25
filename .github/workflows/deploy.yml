@@ -12,6 +12,6 @@ jobs:
         uses: airvzxf/ftp-deployment-action@latest
         with:
           server: ftp.jazbastudio.com
-          user: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          user: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           delete: "false"
