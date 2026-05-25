@@ -1,100 +1,32 @@
 name: CI -> Deploy to My website
-
 on:
   push:
-    branches: [ main, development ]
-
+    branches: [ dev ]
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v4
-
-      - name: 📦 Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: mbstring, xml, zip, bcmath, intl, pdo_mysql, tokenizer, ctype, fileinfo
-          coverage: none
-
-      - name: 📦 Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: 📦 Install PHP dependencies
-        run: composer install --no-dev --optimize-autoloader
-
-      - name: 📦 Install Node dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: 🏗️ Build frontend assets
-        run: pnpm run build
-
-      - name:  Create production .env file
-        run: |
-          echo 'APP_NAME="AI Education Studio"' > .env
-          echo 'APP_ENV=production' >> .env
-          echo 'APP_KEY=${{ secrets.APP_KEY }}' >> .env
-          echo 'APP_DEBUG=false' >> .env
-          echo 'APP_URL=https://aie-studio.jazbastudio.com' >> .env
-          echo 'APP_LOCALE=en' >> .env
-          echo 'APP_FALLBACK_LOCALE=en' >> .env
-          echo '' >> .env
-          echo 'LOG_CHANNEL=stack' >> .env
-          echo 'LOG_STACK=single' >> .env
-          echo 'LOG_LEVEL=error' >> .env
-          echo '' >> .env
-          echo 'DB_CONNECTION=mysql' >> .env
-          echo 'DB_HOST=${{ secrets.DB_HOST }}' >> .env
-          echo 'DB_PORT=3306' >> .env
-          echo 'DB_DATABASE=${{ secrets.DB_DATABASE }}' >> .env
-          echo 'DB_USERNAME=${{ secrets.DB_USERNAME }}' >> .env
-          echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' >> .env
-          echo '' >> .env
-          echo 'SESSION_DRIVER=database' >> .env
-          echo 'SESSION_LIFETIME=120' >> .env
-          echo 'SESSION_ENCRYPT=false' >> .env
-          echo '' >> .env
-          echo 'CACHE_STORE=database' >> .env
-          echo 'QUEUE_CONNECTION=database' >> .env
-          echo 'FILESYSTEM_DISK=local' >> .env
-          echo '' >> .env
-          echo 'STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}' >> .env
-          echo 'STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET }}' >> .env
-          echo '' >> .env
-          echo 'VITE_APP_NAME="AI Education Studio"' >> .env
-
-      - name: � Directory permissions
-        run: |
-          chmod -R 755 storage bootstrap/cache
-          mkdir -p public/build
-          touch storage/logs/laravel.log
-          chmod -R 777 storage/logs
-
-      - name: 🔗 Create storage link
-        run: php artisan storage:link --force
-
-      - name: ⚡ Cache Laravel config, routes & views
-        run: |
-          php artisan config:cache
-          php artisan route:cache
-          php artisan view:cache
-
-      - name: 📂 Upload via FTP
+      - uses: actions/checkout@v4
+      # Here is the deployment action
+      - name: Upload from public_html via FTP
         uses: airvzxf/ftp-deployment-action@latest
         with:
           server: ${{ secrets.FTP_SERVER }}
           user: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          local_dir: "./"
-          remote_dir: "/public_html/"
+          local_dir: "./public_html"
           delete: "false"
-          exclude: >
-            .git .github node_modules tests .planning .windsurf .cursor .agent
-            storage/logs storage/framework/cache storage/framework/sessions storage/framework/views
+          ignore: |
+            .git*
+            .github
+            node_modules
+            vendor
+            tests
+            .planning
+            .windsurf
+            .cursor
+            .agent
+            storage/logs
+            storage/framework/cache
+            storage/framework/sessions
+            storage/framework/views
