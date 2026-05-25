@@ -6,7 +6,41 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, bcmath, intl, pdo, pdo_mysql, tokenizer, xml, ctype, json, fileinfo, openssl
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Remove agentic and dev-only files before deploy
+        run: |
+          rm -rf .git .github
+          rm -rf .cursor .windsurf .agent .gemini .kiro .roo .copilot
+          rm -rf .planning node_modules tests
+          rm -f .env.example .gitignore .gitattributes .editorconfig
+          rm -f .prettierrc .prettierignore .npmrc
+          rm -f eslint.config.js vite.config.ts tsconfig.json
+          rm -f phpunit.xml pint.json components.json boost.json
+          rm -f AGENTS.md README.md INTEGRATION_GUIDE.md
 
       # Here is the deployment action
       - name: Upload from public_html via FTP
