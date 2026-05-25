@@ -50,4 +50,4 @@ jobs:
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           delete: "false"
-          local_dir: "./aie-studio/"
+          local_dir: "./"
