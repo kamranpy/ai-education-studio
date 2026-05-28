@@ -24,7 +24,14 @@ class CheckMaintenanceMode
 
     public function handle(Request $request, Closure $next): Response
     {
-        if (! (bool) SiteSetting::get('maintenance_mode', false)) {
+        try {
+            $maintenanceMode = (bool) SiteSetting::get('maintenance_mode', false);
+        } catch (\Throwable $e) {
+            // During install (DB not configured), assume maintenance mode is off
+            $maintenanceMode = false;
+        }
+
+        if (! $maintenanceMode) {
             return $next($request);
         }
 

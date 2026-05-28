@@ -15,6 +15,7 @@ createInertiaApp({
         switch (true) {
             case name === 'welcome':
             case name === 'maintenance':
+            case name === 'install':
                 return null;
             case name.startsWith('auth/'):
                 return AuthSplitLayout;
