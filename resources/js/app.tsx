@@ -4,7 +4,6 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import AppLayout from '@/layouts/app-layout';
 import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
-import AuthLayout from '@/layouts/auth-layout';
 import RoleAwareLayout from '@/layouts/role-aware-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
@@ -15,6 +14,7 @@ createInertiaApp({
     layout: (name) => {
         switch (true) {
             case name === 'welcome':
+            case name === 'maintenance':
                 return null;
             case name.startsWith('auth/'):
                 return AuthSplitLayout;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,13 +36,28 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $siteName = SiteSetting::get('site_name') ?: config('app.name');
+
         return [
             ...parent::share($request),
-            'name' => config('app.name'),
+            'name' => $siteName,
+            'site' => [
+                'name'             => $siteName,
+                'tagline'          => SiteSetting::get('site_tagline', ''),
+                'logo_url'         => SiteSetting::getFileUrl('logo_path'),
+                'favicon_url'      => SiteSetting::getFileUrl('favicon_path'),
+                'support_email'    => SiteSetting::get('support_email', ''),
+                'social_facebook'  => SiteSetting::get('social_facebook', ''),
+                'social_twitter'   => SiteSetting::get('social_twitter', ''),
+                'social_linkedin'  => SiteSetting::get('social_linkedin', ''),
+                'social_instagram' => SiteSetting::get('social_instagram', ''),
+                'footer_text'      => SiteSetting::get('footer_text', ''),
+            ],
             'auth' => [
                 'user' => $request->user()?->loadMissing(['institute', 'role']),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'canRegister' => (bool) SiteSetting::get('registration_open', true),
         ];
     }
 }

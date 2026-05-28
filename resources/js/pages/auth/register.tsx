@@ -1,4 +1,5 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
+import { Lock } from 'lucide-react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -10,6 +11,37 @@ import { login } from '@/routes';
 import { store } from '@/routes/register';
 
 export default function Register() {
+    const { props } = usePage();
+    const canRegister = (props.canRegister as boolean | undefined) ?? true;
+
+    if (!canRegister) {
+        return (
+            <>
+                <Head title="Registration Closed" />
+                <div className="flex min-h-[50vh] flex-col items-center justify-center gap-5 text-center">
+                    <div className="flex size-16 items-center justify-center rounded-full bg-[#464555]/30">
+                        <Lock className="size-8 text-[#c3c0ff]" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-semibold text-[#e5e2e1]">
+                            Registration is closed
+                        </h2>
+                        <p className="mt-2 max-w-sm text-sm text-[#c7c4d8]">
+                            New registrations are currently not being accepted.
+                            Contact the administrator for more information.
+                        </p>
+                    </div>
+                    <TextLink
+                        href={login()}
+                        className="text-[#c3c0ff] font-semibold hover:text-[#d0bcff]"
+                    >
+                        Back to log in
+                    </TextLink>
+                </div>
+            </>
+        );
+    }
+
     return (
         <>
             <Head title="Register" />

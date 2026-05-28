@@ -7,6 +7,7 @@ import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
 import { dashboard as studentDashboard } from '@/routes/student';
 import type { User } from '@/types';
+import type { SiteConfig } from '@/types/global';
 
 function getInitials(name: string): string {
     return name
@@ -135,6 +136,7 @@ function CloseIcon() {
 export default function StudentLayout({ children }: { children: ReactNode }) {
     const { url, props } = usePage();
     const user = props.auth?.user as User | undefined;
+    const site = props.site as SiteConfig | undefined;
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const dashboardHref = studentDashboard.url();
@@ -151,9 +153,18 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
         <>
             {/* Brand */}
             <div className="px-6 mb-10">
-                <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--brand-primary)' }}>
-                    AI Education Studio
-                </h1>
+                <div className="flex items-center gap-2">
+                    {site?.logo_url && (
+                        <img
+                            src={site.logo_url}
+                            alt={site.name}
+                            className="h-7 w-auto object-contain"
+                        />
+                    )}
+                    <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--brand-primary)' }}>
+                        {site?.name ?? 'AI Education Studio'}
+                    </h1>
+                </div>
             </div>
 
             {/* Nav items */}
