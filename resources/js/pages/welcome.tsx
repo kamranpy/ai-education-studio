@@ -1,4 +1,5 @@
-﻿import { Head, Link } from '@inertiajs/react';
+﻿import { Head, Link, usePage } from '@inertiajs/react';
+import { ExternalLink, Mail } from 'lucide-react';
 import {
     BarChart,
     CheckCircle,
@@ -14,6 +15,7 @@ import {
 import type { ComponentType, SVGProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { login, register } from '@/routes';
+import type { SiteConfig } from '@/types/global';
 
 const NAV_ITEMS = [
     { id: 'features', label: 'Features' },
@@ -23,10 +25,18 @@ const NAV_ITEMS = [
 ];
 
 export default function Welcome({
-    canRegister = true,
+    canRegister: canRegisterProp,
 }: {
     canRegister?: boolean;
 }) {
+    const { props } = usePage();
+    const site = props.site as SiteConfig | undefined;
+    const sharedCanRegister = props.canRegister as boolean | undefined;
+    const canRegister = canRegisterProp ?? sharedCanRegister ?? true;
+    const siteName = site?.name ?? 'AI Education Studio';
+    const siteTagline = site?.tagline?.trim()
+        ? site.tagline
+        : 'AI-Powered Exam Platform for Institutes';
     const [activeSection, setActiveSection] = useState<string>('');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
     const navRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
@@ -89,14 +99,23 @@ return;
 
     return (
         <>
-            <Head title="AI Education Studio" />
+            <Head>
+                <title>{siteName}</title>
+            </Head>
             <div className="min-h-screen bg-[#131313] text-[#e5e2e1] font-sans overflow-x-hidden">
                 {/* Navbar */}
                 <nav className="fixed top-0 w-full z-50 bg-[#131313]/70 backdrop-blur-md shadow-sm border-b border-[#464555]/20 h-16">
                     <div className="flex justify-between items-center h-full px-6 max-w-[1280px] mx-auto">
                         <div className="flex items-center gap-2">
+                            {site?.logo_url ? (
+                                <img
+                                    src={site.logo_url}
+                                    alt={siteName}
+                                    className="h-8 w-auto object-contain"
+                                />
+                            ) : null}
                             <span className="text-xl font-semibold text-[#c3c0ff] tracking-tight">
-                                AI Education Studio
+                                {siteName}
                             </span>
                         </div>
                         <div className="relative hidden md:flex items-center gap-10">
@@ -149,7 +168,7 @@ return;
                     <div className="max-w-[1280px] mx-auto relative z-10 flex flex-col items-center text-center">
                         <div className="inline-flex items-center gap-2 px-4 py-1 bg-[#c3c0ff]/10 border border-[#c3c0ff]/20 rounded-full mb-10">
                             <Stars className="text-[#c3c0ff] size-4" />
-                            <span className="text-[#c3c0ff] text-sm font-medium">AI-Powered Exam Platform for Institutes</span>
+                            <span className="text-[#c3c0ff] text-sm font-medium">{siteTagline}</span>
                         </div>
                         <h1 className="font-bold text-5xl md:text-6xl max-w-[900px] mb-6 text-[#e5e2e1] leading-tight tracking-tight">
                             The{' '}
@@ -590,9 +609,9 @@ return;
                 <footer className="w-full py-16 bg-[#0e0e0e] border-t border-[#464555]">
                     <div className="max-w-[1280px] mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-16">
                         <div className="col-span-1">
-                            <div className="font-semibold text-2xl text-[#c3c0ff] mb-6">AI Education Studio</div>
+                            <div className="font-semibold text-2xl text-[#c3c0ff] mb-6">{siteName}</div>
                             <p className="text-[#c7c4d8] text-base">
-                                Empowering education through ethical AI and seamless assessment tools.
+                                {site?.footer_text || siteTagline}
                             </p>
                         </div>
                         <div>
@@ -604,11 +623,71 @@ return;
                             </ul>
                         </div>
                         <div>
-                            <h4 className="font-semibold text-xl text-[#e5e2e1] mb-6">Company</h4>
+                            <h4 className="font-semibold text-xl text-[#e5e2e1] mb-6">Contact & Social</h4>
                             <ul className="space-y-4 text-[#c7c4d8] text-base">
-                                {['About Us', 'Contact', 'Success Stories', 'Security'].map((l) => (
-                                    <li key={l}><a href="#" className="hover:text-[#c3c0ff] transition-colors">{l}</a></li>
-                                ))}
+                                {site?.support_email && (
+                                    <li>
+                                        <a
+                                            href={`mailto:${site.support_email}`}
+                                            className="hover:text-[#c3c0ff] transition-colors inline-flex items-center gap-2"
+                                        >
+                                            <Mail className="size-4" />
+                                            {site.support_email}
+                                        </a>
+                                    </li>
+                                )}
+                                {site?.social_facebook && (
+                                    <li>
+                                        <a
+                                            href={site.social_facebook}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hover:text-[#c3c0ff] transition-colors inline-flex items-center gap-2"
+                                        >
+                                            <ExternalLink className="size-4" />
+                                            Facebook
+                                        </a>
+                                    </li>
+                                )}
+                                {site?.social_twitter && (
+                                    <li>
+                                        <a
+                                            href={site.social_twitter}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hover:text-[#c3c0ff] transition-colors inline-flex items-center gap-2"
+                                        >
+                                            <ExternalLink className="size-4" />
+                                            Twitter
+                                        </a>
+                                    </li>
+                                )}
+                                {site?.social_linkedin && (
+                                    <li>
+                                        <a
+                                            href={site.social_linkedin}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hover:text-[#c3c0ff] transition-colors inline-flex items-center gap-2"
+                                        >
+                                            <ExternalLink className="size-4" />
+                                            LinkedIn
+                                        </a>
+                                    </li>
+                                )}
+                                {site?.social_instagram && (
+                                    <li>
+                                        <a
+                                            href={site.social_instagram}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="hover:text-[#c3c0ff] transition-colors inline-flex items-center gap-2"
+                                        >
+                                            <ExternalLink className="size-4" />
+                                            Instagram
+                                        </a>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                         <div>
@@ -621,7 +700,7 @@ return;
                         </div>
                     </div>
                     <div className="max-w-[1280px] mx-auto px-6 mt-16 pt-6 border-t border-[#464555]/10 text-center text-[#c7c4d8] text-base">
-                        © {new Date().getFullYear()} AI Education Studio. All rights reserved.
+                        © {new Date().getFullYear()} {siteName}. All rights reserved.
                     </div>
                 </footer>
             </div>

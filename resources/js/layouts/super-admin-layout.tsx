@@ -3,22 +3,26 @@ import {
     Close,
     CreditCard,
     Dashboard,
+    Language,
     Logout,
     Menu,
     Notifications,
     School,
     Settings,
     SmartToy,
+    VpnKey,
 } from '@material-symbols-svg/react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { index as creditPackagesIndex } from '@/actions/App/Http/Controllers/SuperAdmin/CreditPackageController';
 import { index as institutesIndex } from '@/actions/App/Http/Controllers/SuperAdmin/InstituteController';
+import { index as websiteSettingsIndex } from '@/actions/App/Http/Controllers/SuperAdmin/SiteSettingController';
 import { index as billingIndex } from '@/actions/App/Http/Controllers/SuperAdmin/StripeSettingController';
 import { ThemeDropdown } from '@/components/theme-dropdown';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
 import type { User } from '@/types';
+import type { SiteConfig } from '@/types/global';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -53,6 +57,7 @@ type NavItem = {
 export default function SuperAdminLayout({ children }: { children: ReactNode }) {
     const { url, props } = usePage();
     const user = props.auth?.user as User | undefined;
+    const site = props.site as SiteConfig | undefined;
     const [mobileOpen, setMobileOpen] = useState(false);
 
     const navItems: NavItem[] = [
@@ -61,6 +66,8 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
         { title: 'LLM Provider', href: '/super-admin/llm', icon: SmartToy, matchPrefix: '/super-admin/llm' },
         { title: 'Billing', href: billingIndex.url(), icon: CreditCard, matchPrefix: '/super-admin/billing' },
         { title: 'Credit Packages', href: creditPackagesIndex.url(), icon: CreditCard, matchPrefix: '/super-admin/credit-packages' },
+        { title: 'Website Settings', href: websiteSettingsIndex.url(), icon: Language, matchPrefix: '/super-admin/settings/website' },
+        { title: 'License', href: '/super-admin/license', icon: VpnKey, matchPrefix: '/super-admin/license' },
     ];
 
     const getPageTitle = () => {
@@ -84,6 +91,14 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
             return 'Credit Packages';
         }
 
+        if (url.startsWith('/super-admin/settings/website')) {
+            return 'Website Settings';
+        }
+
+        if (url.startsWith('/super-admin/license')) {
+            return 'License';
+        }
+
         return 'Super Admin';
     };
 
@@ -92,12 +107,16 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
             {/* Brand header */}
             <div className="px-4 pb-0 mb-6">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15">
-                        <School className="size-5 text-brand-primary-text" />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15 overflow-hidden">
+                        {site?.logo_url ? (
+                            <img src={site.logo_url} alt={site.name} className="size-7 object-contain" />
+                        ) : (
+                            <School className="size-5 text-brand-primary-text" />
+                        )}
                     </div>
                     <div>
                         <h1 className="text-sm font-bold tracking-tight leading-tight text-brand-primary-text">
-                            Admin Portal
+                            {site?.name ?? 'Admin Portal'}
                         </h1>
                         <p className="text-xs text-(--portal-text-muted)">Super User</p>
                     </div>

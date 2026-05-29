@@ -22,6 +22,7 @@ import { logout } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
 import { edit as profileEdit } from '@/routes/profile';
 import type { User } from '@/types/auth';
+import type { SiteConfig } from '@/types/global';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ return 'Settings';
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const { url, props } = usePage();
     const user = props.auth?.user as User | undefined;
+    const site = props.site as SiteConfig | undefined;
     const instituteName = (user as Record<string, unknown> | undefined)
         ?.institute as { name?: string } | undefined;
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -128,12 +130,16 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             {/* Brand header */}
             <div className="px-4 pb-0 mb-6">
                 <div className="flex items-center gap-3 mb-3">
-                    {/* School icon in rounded square */}
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15">
-                        <School className="size-5 text-brand-primary-text" />
+                    {/* Logo or fallback school icon */}
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15 overflow-hidden">
+                        {site?.logo_url ? (
+                            <img src={site.logo_url} alt={site.name} className="size-7 object-contain" />
+                        ) : (
+                            <School className="size-5 text-brand-primary-text" />
+                        )}
                     </div>
                     <h1 className="text-sm font-bold tracking-tight leading-tight text-brand-primary-text">
-                        AI Education Studio
+                        {site?.name ?? 'AI Education Studio'}
                     </h1>
                 </div>
 

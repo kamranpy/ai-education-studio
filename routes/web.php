@@ -10,19 +10,38 @@ use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\ExamAttemptController;
 use App\Http\Controllers\Student\ResultsController;
+use App\Http\Controllers\InstallController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
 use App\Http\Controllers\SuperAdmin\InstituteController;
+use App\Http\Controllers\SuperAdmin\LicenseController;
 use App\Http\Controllers\SuperAdmin\LlmSettingController;
 use App\Http\Controllers\SuperAdmin\CreditPackageController;
+use App\Http\Controllers\SuperAdmin\SiteSettingController;
 use App\Http\Controllers\SuperAdmin\StripeSettingController;
 use App\Http\Middleware\EnsureInstituteAdmin;
 use App\Http\Middleware\EnsureSuperAdmin;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-Route::inertia('/', 'welcome', [
-    'canRegister' => Features::enabled(Features::registration()),
-])->name('home');
+Route::get('/', function () {
+    return Inertia::render('welcome', [
+        'canRegister' => Features::enabled(Features::registration())
+            && (bool) SiteSetting::get('registration_open', true),
+    ]);
+})->name('home');
+
+Route::get('/maintenance', function () {
+    return Inertia::render('maintenance');
+})->name('maintenance');
+
+// Install wizard — no auth middleware
+Route::get('/install', [InstallController::class, 'index'])->name('install');
+Route::get('/install/requirements', [InstallController::class, 'checkRequirements']);
+Route::post('/install/license', [InstallController::class, 'validateLicense']);
+Route::post('/install/database', [InstallController::class, 'testDatabase']);
+Route::post('/install', [InstallController::class, 'install']);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Role-based dashboard redirect — used by the welcome page "Dashboard" link
@@ -57,6 +76,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('institutes/{institute}/toggle-status', [InstituteController::class, 'toggleStatus'])->name('super_admin.institutes.toggle-status');
         Route::post('institutes/{institute}/adjust-credits', [InstituteController::class, 'adjustCredits'])->name('super_admin.institutes.adjust-credits');
         Route::delete('institutes/{institute}', [InstituteController::class, 'destroy'])->name('super_admin.institutes.destroy');
+
+        Route::get('settings/website', [SiteSettingController::class, 'index'])->name('super_admin.settings.website');
+        Route::post('settings/website/branding', [SiteSettingController::class, 'updateBranding'])->name('super_admin.settings.website.branding');
+        Route::post('settings/website/contact', [SiteSettingController::class, 'updateContact'])->name('super_admin.settings.website.contact');
+        Route::post('settings/website/flags', [SiteSettingController::class, 'updateFlags'])->name('super_admin.settings.website.flags');
+        Route::post('settings/website/logo', [SiteSettingController::class, 'uploadLogo'])->name('super_admin.settings.website.logo.upload');
+        Route::delete('settings/website/logo', [SiteSettingController::class, 'deleteLogo'])->name('super_admin.settings.website.logo.delete');
+        Route::post('settings/website/favicon', [SiteSettingController::class, 'uploadFavicon'])->name('super_admin.settings.website.favicon.upload');
+        Route::delete('settings/website/favicon', [SiteSettingController::class, 'deleteFavicon'])->name('super_admin.settings.website.favicon.delete');
+
+        Route::get('license', [LicenseController::class, 'index'])->name('super_admin.license.index');
+        Route::post('license', [LicenseController::class, 'activate'])->name('super_admin.license.activate');
+        Route::post('license/verify', [LicenseController::class, 'verify'])->name('super_admin.license.verify');
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {
