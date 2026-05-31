@@ -42,7 +42,7 @@ class InstallController extends Controller
             'ctype', 'curl', 'dom', 'fileinfo', 'filter', 'hash',
             'mbstring', 'openssl', 'pcre', 'pdo', 'pdo_mysql',
             'session', 'tokenizer', 'xml', 'zip', 'gd', 'intl',
-            'bcmath', 'redis',
+            'bcmath',
         ];
 
         $extensions = [];
@@ -234,7 +234,7 @@ class InstallController extends Controller
             'DB_PASSWORD' => $data['password'],
 
             'QUEUE_CONNECTION' => 'database',
-            'CACHE_STORE' => 'redis',
+            'CACHE_STORE' => 'database',
             'SESSION_DRIVER' => 'database',
 
             'MAIL_MAILER' => 'log',
