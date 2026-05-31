@@ -234,8 +234,8 @@ class InstallController extends Controller
             'DB_PASSWORD' => $data['password'],
 
             'QUEUE_CONNECTION' => 'database',
-            'CACHE_STORE' => 'database',
-            'SESSION_DRIVER' => 'database',
+            'CACHE_STORE' => 'file',
+            'SESSION_DRIVER' => 'file',
 
             'MAIL_MAILER' => 'log',
 
