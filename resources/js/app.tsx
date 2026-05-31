@@ -7,7 +7,7 @@ import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import RoleAwareLayout from '@/layouts/role-aware-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'AI Education Studio';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
