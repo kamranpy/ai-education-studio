@@ -30,7 +30,15 @@
             }
         </style>
 
-        @php($faviconUrl = \App\Models\SiteSetting::getFileUrl('favicon_path'))
+        @php
+            try {
+                $faviconUrl = \App\Models\SiteSetting::getFileUrl('favicon_path');
+                $siteName = \App\Models\SiteSetting::get('site_name', config('app.name', 'AI Education Studio'));
+            } catch (\Throwable $e) {
+                $faviconUrl = null;
+                $siteName = config('app.name', 'AI Education Studio');
+            }
+        @endphp
         @if($faviconUrl)
             <link rel="icon" href="{{ $faviconUrl }}" sizes="any">
             <link rel="apple-touch-icon" href="{{ $faviconUrl }}">
@@ -50,7 +58,7 @@
         @viteReactRefresh
         @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
         <x-inertia::head>
-            <title>{{ \App\Models\SiteSetting::get('site_name', config('app.name', 'Laravel')) }}</title>
+            <title>{{ $siteName }}</title>
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
