@@ -9,7 +9,6 @@ import {
     Notifications,
     Payments,
     Quiz,
-    School,
     Settings,
 } from '@material-symbols-svg/react';
 import { useState } from 'react';
@@ -17,6 +16,7 @@ import type { ReactNode } from 'react';
 import { index as examsIndex } from '@/actions/App/Http/Controllers/Admin/ExamController';
 import { index as usersIndex } from '@/actions/App/Http/Controllers/Admin/UserController';
 import { index as billingIndex } from '@/actions/App/Http/Controllers/Institute/BillingController';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { ThemeDropdown } from '@/components/theme-dropdown';
 import { logout } from '@/routes';
 import { dashboard as adminDashboard } from '@/routes/admin';
@@ -130,12 +130,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             {/* Brand header */}
             <div className="px-4 pb-0 mb-6">
                 <div className="flex items-center gap-3 mb-3">
-                    {/* Logo or fallback school icon */}
+                    {/* Logo or fallback icon */}
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-brand-primary/15 overflow-hidden">
                         {site?.logo_url ? (
                             <img src={site.logo_url} alt={site.name} className="size-7 object-contain" />
                         ) : (
-                            <School className="size-5 text-brand-primary-text" />
+                            <AppLogoIcon className="size-5 fill-current text-brand-primary-text" />
                         )}
                     </div>
                     <h1 className="text-sm font-bold tracking-tight leading-tight text-brand-primary-text">
