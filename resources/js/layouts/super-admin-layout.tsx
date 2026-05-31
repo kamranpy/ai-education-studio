@@ -10,7 +10,6 @@ import {
     School,
     Settings,
     SmartToy,
-    VpnKey,
 } from '@material-symbols-svg/react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
@@ -67,7 +66,6 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
         { title: 'Billing', href: billingIndex.url(), icon: CreditCard, matchPrefix: '/super-admin/billing' },
         { title: 'Credit Packages', href: creditPackagesIndex.url(), icon: CreditCard, matchPrefix: '/super-admin/credit-packages' },
         { title: 'Website Settings', href: websiteSettingsIndex.url(), icon: Language, matchPrefix: '/super-admin/settings/website' },
-        { title: 'License', href: '/super-admin/license', icon: VpnKey, matchPrefix: '/super-admin/license' },
     ];
 
     const getPageTitle = () => {
@@ -93,10 +91,6 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
 
         if (url.startsWith('/super-admin/settings/website')) {
             return 'Website Settings';
-        }
-
-        if (url.startsWith('/super-admin/license')) {
-            return 'License';
         }
 
         return 'Super Admin';

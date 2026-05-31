@@ -220,7 +220,7 @@ class InstallController extends Controller
         $envContent = file_exists($envPath) ? file_get_contents($envPath) : '';
 
         $replacements = [
-            'APP_NAME' => 'AI Education Studio',
+            'APP_NAME' => '"AI Education Studio"',
             'APP_ENV' => 'production',
             'APP_DEBUG' => 'false',
             'APP_URL' => $data['app_url'],
