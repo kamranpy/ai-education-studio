@@ -13,7 +13,6 @@ use App\Http\Controllers\Student\ResultsController;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\SuperAdmin\DashboardController;
 use App\Http\Controllers\SuperAdmin\InstituteController;
-use App\Http\Controllers\SuperAdmin\LicenseController;
 use App\Http\Controllers\SuperAdmin\LlmSettingController;
 use App\Http\Controllers\SuperAdmin\CreditPackageController;
 use App\Http\Controllers\SuperAdmin\SiteSettingController;
@@ -86,9 +85,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('settings/website/favicon', [SiteSettingController::class, 'uploadFavicon'])->name('super_admin.settings.website.favicon.upload');
         Route::delete('settings/website/favicon', [SiteSettingController::class, 'deleteFavicon'])->name('super_admin.settings.website.favicon.delete');
 
-        Route::get('license', [LicenseController::class, 'index'])->name('super_admin.license.index');
-        Route::post('license', [LicenseController::class, 'activate'])->name('super_admin.license.activate');
-        Route::post('license/verify', [LicenseController::class, 'verify'])->name('super_admin.license.verify');
     });
 
     Route::prefix('admin')->middleware(EnsureInstituteAdmin::class)->group(function () {

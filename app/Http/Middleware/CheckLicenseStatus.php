@@ -17,8 +17,6 @@ class CheckLicenseStatus
         'login',
         'logout',
         'maintenance',
-        'super-admin/license',
-        'super-admin/license/*',
         'two-factor-challenge',
         'two-factor-challenge/*',
     ];
@@ -41,11 +39,6 @@ class CheckLicenseStatus
             return $next($request);
         }
 
-        // Super Admin can always access the license management page
-        if ($request->is('super-admin/license', 'super-admin/license/*')) {
-            return $next($request);
-        }
-
         // Exempt paths (auth, maintenance, public pages)
         foreach ($this->exemptPaths as $pattern) {
             if ($request->is($pattern)) {
@@ -58,9 +51,9 @@ class CheckLicenseStatus
             return $next($request);
         }
 
-        // Redirect authenticated users to license management
+        // Redirect authenticated users to login (since license management page is removed)
         if ($request->user()) {
-            return redirect()->route('super_admin.license.index');
+            return redirect()->route('login');
         }
 
         // Redirect guests to login (which is exempt)
