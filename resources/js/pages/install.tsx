@@ -496,7 +496,7 @@ export default function Install() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="db-user">Username</Label>
+                                    <Label htmlFor="db-user">Database User</Label>
                                     <Input
                                         id="db-user"
                                         value={dbUsername}
@@ -505,7 +505,7 @@ export default function Install() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="db-pass">Password</Label>
+                                    <Label htmlFor="db-pass">Database Password</Label>
                                     <Input
                                         id="db-pass"
                                         type="password"

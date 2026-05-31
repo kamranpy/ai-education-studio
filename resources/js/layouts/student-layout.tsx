@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { index as resultsIndex } from '@/actions/App/Http/Controllers/Student/ResultsController';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { ThemeDropdown } from '@/components/theme-dropdown';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
@@ -154,12 +155,14 @@ export default function StudentLayout({ children }: { children: ReactNode }) {
             {/* Brand */}
             <div className="px-6 mb-10">
                 <div className="flex items-center gap-2">
-                    {site?.logo_url && (
+                    {site?.logo_url ? (
                         <img
                             src={site.logo_url}
                             alt={site.name}
                             className="h-7 w-auto object-contain"
                         />
+                    ) : (
+                        <AppLogoIcon className="h-7 w-auto fill-current" style={{ color: 'var(--brand-primary)' }} />
                     )}
                     <h1 className="text-xl font-bold tracking-tight" style={{ color: 'var(--brand-primary)' }}>
                         {site?.name ?? 'AI Education Studio'}

@@ -17,6 +17,7 @@ import { index as creditPackagesIndex } from '@/actions/App/Http/Controllers/Sup
 import { index as institutesIndex } from '@/actions/App/Http/Controllers/SuperAdmin/InstituteController';
 import { index as websiteSettingsIndex } from '@/actions/App/Http/Controllers/SuperAdmin/SiteSettingController';
 import { index as billingIndex } from '@/actions/App/Http/Controllers/SuperAdmin/StripeSettingController';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { ThemeDropdown } from '@/components/theme-dropdown';
 import { logout } from '@/routes';
 import { edit as profileEdit } from '@/routes/profile';
@@ -105,7 +106,7 @@ export default function SuperAdminLayout({ children }: { children: ReactNode }) 
                         {site?.logo_url ? (
                             <img src={site.logo_url} alt={site.name} className="size-7 object-contain" />
                         ) : (
-                            <School className="size-5 text-brand-primary-text" />
+                            <AppLogoIcon className="size-5 fill-current text-brand-primary-text" />
                         )}
                     </div>
                     <div>

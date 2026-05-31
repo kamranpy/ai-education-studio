@@ -1,5 +1,4 @@
 ﻿import { Head, Link, usePage } from '@inertiajs/react';
-import { ExternalLink, Mail } from 'lucide-react';
 import {
     BarChart,
     CheckCircle,
@@ -12,8 +11,10 @@ import {
     Stars,
     Timer,
 } from '@material-symbols-svg/react';
+import { ExternalLink, Mail } from 'lucide-react';
 import type { ComponentType, SVGProps } from 'react';
 import { useEffect, useRef, useState } from 'react';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { login, register } from '@/routes';
 import type { SiteConfig } from '@/types/global';
 
@@ -113,7 +114,9 @@ return;
                                     alt={siteName}
                                     className="h-8 w-auto object-contain"
                                 />
-                            ) : null}
+                            ) : (
+                                <AppLogoIcon className="h-8 w-auto fill-current text-[#c3c0ff]" />
+                            )}
                             <span className="text-xl font-semibold text-[#c3c0ff] tracking-tight">
                                 {siteName}
                             </span>
