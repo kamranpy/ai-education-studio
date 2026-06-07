@@ -28,16 +28,18 @@ class ExamSeeder extends Seeder
             $shuffled = collect($examTemplates)->shuffle()->take($count);
 
             foreach ($shuffled as $template) {
-                $status = fake()->randomElement(['draft', 'published', 'published', 'locked']);
-                $evaluation = fake()->randomElement(['instant', 'instant', 'manual']);
+                $statuses = ['draft', 'published', 'published', 'locked'];
+                $evaluations = ['instant', 'instant', 'manual'];
+                $status = $statuses[array_rand($statuses)];
+                $evaluation = $evaluations[array_rand($evaluations)];
                 $resultsAt = ($status === 'locked' && $evaluation === 'manual')
-                    ? fake()->dateTimeBetween('-30 days', '-1 day')
+                    ? now()->subDays(rand(1, 30))
                     : null;
 
                 Exam::create([
                     'institute_id' => $institute->id,
                     'title' => $template['title'],
-                    'description' => fake()->paragraph(3),
+                    'description' => 'This exam covers essential topics designed to assess student understanding and application of key concepts. It includes multiple sections with varying difficulty levels to ensure comprehensive evaluation.',
                     'class_name' => $template['class'],
                     'subject_name' => $template['subject'],
                     'time_limit_minutes' => $template['time'],

@@ -19,13 +19,14 @@ class TransactionSeeder extends Seeder
 
             for ($i = 0; $i < $transactionCount; $i++) {
                 $package = $packages->random();
-                $status = fake()->randomElement(['completed', 'completed', 'completed', 'pending', 'failed']);
+                $statuses = ['completed', 'completed', 'completed', 'pending', 'failed'];
+                $status = $statuses[array_rand($statuses)];
 
-                $createdAt = fake()->dateTimeBetween('-7 days', 'now');
+                $createdAt = now()->subDays(rand(0, 7));
 
                 Transaction::create([
                     'institute_id' => $institute->id,
-                    'stripe_session_id' => 'cs_test_' . fake()->uuid(),
+                    'stripe_session_id' => 'cs_test_' . str_replace('-', '', bin2hex(random_bytes(16))),
                     'credits_added' => $status === 'completed' ? $package->credits : 0,
                     'amount_cents' => $package->price_cents,
                     'currency' => $package->currency,
