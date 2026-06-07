@@ -18,7 +18,7 @@ class InstituteSeeder extends Seeder
         ];
 
         foreach ($institutes as $institute) {
-            $createdAt = fake()->dateTimeBetween('-7 days', 'now');
+            $createdAt = now()->subDays(rand(0, 7));
 
             Institute::updateOrCreate(
                 ['name' => $institute['name']],

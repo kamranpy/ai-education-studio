@@ -28,7 +28,7 @@ class ExamAttemptSeeder extends Seeder
             $attemptingStudents = $students->where('institute_id', $exam->institute_id)->random(min(4, $students->where('institute_id', $exam->institute_id)->count()));
 
             foreach ($attemptingStudents as $student) {
-                $status = fake()->randomElement([
+                $statuses = [
                     'in_progress',
                     'in_progress',
                     'submitted',
@@ -37,9 +37,10 @@ class ExamAttemptSeeder extends Seeder
                     'graded',
                     'graded',
                     'needs_review',
-                ]);
+                ];
+                $status = $statuses[array_rand($statuses)];
 
-                $startedAt = fake()->dateTimeBetween('-7 days', 'now');
+                $startedAt = now()->subDays(rand(0, 7));
                 $submittedAt = in_array($status, ['submitted', 'graded', 'needs_review'])
                     ? (clone $startedAt)->modify('+'.rand(20, $exam->time_limit_minutes ?? 60).' minutes')
                     : null;
@@ -107,12 +108,12 @@ class ExamAttemptSeeder extends Seeder
                     'OOP principles include encapsulation (hiding internals), inheritance (reusing code), polymorphism (many forms), and abstraction (simplifying complex systems).',
                     'Holden Caulfield struggles with identity throughout the novel, seeing adulthood as "phony" while desperately trying to protect childhood innocence.',
                 ];
-                $answerData = ['text' => $sampleAnswers[array_rand($sampleAnswers)] . ' ' . fake()->sentence(5)];
+                $answerData = ['text' => $sampleAnswers[array_rand($sampleAnswers)] . ' Additional context from student.'];
 
                 if (in_array($status, ['graded', 'needs_review'])) {
                     $aiScore = round(rand(40, 95) / 100 * $question->points, 2);
                     $aiConfidence = round(rand(700, 980) / 1000, 3);
-                    $aiExplanation = fake()->paragraph(2);
+                    $aiExplanation = 'The response demonstrates a solid understanding of the core concepts with minor gaps in detail. The student correctly identified the main principles but could strengthen the answer with more specific examples.';
                     $aiAxes = [
                         ['axis' => 'Concept', 'score' => rand(60, 95), 'max' => 100],
                         ['axis' => 'Logic', 'score' => rand(50, 90), 'max' => 100],
