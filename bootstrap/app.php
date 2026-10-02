@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Middleware\CheckLicenseStatus;
+use App\Http\Middleware\CheckMaintenanceMode;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,15 +16,22 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->command('app:submit-expired-exams')->everyMinute();
+    })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->validateCsrfTokens(except: ['stripe/webhook']);
 
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
+            CheckMaintenanceMode::class,
+            CheckLicenseStatus::class,
             AddLinkHeadersForPreloadedAssets::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
+

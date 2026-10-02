@@ -76,7 +76,7 @@ class EmailVerificationTest extends TestCase
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),
-            ['id' => 123, 'hash' => sha1($user->email)],
+            ['id' => '00000000-0000-0000-0000-000000000000', 'hash' => sha1($user->email)],
         );
 
         $this->actingAs($user)->get($verificationUrl);

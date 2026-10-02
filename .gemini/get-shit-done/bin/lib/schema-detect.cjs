@@ -163,9 +163,13 @@ function checkSchemaDrift(changedFiles, executionLog, options = {}) {
 
   for (const orm of detection.orms) {
     const info = ORM_INFO[orm];
-    if (!info) continue;
+
+    if (!info) {
+continue;
+}
 
     const hasPushEvidence = info.evidencePatterns.some(p => p.test(executionLog));
+
     if (hasPushEvidence) {
       pushedOrms.add(orm);
     } else {
@@ -190,6 +194,7 @@ function checkSchemaDrift(changedFiles, executionLog, options = {}) {
   const pushCommands = unpushedOrms
     .map(orm => {
       const info = ORM_INFO[orm];
+
       return info ? `  ${orm}: ${info.envHint || info.pushCommand}` : null;
     })
     .filter(Boolean)

@@ -38,6 +38,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
+
   try {
     const data = JSON.parse(input);
     const toolName = data.tool_name;
@@ -56,12 +57,14 @@ process.stdin.on('end', () => {
 
     // Get the content being written
     const content = data.tool_input?.content || data.tool_input?.new_string || '';
+
     if (!content) {
       process.exit(0);
     }
 
     // Scan for injection patterns
     const findings = [];
+
     for (const pattern of INJECTION_PATTERNS) {
       if (pattern.test(content)) {
         findings.push(pattern.source);

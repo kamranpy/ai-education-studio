@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Check for Duplicate Model Logic",
+  "description": "When a new Eloquent model is created, checks for overlapping responsibilities or logic that could be shared via traits or a base model",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "app/Models/**/*.php"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new Eloquent model was just created. Check app/Models/ for any existing models with overlapping responsibilities, duplicate scopes, or shared relationships that could be extracted into a trait or base model. Suggest consolidation where appropriate to keep the codebase DRY."
+  }
+}

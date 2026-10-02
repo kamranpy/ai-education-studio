@@ -9,8 +9,8 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const os = require('os');
+const path = require('path');
 const readline = require('readline');
 const { output, error, safeReadFile, reapStaleTempFiles } = require('./core.cjs');
 
@@ -18,7 +18,11 @@ const { output, error, safeReadFile, reapStaleTempFiles } = require('./core.cjs'
 
 function getSessionsDir(overridePath) {
   const dir = overridePath || path.join(os.homedir(), '.claude', 'projects');
-  if (!fs.existsSync(dir)) return null;
+
+  if (!fs.existsSync(dir)) {
+return null;
+}
+
   return dir;
 }
 
@@ -27,7 +31,10 @@ function scanProjectDir(projectDirPath) {
   const sessions = [];
 
   for (const entry of entries) {
-    if (!entry.endsWith('.jsonl')) continue;
+    if (!entry.endsWith('.jsonl')) {
+continue;
+}
+
     const sessionId = entry.replace('.jsonl', '');
     const filePath = path.join(projectDirPath, entry);
     const stat = fs.statSync(filePath);
@@ -41,6 +48,7 @@ function scanProjectDir(projectDirPath) {
   }
 
   sessions.sort((a, b) => b.modified - a.modified);
+
   return sessions;
 }
 
@@ -50,11 +58,13 @@ function readSessionIndex(projectDirPath) {
     const raw = fs.readFileSync(indexPath, 'utf-8');
     const parsed = JSON.parse(raw);
     const entries = new Map();
+
     for (const entry of (parsed.entries || [])) {
       if (entry.sessionId) {
         entries.set(entry.sessionId, entry);
       }
     }
+
     return { originalPath: parsed.originalPath || null, entries };
   } catch {
     return { originalPath: null, entries: new Map() };
@@ -65,16 +75,27 @@ function getProjectName(projectDirName, indexData, firstRecordCwd) {
   if (indexData && indexData.originalPath) {
     return path.basename(indexData.originalPath);
   }
+
   if (firstRecordCwd) {
     return path.basename(firstRecordCwd);
   }
+
   return projectDirName;
 }
 
 function formatBytes(bytes) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1073741824) return `${(bytes / 1048576).toFixed(1)} MB`;
+  if (bytes < 1024) {
+return `${bytes} B`;
+}
+
+  if (bytes < 1048576) {
+return `${(bytes / 1024).toFixed(1)} KB`;
+}
+
+  if (bytes < 1073741824) {
+return `${(bytes / 1048576).toFixed(1)} MB`;
+}
+
   return `${(bytes / 1073741824).toFixed(1)} GB`;
 }
 
@@ -82,11 +103,13 @@ function formatProjectTable(projects) {
   let out = '';
   out += 'Project'.padEnd(35) + 'Sessions'.padEnd(10) + 'Size'.padEnd(10) + 'Last Active\n';
   out += '-'.repeat(75) + '\n';
+
   for (const p of projects) {
     const name = p.name.length > 33 ? p.name.substring(0, 30) + '...' : p.name;
     out += name.padEnd(35) + String(p.sessionCount).padEnd(10) +
            p.totalSizeHuman.padEnd(10) + p.lastActive + '\n';
   }
+
   return out;
 }
 
@@ -94,33 +117,69 @@ function formatSessionTable(sessions) {
   let out = '';
   out += '  Session ID'.padEnd(42) + 'Size'.padEnd(10) + 'Modified\n';
   out += '  ' + '-'.repeat(70) + '\n';
+
   for (const s of sessions) {
     const id = s.sessionId.length > 38 ? s.sessionId.substring(0, 35) + '...' : s.sessionId;
     out += '  ' + id.padEnd(40) + formatBytes(s.size).padEnd(10) +
            new Date(s.modified).toISOString().replace('T', ' ').substring(0, 19) + '\n';
   }
+
   return out;
 }
 
 // ─── Message Extraction Helpers ───────────────────────────────────────────────
 
 function isGenuineUserMessage(record) {
-  if (record.type !== 'user') return false;
-  if (record.userType !== 'external') return false;
-  if (record.isMeta === true) return false;
-  if (record.isSidechain === true) return false;
+  if (record.type !== 'user') {
+return false;
+}
+
+  if (record.userType !== 'external') {
+return false;
+}
+
+  if (record.isMeta === true) {
+return false;
+}
+
+  if (record.isSidechain === true) {
+return false;
+}
+
   const content = record.message?.content;
-  if (typeof content !== 'string') return false;
-  if (content.length === 0) return false;
-  if (content.startsWith('<local-command')) return false;
-  if (content.startsWith('<command-')) return false;
-  if (content.startsWith('<task-notification')) return false;
-  if (content.startsWith('<local-command-stdout')) return false;
+
+  if (typeof content !== 'string') {
+return false;
+}
+
+  if (content.length === 0) {
+return false;
+}
+
+  if (content.startsWith('<local-command')) {
+return false;
+}
+
+  if (content.startsWith('<command-')) {
+return false;
+}
+
+  if (content.startsWith('<task-notification')) {
+return false;
+}
+
+  if (content.startsWith('<local-command-stdout')) {
+return false;
+}
+
   return true;
 }
 
 function truncateContent(content, maxLen = 2000) {
-  if (content.length <= maxLen) return content;
+  if (content.length <= maxLen) {
+return content;
+}
+
   return content.substring(0, maxLen) + '... [truncated]';
 }
 
@@ -135,14 +194,22 @@ async function streamExtractMessages(filePath, filterFn, maxMessages = 300) {
   const sessionId = path.basename(filePath, '.jsonl');
 
   for await (const line of rl) {
-    if (messages.length >= maxMessages) break;
+    if (messages.length >= maxMessages) {
+break;
+}
+
     let record;
+
     try {
       record = JSON.parse(line);
     } catch {
       continue;
     }
-    if (!filterFn(record)) continue;
+
+    if (!filterFn(record)) {
+continue;
+}
+
     messages.push({
       sessionId,
       projectPath: record.cwd || null,
@@ -158,6 +225,7 @@ async function streamExtractMessages(filePath, filterFn, maxMessages = 300) {
 
 async function cmdScanSessions(overridePath, options, raw) {
   const sessionsDir = getSessionsDir(overridePath);
+
   if (!sessionsDir) {
     const searchedPath = overridePath || '~/.claude/projects';
     error(`No Claude Code sessions found at ${searchedPath}.${overridePath ? '' : ' Is Claude Code installed?'}`);
@@ -166,9 +234,11 @@ async function cmdScanSessions(overridePath, options, raw) {
   process.stderr.write('Reading your session history (read-only, nothing is modified or sent anywhere)...\n');
 
   let projectDirs;
+
   try {
     projectDirs = fs.readdirSync(sessionsDir).filter(entry => {
       const fullPath = path.join(sessionsDir, entry);
+
       try {
         return fs.statSync(fullPath).isDirectory();
       } catch {
@@ -184,7 +254,10 @@ async function cmdScanSessions(overridePath, options, raw) {
   for (const dirName of projectDirs) {
     const projectPath = path.join(sessionsDir, dirName);
     const sessions = scanProjectDir(projectPath);
-    if (sessions.length === 0) continue;
+
+    if (sessions.length === 0) {
+continue;
+}
 
     const indexData = readSessionIndex(projectPath);
     const projectName = getProjectName(dirName, indexData);
@@ -217,11 +290,21 @@ async function cmdScanSessions(overridePath, options, raw) {
           sizeHuman: formatBytes(s.size),
           modified: s.modified.toISOString(),
         };
+
         if (indexed) {
-          if (indexed.summary) session.summary = indexed.summary;
-          if (indexed.messageCount !== undefined) session.messageCount = indexed.messageCount;
-          if (indexed.created) session.created = indexed.created;
+          if (indexed.summary) {
+session.summary = indexed.summary;
+}
+
+          if (indexed.messageCount !== undefined) {
+session.messageCount = indexed.messageCount;
+}
+
+          if (indexed.created) {
+session.created = indexed.created;
+}
         }
+
         return session;
       });
     }
@@ -235,14 +318,17 @@ async function cmdScanSessions(overridePath, options, raw) {
     output(projects, raw);
   } else {
     process.stdout.write('\n' + formatProjectTable(projects));
+
     if (options.verbose) {
       for (const p of projects) {
         process.stdout.write(`\n  ${p.name} (${p.sessionCount} sessions):\n`);
+
         if (p.sessions) {
           process.stdout.write(formatSessionTable(p.sessions));
         }
       }
     }
+
     process.stdout.write(`\nTotal: ${projects.length} projects\n`);
     process.exit(0);
   }
@@ -250,15 +336,18 @@ async function cmdScanSessions(overridePath, options, raw) {
 
 async function cmdExtractMessages(projectArg, options, raw, overridePath) {
   const sessionsDir = getSessionsDir(overridePath);
+
   if (!sessionsDir) {
     const searchedPath = overridePath || '~/.claude/projects';
     error(`No Claude Code sessions found at ${searchedPath}.${overridePath ? '' : ' Is Claude Code installed?'}`);
   }
 
   let projectDirs;
+
   try {
     projectDirs = fs.readdirSync(sessionsDir).filter(entry => {
       const fullPath = path.join(sessionsDir, entry);
+
       try {
         return fs.statSync(fullPath).isDirectory();
       } catch {
@@ -282,23 +371,28 @@ async function cmdExtractMessages(projectArg, options, raw, overridePath) {
   if (!matchedDir) {
     const lowerArg = projectArg.toLowerCase();
     const matches = projectDirs.filter(d => d.toLowerCase().includes(lowerArg));
+
     if (matches.length === 1) {
       matchedDir = matches[0];
     } else if (matches.length > 1) {
       const exactNameMatches = [];
+
       for (const dirName of matches) {
         const indexData = readSessionIndex(path.join(sessionsDir, dirName));
         const pName = getProjectName(dirName, indexData);
+
         if (pName.toLowerCase() === lowerArg) {
           exactNameMatches.push({ dirName, name: pName });
         }
       }
+
       if (exactNameMatches.length === 1) {
         matchedDir = exactNameMatches[0].dirName;
         matchedName = exactNameMatches[0].name;
       } else {
         const names = matches.map(d => {
           const idx = readSessionIndex(path.join(sessionsDir, d));
+
           return `  - ${getProjectName(d, idx)} (${d})`;
         });
         error(`Multiple projects match "${projectArg}":\n${names.join('\n')}\nBe more specific.`);
@@ -309,6 +403,7 @@ async function cmdExtractMessages(projectArg, options, raw, overridePath) {
   if (!matchedDir) {
     const available = projectDirs.map(d => {
       const idx = readSessionIndex(path.join(sessionsDir, d));
+
       return `  - ${getProjectName(d, idx)}`;
     });
     error(`No project matching "${projectArg}". Available projects:\n${available.join('\n')}`);
@@ -324,6 +419,7 @@ async function cmdExtractMessages(projectArg, options, raw, overridePath) {
 
   if (options.sessionId) {
     sessions = sessions.filter(s => s.sessionId === options.sessionId);
+
     if (sessions.length === 0) {
       error(`Session "${options.sessionId}" not found in project "${projectName}".`);
     }
@@ -345,7 +441,9 @@ async function cmdExtractMessages(projectArg, options, raw, overridePath) {
   const batchLimit = 300;
 
   for (let i = 0; i < sessions.length; i++) {
-    if (messagesExtracted >= batchLimit) break;
+    if (messagesExtracted >= batchLimit) {
+break;
+}
 
     const session = sessions[i];
     process.stderr.write(`\rProcessing session ${i + 1}/${total}...`);
@@ -353,13 +451,16 @@ async function cmdExtractMessages(projectArg, options, raw, overridePath) {
     try {
       const remaining = batchLimit - messagesExtracted;
       const msgs = await streamExtractMessages(session.filePath, isGenuineUserMessage, remaining);
+
       for (const msg of msgs) {
         fs.appendFileSync(outputPath, JSON.stringify(msg) + '\n');
         messagesExtracted++;
+
         if (msg.content.endsWith('... [truncated]')) {
           messagesTruncated++;
         }
       }
+
       sessionsProcessed++;
     } catch (err) {
       sessionsSkipped++;
@@ -391,6 +492,7 @@ async function cmdExtractMessages(projectArg, options, raw, overridePath) {
 
 async function cmdProfileSample(overridePath, options, raw) {
   const sessionsDir = getSessionsDir(overridePath);
+
   if (!sessionsDir) {
     const searchedPath = overridePath || '~/.claude/projects';
     error(`No Claude Code sessions found at ${searchedPath}.${overridePath ? '' : ' Is Claude Code installed?'}`);
@@ -402,9 +504,11 @@ async function cmdProfileSample(overridePath, options, raw) {
   const maxChars = options.maxChars || 500;
 
   let projectDirs;
+
   try {
     projectDirs = fs.readdirSync(sessionsDir).filter(entry => {
       const fullPath = path.join(sessionsDir, entry);
+
       try {
         return fs.statSync(fullPath).isDirectory();
       } catch {
@@ -420,10 +524,15 @@ async function cmdProfileSample(overridePath, options, raw) {
   }
 
   const projectMeta = [];
+
   for (const dirName of projectDirs) {
     const projectPath = path.join(sessionsDir, dirName);
     const sessions = scanProjectDir(projectPath);
-    if (sessions.length === 0) continue;
+
+    if (sessions.length === 0) {
+continue;
+}
+
     const indexData = readSessionIndex(projectPath);
     const projectName = getProjectName(dirName, indexData);
     const lastActive = sessions[0].modified;
@@ -433,6 +542,7 @@ async function cmdProfileSample(overridePath, options, raw) {
   projectMeta.sort((a, b) => b.lastActive - a.lastActive);
 
   const projectCount = projectMeta.length;
+
   if (projectCount === 0) {
     error('No projects with sessions found.');
   }
@@ -445,7 +555,9 @@ async function cmdProfileSample(overridePath, options, raw) {
   const projectBreakdown = [];
 
   for (const proj of projectMeta) {
-    if (allMessages.length >= limit) break;
+    if (allMessages.length >= limit) {
+break;
+}
 
     const cappedSessions = proj.sessions.slice(0, perProjectCap);
 
@@ -453,7 +565,9 @@ async function cmdProfileSample(overridePath, options, raw) {
     let projectSessionsUsed = 0;
 
     for (const session of cappedSessions) {
-      if (allMessages.length >= limit) break;
+      if (allMessages.length >= limit) {
+break;
+}
 
       const isRecent = session.modified.getTime() >= recencyThreshold;
       const perSessionMax = isRecent ? 10 : 3;
@@ -465,19 +579,24 @@ async function cmdProfileSample(overridePath, options, raw) {
         let sessionUsed = false;
 
         for (const msg of msgs) {
-          if (allMessages.length >= limit) break;
+          if (allMessages.length >= limit) {
+break;
+}
 
           const content = msg.content || '';
+
           if (content.startsWith('This session is being continued')) {
             skippedContextDumps++;
             continue;
           }
 
           const lines = content.split('\n').filter(l => l.trim().length > 0);
+
           if (lines.length > 3) {
             const logPattern = /^\[?(DEBUG|INFO|WARN|ERROR|LOG)\]?/i;
             const timestampPattern = /^\d{4}-\d{2}-\d{2}/;
             const logLines = lines.filter(l => logPattern.test(l.trim()) || timestampPattern.test(l.trim()));
+
             if (logLines.length / lines.length > 0.8) {
               skippedContextDumps++;
               continue;
@@ -497,7 +616,10 @@ async function cmdProfileSample(overridePath, options, raw) {
           projectMessages++;
           sessionUsed = true;
         }
-        if (sessionUsed) projectSessionsUsed++;
+
+        if (sessionUsed) {
+projectSessionsUsed++;
+}
       } catch {
         continue;
       }
@@ -515,6 +637,7 @@ async function cmdProfileSample(overridePath, options, raw) {
   reapStaleTempFiles('gsd-profile-', { dirsOnly: true });
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-profile-'));
   const outputPath = path.join(tmpDir, 'profile-sample.jsonl');
+
   for (const msg of allMessages) {
     fs.appendFileSync(outputPath, JSON.stringify(msg) + '\n');
   }

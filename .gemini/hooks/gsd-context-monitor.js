@@ -37,6 +37,7 @@ process.stdin.setEncoding('utf8');
 process.stdin.on('data', chunk => input += chunk);
 process.stdin.on('end', () => {
   clearTimeout(stdinTimeout);
+
   try {
     const data = JSON.parse(input);
     const sessionId = data.session_id;
@@ -55,9 +56,11 @@ process.stdin.on('end', () => {
     // Check if context warnings are disabled via config
     const cwd = data.cwd || process.cwd();
     const configPath = path.join(cwd, '.planning', 'config.json');
+
     if (fs.existsSync(configPath)) {
       try {
         const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
         if (config.hooks?.context_warnings === false) {
           process.exit(0);
         }
@@ -112,6 +115,7 @@ process.stdin.on('end', () => {
     // Emit immediately on first warning, then debounce subsequent ones
     // Severity escalation (WARNING -> CRITICAL) bypasses debounce
     const severityEscalated = currentLevel === 'critical' && warnData.lastLevel === 'warning';
+
     if (!firstWarn && warnData.callsSinceWarn < DEBOUNCE_CALLS && !severityEscalated) {
       // Update counter and exit without warning
       fs.writeFileSync(warnPath, JSON.stringify(warnData));
@@ -129,6 +133,7 @@ process.stdin.on('end', () => {
     // Build advisory warning message (never use imperative commands that
     // override user preferences — see #884)
     let message;
+
     if (isCritical) {
       message = isGsdActive
         ? `CONTEXT CRITICAL: Usage at ${usedPct}%. Remaining: ${remaining}%. ` +
